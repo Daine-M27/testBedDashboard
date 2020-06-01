@@ -3,11 +3,15 @@
  * @param {string} inputHex 
  */
 const hexToAscii = inputHex => {
+    // remove spaces if any exist
+    inputHex = inputHex.split(" ").join("");
+    // convert to string incase its not already
     let hex = inputHex.toString();
+    
     let asciiValue = '';
     
-    for (let i = 0; i < hex.length; i++) {
-        str += String.fromCharCode(parseInt(hex.substr(n,2),16));        
+    for (let i = 0; i < hex.length; i+=2) {
+        asciiValue += String.fromCharCode(parseInt(hex.substr(i,2),16));        
     }
     
     return asciiValue;
