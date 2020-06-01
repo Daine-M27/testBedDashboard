@@ -21,6 +21,11 @@ const hexToAscii = inputHex => {
  * @param {number} posEnd 
  */
  const rdmHexResponseParse = (inputString, posStart, posEnd) => {
+    // remove spaces from hex if any exist
+    inputString = inputString.split(" ").join("");
+    // set end position if one is not specified
+    posEnd = posEnd || (inputString.length - 4);
+    // remove segment of string
     let hexString = (inputString.toString()).substring(posStart, posEnd) 
    
     return hexString;
