@@ -2,7 +2,7 @@
  * This function returns a string in ascii format from a hex value
  * @param {string} inputHex 
  */
-const hexToAscii = inputHex => {
+const hexToAscii = (inputHex) => {
     // remove spaces if any exist
     inputHex = inputHex.split(" ").join("");
     // convert to string incase its not already
