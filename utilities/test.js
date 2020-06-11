@@ -1,4 +1,4 @@
-const scpi = require("./SCPIHelper");
+const scpi = require( "./SCPIHelper" );
 
 const queryDeviceID = "*IDN?";
 const queryCurrent = "CURRent?";
@@ -14,13 +14,38 @@ const setCurrent = ( ch, val ) => {
 const setVoltage = ( ch, val ) => {
     return ( ch + ":VOLTage " + val )
 };
-const setOutput = "OUTPut:TRACK 1";
+const setToSeries = "OUTPut:TRACK 1";
 
 const onOff = (position) => {
-    return ( "OUTPut CH1,"+position ) 
+    return ( "OUTPut CH1," + position ) 
 };
 
 const address = "TCPIP0::192.168.1.170";
+
+
+const initialPowerRoutine = () => {
+    let command = new scpi.sendCommand(address, queryDeviceID, "false");
+    if (command.response.includes("SPD3XHCC4R0135")) {
+        // set values for initial power setup
+        command.sendCommand(address, setToSeries, "false");
+        command.sendCommand(address, setVoltage("CH1","24"));
+        command.sendCommand(address, setCurrent("CH1", "3.2"));
+        
+        //check values for setup
+        let queryVolt = new scpi.sendCommand(address, queryVolt, "false");
+        let queryCurrent = new scpi.sendCommand(address, queryCurrent, "false");
+
+        if (queryVolt.response == "24" && queryCurrent.response == "3.2") {
+            command.sendCommand(address, onOff("ON"), "false");
+            return 0;
+        }
+        return 1;
+    }
+}
+
+module.exports = {
+    queryDeviceID, queryCurrent, queryVoltage, measureVolt, measureCurrent, measurePower, setCurrent, setVoltage, setToSeries, onOff, address, initialPowerRoutine
+}
 
 ///////////////////////////////////////////////////////////////
 
