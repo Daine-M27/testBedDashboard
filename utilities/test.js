@@ -25,22 +25,25 @@ const address = "TCPIP0::192.168.1.170";
 
 const initialPowerRoutine = () => {
     let command = new scpi.sendCommand(address, queryDeviceID, "false");
-    if (command.response.includes("SPD3XHCC4R0135")) {
-        // set values for initial power setup
-        command.sendCommand(address, setToSeries, "false");
-        command.sendCommand(address, setVoltage("CH1","24"));
-        command.sendCommand(address, setCurrent("CH1", "3.2"));
-        
-        //check values for setup
-        let queryVolt = new scpi.sendCommand(address, queryVolt, "false");
-        let queryCurrent = new scpi.sendCommand(address, queryCurrent, "false");
-
-        if (queryVolt.response == "24" && queryCurrent.response == "3.2") {
-            command.sendCommand(address, onOff("ON"), "false");
-            return 0;
+    setTimeout( runCommands, 3000 );
+    function runCommands(){
+        if (command.response.includes("SPD3XHCC4R0135")) {
+            // set values for initial power setup
+            scpi.sendCommand(address, setToSeries, "false");
+            scpi.sendCommand(address, setVoltage("CH1","24"));
+            scpi.sendCommand(address, setCurrent("CH1", "3.2"));
+                        
+            //check values for setup
+            let queryVolt = new scpi.sendCommand(address, queryVolt, "false");
+            let queryCurrent = new scpi.sendCommand(address, queryCurrent, "false");
+    
+            if (queryVolt.response == "24" && queryCurrent.response == "3.2") {
+                scpi.sendCommand(address, onOff("ON"), "false");
+                return 0;
+            }
+            return 1;
         }
-        return 1;
-    }
+    }    
 }
 
 module.exports = {
