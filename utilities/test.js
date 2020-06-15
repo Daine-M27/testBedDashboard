@@ -1,80 +1,92 @@
-// Async / Await / Promise - version of SCPI function
-
-const net = require("net");
 
 
-function sendCommand(address, command){
-    return new Promise((resolve, reject) => {
-        const cs = new net.Socket();
-        const params = {
-            "parameters": {
-                "address": address,
-                "command": command                
-            }
-        };
 
-        function cleanUp(){
-            cs.destroy();
-            resolve();
-        }
 
-        cs.connect(5001, "127.0.0.1", () => {
-            cs.write(JSON.stringify(params));
-        })
 
-        cs.on('close', ()=>{
-            cleanUp();
-        })
 
-        cs.on('error', (err) => {
-            reject('error detected: '+ err)
-        })
-    })
-}
 
-function getReading(address, command, convert){
-    return new Promise((resolve, reject) => {
-        const cs = new net.Socket();
-        const params = {
-            "parameters": {
-                "address": address,
-                "command": command,
-                "convert": convert                
-            }
-        };
+// // Async / Await / Promise - version of SCPI function
 
-        function cleanUp(value){
-            cs.destroy();
-            resolve(value);
-        }
+// const net = require( "net" );
 
-        cs.connect(5001, "127.0.0.1", () => {
-            cs.write(JSON.stringify(params));
-        })
 
-        cs.on('data', ( data) => {
-            let reading = new TextDecoder().decode(data);
-            cleanUp(reading)
-        })
+// function sendCommand( address, command ){
+//     return new Promise(( resolve, reject ) => {
+//         const cs = new net.Socket();
+//         const params = {
+//             "parameters": {
+//                 "address": address,
+//                 "command": command                
+//             }
+//         };
 
-        cs.on('close', ()=>{
-            cleanUp();
-        })
+//         function cleanUp() {
+//             cs.destroy();
+//             resolve();
+//         }
 
-        cs.on('error', (err) => {
-            reject('error detected: '+ err)
-        })  
-    })
-}
+//         cs.connect( 5001, "127.0.0.1", () => {
+//             cs.write( JSON.stringify( params ));
+//         })
 
-async function doIt(){
-    //await sendCommand("TCPIP0::192.168.1.170", "OUTPut:TRACK 1");
-    await sendCommand("TCPIP0::192.168.1.170", "CH1:VOLTage 12.7");
-    var reading = await getReading("TCPIP0::192.168.1.170", "VOLTage?", "false");
-    console.log(reading);
-}
+//         cs.on( 'close', () => {
+//             console.log("closing connection");
+//             cleanUp();
+//         })
 
-doIt();
+//         cs.on( 'error', ( err ) => {
+//             reject('error detected: '+ err )
+//         })
+//     })
+// }
+
+// function getReading( address, command, convert ){
+//     return new Promise(( resolve, reject ) => {
+//         const cs = new net.Socket();
+//         const params = {
+//             "parameters": {
+//                 "address": address,
+//                 "command": command,
+//                 "convert": convert                
+//             }
+//         };
+
+//         function cleanUp( value ){
+//             cs.destroy();
+//             resolve(value);
+//         }
+
+//         cs.connect( 5001, "127.0.0.1", () => {
+//             cs.write( JSON.stringify( params ));
+//         })
+
+//         cs.on( 'data', ( data ) => {
+//             let reading = new TextDecoder().decode( data );
+//             cleanUp(reading)
+//         })
+
+//         cs.on( 'close', () => {
+//             console.log("closing connection");
+//             cleanUp();
+//         })
+
+//         cs.on( 'error', ( err ) => {
+//             reject( 'error detected: '+ err )
+//         })  
+//     })
+// }
+
+// async function doIt(){
+//     await sendCommand("TCPIP0::192.168.1.170", "OUTPut:TRACK 1");
+//     await sendCommand("TCPIP0::192.168.1.170", "CH1:VOLTage 24");
+//     await sendCommand("TCPIP0::192.168.1.170", "CH1:CURRent 3.2");
+//     var reading1 = await getReading("TCPIP0::192.168.1.170", "VOLTage?", "false");
+//     var reading2 = await getReading("TCPIP0::192.168.1.170", "CURRent?", "false");
+//     console.log("Voltage Setting: " + reading1);
+//     console.log("Current Setting: " + reading2);
+// }
+
+// doIt();
 
 
 /* 
