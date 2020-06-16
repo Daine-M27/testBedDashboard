@@ -46,4 +46,4 @@ function sendRDM(params){
     })
 }
 
-module.exports{sendDMX, sendRDM};
+module.exports(sendDMX, sendRDM);
