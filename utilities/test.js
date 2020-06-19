@@ -1,8 +1,8 @@
 // MSSQL test
-const dotenv = require('dotenv').config({path: 'testBedDashboard\\.env'});
+const dotenv = require('dotenv').config({path: '..\\.env'});
 const sql = require('mssql');
-//const envConfigs = dotenv;
 
+//use to check errors in dotenv
 if(dotenv.error){
     console.log(dotenv.error)
 }
