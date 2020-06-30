@@ -1,33 +1,33 @@
-// MSSQL test
-const dotenv = require('dotenv').config({path: '..\\.env'});
-const sql = require('mssql');
+// // MSSQL test
+// const dotenv = require('dotenv').config({path: '..\\.env'});
+// const sql = require('mssql');
 
-//use to check errors in dotenv
-if(dotenv.error){
-    console.log(dotenv.error)
-}
-console.log(dotenv.parsed);
+// //use to check errors in dotenv
+// if(dotenv.error){
+//     console.log(dotenv.error)
+// }
+// console.log(dotenv.parsed);
 
-const config = {
-    user: process.env.SQL_USER,
-    password: process.env.SQL_PASSWORD,
-    server: process.env.SQL_SERVER,
-    database: process.env.SQL_DATABASE
-}
-async function getData() {
-    try {
-        let pool = await sql.connect(config);
-        let result = await pool.request()
-            .input('id', sql.Int, 3)
-            .query('SELECT * FROM dbo.TestResults WHERE TestID = @id');
+// const config = {
+//     user: process.env.SQL_USER,
+//     password: process.env.SQL_PASSWORD,
+//     server: process.env.SQL_SERVER,
+//     database: process.env.SQL_DATABASE
+// }
+// async function getData() {
+//     try {
+//         let pool = await sql.connect(config);
+//         let result = await pool.request()
+//             .input('id', sql.Int, 3)
+//             .query('SELECT * FROM dbo.TestResults WHERE TestID = @id');
 
-        console.log(result.recordset[0].DAC_CUR_L_1);
-    } catch( err) {
-        console.log(err);
-    }
-}
+//         console.log(result.recordset[0].DAC_CUR_L_1);
+//     } catch( err) {
+//         console.log(err);
+//     }
+// }
 
-getData();
+// getData();
 
 
 
