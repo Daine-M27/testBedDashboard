@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-console */
 /* eslint-disable prefer-promise-reject-errors */
 /* eslint-disable prefer-template */

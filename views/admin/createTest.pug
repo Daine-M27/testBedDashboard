@@ -1,0 +1,12 @@
+extends ..\\layout
+
+block content
+  h1= title
+
+  form(action='.\\createTest', method='post')
+    label(for='TestName') Test Name:
+    input(type='text', name='TestName')
+    input(type='hidden', value=1, name='IsActive')
+    input(type='submit', value='Submit')
+
+    

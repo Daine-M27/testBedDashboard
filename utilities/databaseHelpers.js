@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 // MSSQL
-require('dotenv').config({ path: '..\\.env' });
+require('dotenv').config({ path: '.env' });
 const sql = require('mssql');
 
 // use to check errors in dotenv
-// if(dotenv.error){
-//     console.log(dotenv.error)
+// if (dotenv.error) {
+//   console.log(dotenv.error);
 // }
 // console.log(dotenv.parsed);
 
@@ -43,19 +43,23 @@ const measurementTemplateObject = {
 };
 
 /**
- * This function takes values in an object to create a new test template in the database
+ * This function takes values in an object consisting of
+ * TestName and IsActive, to create a new test template in the database.
  * @param {object} data
  */
 async function insertTestTemplate(data) {
+  console.log(`from insertTestTemplate ${data.IsActive}`);
   try {
     const pool = await sql.connect(config);
     const request = await pool.request()
       .input('TestName', sql.NVarChar(50), data.TestName)
-      .input('IsActive', sql.Bit, data.IsActive)
+      .input('IsActive', sql.Bit, Number(data.IsActive))
       .execute('InsertTestTemplate');
     pool.close();
+    return request;
   } catch (err) {
     console.log(`Insert Test Template Error: ${err}`);
+    return err;
   }
 }
 
@@ -123,9 +127,13 @@ async function getMeasurementTemplate(id) {
   }
 }
 
-getMeasurementTemplate(measurementTemplateObject.TestTemplateId)
-  .then((res) => { console.log(res); })
-  .catch((err) => { console.log(err); });
+module.exports = {
+  insertTestTemplate, getTestTemplate, insertMeasurementTemplate, getMeasurementTemplate,
+};
+
+// getMeasurementTemplate(measurementTemplateObject.TestTemplateId)
+//   .then((res) => { console.log(res); })
+//   .catch((err) => { console.log(err); });
 
 // insertTestTemplate(testTemplateObject).then(result => {
 
