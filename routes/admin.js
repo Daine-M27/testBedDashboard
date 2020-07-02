@@ -37,7 +37,7 @@ router.post('/createTest', (req, res) => {
 router.post('/createMeasurement', (req, res) => {
   dbhelper.insertMeasurementTemplate(req.body)
     .then(
-      res.redirect('/'),
+      res.redirect('/admin/createMeasurement'),
     ).catch((err) => {
       console.log(`createMeasurement POST error ${err}`);
     });
