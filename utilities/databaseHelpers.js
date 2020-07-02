@@ -89,31 +89,36 @@ async function insertMeasurementTemplate(data) {
     const request = await pool.request()
       .input('TestTemplateId', sql.Int, data.TestTemplateId)
       .input('MeasurementName', sql.VarChar(50), data.MeasurementName)
-      .input('Dac0', sql.VarChar(20), data.Dac0)
-      .input('Bccu0', sql.VarChar(20), data.Bccu0)
-      .input('PassLowCurrent0', sql.VarChar(20), data.PassLowCurrent0)
-      .input('PassHighCurrent0', sql.VarChar(20), data.PassHighCurrent0)
-      .input('Dac1', sql.VarChar(20), data.Dac1)
-      .input('Bccu1', sql.VarChar(20), data.Bccu1)
-      .input('PassLowCurrent1', sql.VarChar(20), data.PassLowCurrent1)
-      .input('PassHighCurrent1', sql.VarChar(20), data.PassHighCurrent1)
-      .input('Dac2', sql.VarChar(20), data.Dac2)
-      .input('Bccu2', sql.VarChar(20), data.Bccu2)
-      .input('PassLowCurrent2', sql.VarChar(20), data.PassLowCurrent2)
-      .input('PassHighCurrent2', sql.VarChar(20), data.PassHighCurrent2)
-      .input('Dac3', sql.VarChar(20), data.Dac3)
-      .input('Bccu3', sql.VarChar(20), data.Bccu3)
-      .input('PassLowCurrent3', sql.VarChar(20), data.PassLowCurrent3)
-      .input('PassHighCurrent3', sql.VarChar(20), data.PassHighCurrent3)
+      .input('Dac0', sql.Int, data.Dac0)
+      .input('Bccu0', sql.Int, data.Bccu0)
+      .input('PassLowCurrent0', sql.Decimal(10, 5), data.PassLowCurrent0)
+      .input('PassHighCurrent0', sql.Decimal(10, 5), data.PassHighCurrent0)
+      .input('Dac1', sql.Int, data.Dac1)
+      .input('Bccu1', sql.Int, data.Bccu1)
+      .input('PassLowCurrent1', sql.Decimal(10, 5), data.PassLowCurrent1)
+      .input('PassHighCurrent1', sql.Decimal(10, 5), data.PassHighCurrent1)
+      .input('Dac2', sql.Int, data.Dac2)
+      .input('Bccu2', sql.Int, data.Bccu2)
+      .input('PassLowCurrent2', sql.Decimal(10, 5), data.PassLowCurrent2)
+      .input('PassHighCurrent2', sql.Decimal(10, 5), data.PassHighCurrent2)
+      .input('Dac3', sql.Int, data.Dac3)
+      .input('Bccu3', sql.Int, data.Bccu3)
+      .input('PassLowCurrent3', sql.Decimal(10, 5), data.PassLowCurrent3)
+      .input('PassHighCurrent3', sql.Decimal(10, 5), data.PassHighCurrent3)
       .execute('InsertMeasurementTemplate');
     pool.close();
-    console.log(request);
+    // console.log(request);
     return request;
   } catch (err) {
     console.log(`Insert Measurement Template Error: ${err}`);
+    return err;
   }
 }
 
+/**
+ * This function gets a measurement template with the test template id
+ * @param {*} id 
+ */
 async function getMeasurementTemplate(id) {
   try {
     const pool = await sql.connect(config);
@@ -124,6 +129,7 @@ async function getMeasurementTemplate(id) {
     return result;
   } catch (err) {
     console.log(`Get Test Measurement Template Error: ${err}`);
+    return err;
   }
 }
 

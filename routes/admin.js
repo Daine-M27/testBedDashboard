@@ -16,20 +16,30 @@ router.get('/createTest', (req, res) => {
 /* GET createMeasurement page. */
 router.get('/createMeasurement', (req, res) => {
   dbhelper.getTestTemplate().then((data) => {
-    console.log(data);
+    // console.log(data);
     res.render('.\\admin\\createMeasurement', { title: 'Create Measurement', templates: data.recordset });
   }).catch((err) => {
     console.log(err);
   });
 });
 
-/* POST admin page. */
+/* POST to create a test template. */
 router.post('/createTest', (req, res) => {
   dbhelper.insertTestTemplate(req.body)
     .then(
       res.redirect('/admin/createMeasurement'),
     ).catch((err) => {
       console.log(`createTest POST error ${err}`);
+    });
+});
+
+/* POST to create a measurement template. */
+router.post('/createMeasurement', (req, res) => {
+  dbhelper.insertMeasurementTemplate(req.body)
+    .then(
+      res.redirect('/'),
+    ).catch((err) => {
+      console.log(`createMeasurement POST error ${err}`);
     });
 });
 

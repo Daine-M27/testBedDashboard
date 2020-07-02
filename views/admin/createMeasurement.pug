@@ -1,51 +1,66 @@
 extends ..\\layout
 
 block content
+  
   h1= title
   form(action='.\\createMeasurement', method='post')
-    select(name='dropDown', id='templateDropDown', required)
+    select(name='TestTemplateId', id='templateDropDown', required)
         option(value='', selected, disabled, hidden)='Choose Test Template Here'
         each template in templates
             option(value=template.Id)= template.TestName
-    input(type='hidden', value='', name='IsActive')
+    br
+    br
+    lable(for='TestTemplateIdNumber') Test Template Id
+    input(id='testTemplateIdField' type='number', value='', name='TestTemplateIdNumber', disabled)
+    br
     br
     label(for='MeasurementName') Measurement Name:
     input(type='text', name='MeasurementName')
+    br
     br
     label(for='Dac0') Dac0:
     input(type='number', name='Dac0')
     label(for='Bccu0') Bccu0:
     input(type='number', name='Bccu0')
     label(for='PassLowCurrent0') PassLowCurrent0:
-    input(type='number', name='PassLowCurrent0')
+    input(type='number', name='PassLowCurrent0', step='0.00001')
     label(for='PassHighCurrent0') PassHighCurrent0:
-    input(type='number', name='PassHighCurrent0')
+    input(type='number', name='PassHighCurrent0', step='0.00001')
+    br
     br
     label(for='Dac1') Dac1:
     input(type='number', name='Dac1')
     label(for='Bccu1') Bccu1:
     input(type='number', name='Bccu1')
     label(for='PassLowCurrent1') PassLowCurrent1:
-    input(type='number', name='PassLowCurrent1')
+    input(type='number', name='PassLowCurrent1', step='0.00001')
     label(for='PassHighCurrent1') PassHighCurrent1:
-    input(type='number', name='PassHighCurrent1')
+    input(type='number', name='PassHighCurrent1', step='0.00001')
+    br
     br
     label(for='Dac2') Dac2:
     input(type='number', name='Dac2')
     label(for='Bccu2') Bccu2:
     input(type='number', name='Bccu2')
     label(for='PassLowCurrent2') PassLowCurrent2:
-    input(type='number', name='PassLowCurrent2')
+    input(type='number', name='PassLowCurrent2', step='0.00001')
     label(for='PassHighCurrent2') PassHighCurrent2:
-    input(type='number', name='PassHighCurrent2')
+    input(type='number', name='PassHighCurrent2', step='0.00001')
+    br
     br
     label(for='Dac3') Dac3:
     input(type='number', name='Dac3')
     label(for='Bccu3') Bccu3:
     input(type='number', name='Bccu3')
     label(for='PassLowCurrent3') PassLowCurrent3:
-    input(type='number', name='PassLowCurrent3')
+    input(type='number', name='PassLowCurrent3', step='0.00001')
     label(for='PassHighCurrent3') PassHighCurrent3:
-    input(type='number', name='PassHighCurrent3')
+    input(type='number', name='PassHighCurrent3', step='0.00001')
+    br
     br
     input(type='submit', value='Submit')
+
+    append scripts
+        script(src="\\javascript\\createMeasurement.js")
+
+  
