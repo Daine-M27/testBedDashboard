@@ -83,7 +83,7 @@ function getReading(address, command, convert) {
   });
 }
 
-module.exports(sendCommand, getReading);
+module.exports = { sendCommand, getReading };
 
 // old way created object that would hold response along with command that was sent.
 // const net = require("net");

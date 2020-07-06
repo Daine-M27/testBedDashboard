@@ -34,9 +34,4 @@ const rdmHexResponseParse = (inputString, posStart, posEnd) => {
   return hexString;
 };
 
-const _rdmHexResponseParse = rdmHexResponseParse;
-const _hexToAscii = hexToAscii;
-export {
-  _hexToAscii as hexToAscii,
-  _rdmHexResponseParse as rdmHexResponseParse,
-};
+module.exports = { hexToAscii, rdmHexResponseParse }
