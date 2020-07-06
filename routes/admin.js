@@ -26,9 +26,9 @@ router.get('/createMeasurement', (req, res) => {
 /* POST to create a test template. */
 router.post('/createTest', (req, res) => {
   dbhelper.insertTestTemplate(req.body)
-    .then(
-      res.redirect('/admin/createMeasurement'),
-    ).catch((err) => {
+    .then(() => {
+      res.redirect('/admin/createMeasurement');
+    }).catch((err) => {
       console.log(`createTest POST error ${err}`);
     });
 });

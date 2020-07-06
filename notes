@@ -1,0 +1,85 @@
+// api notes
+Here's my planned API for the server:
+-----
+/dmx
+-----
+Parameters:
+All channel values are 0-255
+- values - comma separated list of DMX channel values, starting at 1. 0,2,3,255
+- otherwise, any post field that is a number gets set as a channel.
+Examples:
+'/dmx', {'values': '1,255,3,3,4'] }
+'/dmx', {'1': '255', '6': '232'}
+-----
+/rdm/send
+-----
+All values sent as hexadecimal ascii. Optional spaces.
+Parameters:
+- command_class
+- dest
+- pid
+- data
+Example:
+/rdm/send, {command_class: '20', dest: 'FAA3 325678CE', pid: '03 15', data: 'DA552201' }
+-----
+/rdm/raw
+-----
+Parameters:
+- packet
+- disc_style (optional)
+Example:
+/rdm/send, {packet: 'cc 01 18 71 51 31 32 33 34 45 4e 02 18 24 71 08 01 00 00 00 20 00 60 00 04 3c' } (edited) 
+
+
+----------------------------------------------------------------------------------------------------
+
+
+// how to form data packet for rdm
+data = " ".join([
+    "4c 42 56 46", # unlock code
+    "00 DA 00 02 00 00", # White: two bytes dac, two bytes bccu, two bytes pwm off time
+    "00 DA 00 04 00 00", # Red:   two bytes dac, two bytes bccu, two bytes pwm off time
+    "00 DA 00 02 00 00", # Green: two bytes dac, two bytes bccu, two bytes pwm off time
+    "00 DA 00 02 00 00", # Blue:  two bytes dac, two bytes bccu, two bytes pwm off time
+])
+r = requests.post(RDM_URL,{
+    "command_class":30,
+    "destination":"7151:31323334",
+    "pid": "8625",
+    "data": data
+})
+r.json()
+
+
+----------------------------------------------------------------------------------------------------
+
+//read hardware wattage
+
+command_class: 20
+destination: 7151:31323334
+pid: 8626
+data: (blank)
+The result is a 32 bit number  
+
+Example response from an 80-watt light:
+{
+"request": "cc 01 18 71 51 31 32 33 34 45 4e 02 18 24 71 09 01 00 00 00 20 86 26 00 04 89", "interface_code": 5,
+"response": "cc 01 1c 45 4e 02 18 24 71 71 51 31 32 33 34 09 00 00 00 00 21 86 26 04 00 00 00 50 04 e1",
+"rdm_response_type": "other"
+}  
+
+
+cc 01 - I an RDM packet!
+1c - this whole message is this long
+45 4e 02 18 24 71 - To Enttec device with serial 02 18 24 71
+71 51 31 32 33 34 - From LS device with serial 31 32 33 34
+09 - upwards counting transaction number
+00 00 00 00 - We don't care about these for now
+21 - This message is a response to being asked to get data
+86 26 - PID code for the kind of message we are sending. In this case a private LS message to get the wattage
+04 - 4 bytes of data in our answer
+00 00 00 50 - 32bit representation of 80 watts.
+04 e1 - checksum
+
+----------------------------------------------------------------------------------------------------
+
