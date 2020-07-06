@@ -15,12 +15,13 @@ router.get('/createTest', (req, res) => {
 
 /* GET createMeasurement page. */
 router.get('/createMeasurement', (req, res) => {
-  dbhelper.getTestTemplate().then((data) => {
+  dbhelper.getTestTemplate()
+    .then((data) => {
     // console.log(data);
-    res.render('.\\admin\\createMeasurement', { title: 'Create Measurement', templates: data.recordset });
-  }).catch((err) => {
-    console.log(err);
-  });
+      res.render('.\\admin\\createMeasurement', { title: 'Create Measurement', templates: data.recordset });
+    }).catch((err) => {
+      console.log(err);
+    });
 });
 
 /* POST to create a test template. */
