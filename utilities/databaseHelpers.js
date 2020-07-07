@@ -75,6 +75,7 @@ async function getTestTemplate() {
     return result;
   } catch (err) {
     console.log(`Get Test Template Error: ${err}`);
+    return err;
   }
 }
 
@@ -117,7 +118,7 @@ async function insertMeasurementTemplate(data) {
 
 /**
  * This function gets a measurement template with the test template id
- * @param {*} id 
+ * @param {*} id
  */
 async function getMeasurementTemplate(id) {
   try {

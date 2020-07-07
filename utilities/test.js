@@ -1,3 +1,18 @@
+function decToHex(num) {
+  const output = (num).toString(16);
+  // console.log(output.length / 4);
+  if ((output.length / 4).toString().includes('.25')) {
+    return `000${output}`;
+  } if ((output.length / 4).toString().includes('.5')) {
+    return `00${output}`;
+  } if ((output.length / 4).toString().includes('.75')) {
+    return `0${output}`;
+  }
+  return output;
+}
+
+console.log(decToHex(255));
+
 // // MSSQL test
 // const dotenv = require('dotenv').config({path: '..\\.env'});
 // const sql = require('mssql');
@@ -29,8 +44,6 @@
 
 // getData();
 
-
-
 // const qs = require('qs');
 // const axios = require('axios');
 // const green = {
@@ -55,7 +68,7 @@
 //         url: 'http://127.0.0.1:5000/v1/dmx',
 //         data: qs.stringify(params),
 //         headers: {
-//             'content-type':'application/x-www-form-urlencoded' 
+//             'content-type':'application/x-www-form-urlencoded'
 //         }
 //     }).then((res)=>{
 //         console.log(res.status);
@@ -70,7 +83,7 @@
 //         url: 'http://127.0.0.1:5000/v1/rdm',
 //         data: qs.stringify(params),
 //         headers: {
-//             'content-type':'application/x-www-form-urlencoded' 
+//             'content-type':'application/x-www-form-urlencoded'
 //         }
 //     }).then((res)=>{
 //         console.log(res.status);
@@ -79,15 +92,12 @@
 //     })
 // }
 
-//sendDMX(green);
-//sendRDM(rdmParams);
-
-
+// sendDMX(green);
+// sendRDM(rdmParams);
 
 // // Async / Await / Promise - version of SCPI function
 
 // const net = require( "net" );
-
 
 // function sendCommand( address, command ){
 //     return new Promise(( resolve, reject ) => {
@@ -95,7 +105,7 @@
 //         const params = {
 //             "parameters": {
 //                 "address": address,
-//                 "command": command                
+//                 "command": command
 //             }
 //         };
 
@@ -126,7 +136,7 @@
 //             "parameters": {
 //                 "address": address,
 //                 "command": command,
-//                 "convert": convert                
+//                 "convert": convert
 //             }
 //         };
 
@@ -151,7 +161,7 @@
 
 //         cs.on( 'error', ( err ) => {
 //             reject( 'error detected: '+ err )
-//         })  
+//         })
 //     })
 // }
 
@@ -167,9 +177,8 @@
 
 // doIt();
 
-
-/* 
-good test using scpiHelper object to collect data and store it in the object.  
+/*
+good test using scpiHelper object to collect data and store it in the object.
 use to collect readings as objects in variables that contain the parameters send and response
 */
 // const scpi = require( "./SCPIHelper" );
@@ -191,11 +200,10 @@ use to collect readings as objects in variables that contain the parameters send
 // const setToSeries = "OUTPut:TRACK 1";
 
 // const onOff = (position) => {
-//     return ( "OUTPut CH1," + position ) 
+//     return ( "OUTPut CH1," + position )
 // };
 
 // const address = "TCPIP0::192.168.1.170";
-
 
 // const initialPowerRoutine = () => {
 //     let command = new scpi.sendCommand(address, queryDeviceID, "false");
@@ -206,25 +214,25 @@ use to collect readings as objects in variables that contain the parameters send
 //             scpi.sendCommand(address, setToSeries, "false");
 //             scpi.sendCommand(address, setVoltage("CH1","24"));
 //             scpi.sendCommand(address, setCurrent("CH1", "3.2"));
-                        
+
 //             //check values for setup
-//             let queryVolt = new scpi.sendCommand(address, queryVolt, "false");            
+//             let queryVolt = new scpi.sendCommand(address, queryVolt, "false");
 //             let queryCurrent = new scpi.sendCommand(address, queryCurrent, "false");
-    
+
 //             if (queryVolt.response == "24" && queryCurrent.response == "3.2") {
 //                 scpi.sendCommand(address, onOff("ON"), "false");
 //                 return 0;
 //             }
 //             return 1;
 //         }
-//     }    
+//     }
 // }
 
 // module.exports = {
 //     queryDeviceID, queryCurrent, queryVoltage, measureVolt, measureCurrent, measurePower, setCurrent, setVoltage, setToSeries, onOff, address, initialPowerRoutine
 // }
 
-///////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////
 
 // const net = require("net");
 // const client = new net.Socket();
@@ -240,19 +248,17 @@ use to collect readings as objects in variables that contain the parameters send
 
 //     client.connect(5001, "127.0.0.1", function(){
 //         console.log("Connected to C# Socket");
-        
+
 //         //client.write("exit")
 //     })
 
-    
-
 //     let payload = JSON.stringify(params);
-        
+
 //     client.write(payload);
 
 // }
 
-/////////////////////////////////////////////////////////////////
+/// //////////////////////////////////////////////////////////////
 
 // function testSCPI() {
 //     let response = "";
@@ -260,22 +266,22 @@ use to collect readings as objects in variables that contain the parameters send
 //     client.connect(5001, "127.0.0.1", function(){
 //         console.log("Connected to C# Socket");
 //         let payload = JSON.stringify(params);
-        
+
 //         client.write(payload);
 //         //client.write("exit")
 //         client.on('data', (data) => {
-//             let reading = new TextDecoder().decode(data);    
+//             let reading = new TextDecoder().decode(data);
 //             //console.log(reading);
 //             response = reading;
-           
+
 //             client.destroy();
 //         })
-//     })   
-    
+//     })
+
 //     client.on('error', (error) => {
 //         console.log(error);
 //     })
-    
+
 //     client.on('close', () => {
 //         console.log("connection closed");
 //     })
@@ -285,16 +291,15 @@ use to collect readings as objects in variables that contain the parameters send
 // } catch (error) {
 //     console.log(error)
 // }
-  
+
 // }
 
+// var answer = testSCPI();
+// module.exports = {testSCPI};
+/// ////////////////////////////////////////////////////////////////
 
-//var answer = testSCPI();
-//module.exports = {testSCPI};
-///////////////////////////////////////////////////////////////////
+// write function to connect and send command with IPaddress parameters to c# SCPI server
 
-//write function to connect and send command with IPaddress parameters to c# SCPI server
-
-//"command":"*IDN?",
-//"command": "MEASure:VOLTage?",
-//""
+// "command":"*IDN?",
+// "command": "MEASure:VOLTage?",
+// ""

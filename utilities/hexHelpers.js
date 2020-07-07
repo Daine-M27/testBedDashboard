@@ -34,4 +34,21 @@ const rdmHexResponseParse = (inputString, posStart, posEnd) => {
   return hexString;
 };
 
+/**
+ * This function converts a decimal number into a Hex string in signed 2's complement format
+ * @param {number} num 
+ */
+function decToHex(num) {
+  const output = (num).toString(16);
+  // console.log(output.length / 4);
+  if (output.length % 4 === 0) {
+    return output;
+  } if ((output.length / 4).toString().includes('.25')) {
+    return `000${output}`;
+  } if ((output.length / 4).toString().includes('.5')) {
+    return `00${output}`;
+  } if ((output.length / 4).toString().includes('.75')) {
+    return `0${output}`;
+  }
+}
 module.exports = { hexToAscii, rdmHexResponseParse }

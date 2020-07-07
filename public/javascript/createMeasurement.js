@@ -5,17 +5,14 @@ $(document).ready(() => {
     $('#testTemplateIdField').val(window.localStorage.getItem('TestTemplateId'));
     $('#templateDropDown').val(window.localStorage.getItem('TestTemplateId'));
   }
-
-  console.log('body load jquery')
-})
-
+});
 
 // get id and set id in storage
 $('#templateDropDown').on('change', () => {
   const value = ($('select option:selected').val());
   $('#testTemplateIdField').val(value);
 
-  // set local storage  
+  // set local storage
   if (!window.localStorage.getItem('TestTemplateId') || window.localStorage.getItem('TestTemplateId') !== value) {
     window.localStorage.setItem('TestTemplateId', value);
   }
