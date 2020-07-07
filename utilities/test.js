@@ -1,17 +1,44 @@
-function decToHex(num) {
-  const output = (num).toString(16);
-  // console.log(output.length / 4);
-  if ((output.length / 4).toString().includes('.25')) {
-    return `000${output}`;
-  } if ((output.length / 4).toString().includes('.5')) {
-    return `00${output}`;
-  } if ((output.length / 4).toString().includes('.75')) {
-    return `0${output}`;
-  }
-  return output;
+const { checkInsturments, infoCommand, sendCommand, getReading } = require('./SCPIHelper');
+const util = require('util');
+
+require('./SCPIHelper');
+
+const addresses = ['TCPIP0::192.168.1.170', 'TCPIP0::192.168.1.10', 'TCPIP0::192.168.1.11', 'TCPIP0::192.168.1.12', 'TCPIP0::192.168.1.13'];
+
+
+
+
+// let checkData = [];
+// const check = checkInsturments(addresses, infoCommand).then((res) => { 
+//     checkData = res;
+//     console.log('res:' + util.inspect( checkData)); 
+// });
+
+// check
+
+async function getInstruments() {
+    const response = await checkInsturments(addresses, infoCommand);
+    const data = await response;
+    console.log(response)
+    return data;
 }
 
-console.log(decToHex(255));
+getInstruments();
+
+// function decToHex(num) {
+//   const output = (num).toString(16);
+//   // console.log(output.length / 4);
+//   if ((output.length / 4).toString().includes('.25')) {
+//     return `000${output}`;
+//   } if ((output.length / 4).toString().includes('.5')) {
+//     return `00${output}`;
+//   } if ((output.length / 4).toString().includes('.75')) {
+//     return `0${output}`;
+//   }
+//   return output;
+// }
+
+// console.log(decToHex(255));
 
 // // MSSQL test
 // const dotenv = require('dotenv').config({path: '..\\.env'});

@@ -6,6 +6,7 @@
 // Async / Await / Promise - version of SCPI function
 const net = require('net');
 
+
 /**
  * This function sends a command to the scpi server, no response from server
  * @param {string} address
@@ -73,7 +74,7 @@ function getReading(address, command, convert) {
     });
 
     cs.on('close', () => {
-      console.log('closing connection');
+      //console.log('closing connection');
       cleanUp();
     });
 
@@ -83,7 +84,35 @@ function getReading(address, command, convert) {
   });
 }
 
-module.exports = { sendCommand, getReading };
+
+
+
+const infoCommand = '*IDN?';
+
+function checkInsturments(addressList, command) {
+  return new Promise((resolve) => {
+    const output = [];
+
+    function complete(data) {
+    // console.log('complete')
+      resolve(data);
+    }
+
+    addressList.forEach(async (deviceAddress) => {
+      await getReading(deviceAddress, command, 'false').then((result) => {
+        output.push({ address: deviceAddress, deviceReading: result });
+      });
+      // console.log('return ' + output);
+      if (output.length === addressList.length) {
+        complete(output);
+      }
+    });
+  });
+}
+
+module.exports = {
+  sendCommand, getReading, checkInsturments, infoCommand,
+};
 
 // old way created object that would hold response along with command that was sent.
 // const net = require("net");
