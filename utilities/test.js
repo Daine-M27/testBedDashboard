@@ -19,7 +19,7 @@ const addresses = ['TCPIP0::192.168.1.170', 'TCPIP0::192.168.1.10', 'TCPIP0::192
 async function getInstruments() {
     const response = await checkInsturments(addresses, infoCommand);
     const data = await response;
-    console.log(response)
+    console.log(data)
     return data;
 }
 
