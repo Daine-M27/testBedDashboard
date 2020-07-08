@@ -2,7 +2,7 @@
  * This function returns a string in ascii format from a hex value
  * @param {string} inputHex
  */
-const hexToAscii = (inputHex) => {
+function hexToAscii(inputHex) {
   // remove spaces if any exist
   // inputHex = inputHex.split(' ').join('');
   // convert to string incase its not already
@@ -18,12 +18,21 @@ const hexToAscii = (inputHex) => {
 };
 
 /**
+ * This function returns a 10 digit binary number from hex input
+ * @param {string} inputHex
+ */
+function hexToBinary(inputHex) {
+  const output = (parseInt(inputHex, 16).toString(2)).padStart(10, 0);
+  return output;
+}
+
+/**
  * This function returns a section of a string based on index values
  * @param {string} inputString
  * @param {number} posStart
  * @param {number} posEnd
  */
-const rdmHexResponseParse = (inputString, posStart, posEnd) => {
+function rdmHexResponseParse(inputString, posStart, posEnd) {
   // remove spaces from hex if any exist
   const rdmString = inputString.split(' ').join('');
   // set end position if one is not specified
@@ -50,4 +59,4 @@ function decToHex2c(num) {
   }
   return output;
 }
-module.exports = { hexToAscii, rdmHexResponseParse, decToHex2c };
+module.exports = { hexToAscii, hexToBinary, rdmHexResponseParse, decToHex2c };

@@ -1,29 +1,64 @@
 const { checkInsturments, infoCommand, sendCommand, getReading } = require('./SCPIHelper');
 const util = require('util');
+const { hexToBinary } = require('./hexHelpers');
 
 require('./SCPIHelper');
+require('./hexHelpers');
 
 const addresses = ['TCPIP0::192.168.1.170', 'TCPIP0::192.168.1.10', 'TCPIP0::192.168.1.11', 'TCPIP0::192.168.1.12', 'TCPIP0::192.168.1.13'];
 
+async function doIt() {
+  await sendCommand('TCPIP0::192.168.1.170', 'OUTPut:TRACK 1');
+  await sendCommand('TCPIP0::192.168.1.170', 'CH1:VOLTage 24');
+  await sendCommand('TCPIP0::192.168.1.170', 'CH1:CURRent 3.2');
+  const reading1 = await getReading('TCPIP0::192.168.1.170', 'VOLTage?', 'false');
+  const reading2 = await getReading('TCPIP0::192.168.1.170', 'CURRent?', 'false');
+  const reading3 = await getReading(addresses[0], 'SYSTem:STATus?');
+  const reading3ToBinary = hexToBinary(reading3);
+  console.log(`Voltage Setting: ${reading1}`);
+  console.log(`Current Setting: ${reading2}`);
+  console.log(`Binary Status: ${reading3ToBinary}`);
+}
+
+doIt();
+
+// sendCommand(addresses[0], 'OUTPut CH1,ON')
+//   .then(() => {
+//     getReading(addresses[0], 'SYSTem:STATus?')
+//     .then((response) => {
+//       console.log(response);
+//     });
+//   });
+
+// getReading(addresses[0], 'SYSTem:STATus?').then((response) => {
+//           console.log(response);
+//         });
 
 
+
+
+
+//------------------------------------------------------
+// Two working ways to use async function check instruments
 
 // let checkData = [];
-// const check = checkInsturments(addresses, infoCommand).then((res) => { 
+// const check = checkInsturments(addresses, infoCommand).then((res) => {
 //     checkData = res;
-//     console.log('res:' + util.inspect( checkData)); 
+//     console.log('res:' + util.inspect( checkData));
 // });
 
 // check
 
-async function getInstruments() {
-    const response = await checkInsturments(addresses, infoCommand);
-    const data = await response;
-    console.log(data)
-    return data;
-}
+// async function getInstruments() {
+//   const response = await checkInsturments(addresses, infoCommand);
+//   const data = await response;
+//   console.log(data);
+//   return data;
+// }
 
-getInstruments();
+// getInstruments();
+
+//--------------------------------------------------------
 
 // function decToHex(num) {
 //   const output = (num).toString(16);
