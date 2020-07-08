@@ -69,6 +69,7 @@ function readPowerSupplyStatus(binary) {
     }
   }
   // console.log(output);
+  return output;
 }
 
 module.exports = { readPowerSupplyStatus };

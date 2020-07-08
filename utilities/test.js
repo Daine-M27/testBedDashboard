@@ -1,13 +1,17 @@
-const { checkInsturments, infoCommand, sendCommand, getReading } = require('./SCPIHelper');
+const { checkInsturments, infoCommand, sendCommand, getReading } = require('./SCPIHelpers');
 const util = require('util');
 const { hexToBinary } = require('./hexHelpers');
+const psStatusHelpers = require('./psStatusHelpers');
+const { readPowerSupplyStatus } = require('./psStatusHelpers');
+const { send } = require('process');
 
-require('./SCPIHelper');
+require('./SCPIHelpers');
 require('./hexHelpers');
+require('./psStatusHelpers');
 
 const addresses = ['TCPIP0::192.168.1.170', 'TCPIP0::192.168.1.10', 'TCPIP0::192.168.1.11', 'TCPIP0::192.168.1.12', 'TCPIP0::192.168.1.13'];
 
-async function doIt() {
+async function initializePowerSupply() {
   await sendCommand('TCPIP0::192.168.1.170', 'OUTPut:TRACK 1');
   await sendCommand('TCPIP0::192.168.1.170', 'CH1:VOLTage 24');
   await sendCommand('TCPIP0::192.168.1.170', 'CH1:CURRent 3.2');
@@ -15,12 +19,17 @@ async function doIt() {
   const reading2 = await getReading('TCPIP0::192.168.1.170', 'CURRent?', 'false');
   const reading3 = await getReading(addresses[0], 'SYSTem:STATus?');
   const reading3ToBinary = hexToBinary(reading3);
+  const binaryStatus = readPowerSupplyStatus(reading3ToBinary);
   console.log(`Voltage Setting: ${reading1}`);
   console.log(`Current Setting: ${reading2}`);
-  console.log(`Binary Status: ${reading3ToBinary}`);
+  console.log(`Binary Code: ${reading3ToBinary}`);
+  console.log(`Device Status: ${binaryStatus}`);
 }
 
-doIt();
+
+
+sendCommand(addresses[0], 'OUTPut CH1,OFF');
+initializePowerSupply();
 
 // sendCommand(addresses[0], 'OUTPut CH1,ON')
 //   .then(() => {
