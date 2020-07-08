@@ -1,4 +1,10 @@
+/**
+ * This function takes in a 10 digit binary number from the power supply and outputs
+ * readable status for each bit
+ * @param {string} binary
+ */
 function readPowerSupplyStatus(binary) {
+  // split string into array and then revers to match pattern for bit position object
   const bitsArray = binary.split('').reverse();
   const bitPosition = {
     0: {
@@ -44,9 +50,9 @@ function readPowerSupplyStatus(binary) {
   };
 
   const output = [];
-  console.log(bitsArray);
+  // console.log(bitsArray);
 
-  for (let i = 0; i < bitsArray.length; i++) {
+  for (let i = 0; i < bitsArray.length; i += 1) {
     if (i === 2) {
       if (bitsArray[2] === '0' && bitsArray[3] === '1') {
         output.push('Independent mode');
@@ -62,10 +68,7 @@ function readPowerSupplyStatus(binary) {
       output.push(bitPosition[i][bitsArray[i]]);
     }
   }
-  console.log(output);
+  // console.log(output);
 }
 
-readPowerSupplyStatus('0000101100');
-
-
-//module.exports = { readPowerSupplyStatus };
+module.exports = { readPowerSupplyStatus };
