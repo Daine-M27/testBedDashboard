@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 const qs = require('qs');
 const axios = require('axios');
+const util = require('util');
+const { getTestTemplate, getMeasurementTemplate } = require('./databaseHelpers');
 
 // const green = {
 //   1: '128',
@@ -18,6 +20,13 @@ const axios = require('axios');
 //   data: '01',
 // };
 
+function RdmParamsObject(cc, des, pid, data) {
+  this.command_class = cc;
+  this.destination = des;
+  this.pid = pid;
+  this.data = data;
+}
+
 function sendDMX(params) {
   axios({
     method: 'post',
@@ -34,6 +43,7 @@ function sendDMX(params) {
 }
 
 function sendRDM(params) {
+  console.log(`function : ${util.inspect(params)}`);
   axios({
     method: 'post',
     url: 'http://127.0.0.1:5000/v1/rdm',
@@ -48,4 +58,8 @@ function sendRDM(params) {
   });
 }
 
-module.exports = { sendDMX, sendRDM };
+function rdmDataFormater() {
+
+}
+
+module.exports = { sendDMX, sendRDM, RdmParamsObject, rdmDataFormater };

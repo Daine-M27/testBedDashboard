@@ -1,15 +1,85 @@
-const { checkInsturments, infoCommand, sendCommand, getReading } = require('./SCPIHelpers');
 const util = require('util');
-const { hexToBinary } = require('./hexHelpers');
-const psStatusHelpers = require('./psStatusHelpers');
-const { readPowerSupplyStatus } = require('./psStatusHelpers');
-const { send } = require('process');
+const { getMeasurementTemplate } = require('./databaseHelpers');
+const { decToHex2c, hexToBinary } = require('./hexHelpers');
+const { RdmParamsObject, sendRDM } = require('./rdmDmxHelpers');
+const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
+// require('dotenv').config({ path: '.env' });
+const addresses = ['TCPIP0::192.168.1.10', 'TCPIP0::192.168.1.11', 'TCPIP0::192.168.1.12', 'TCPIP0::192.168.1.13'];
 
-require('./SCPIHelpers');
-require('./hexHelpers');
-require('./psStatusHelpers');
+async function getTestData() {
+  const dacBccuData = await getMeasurementTemplate(15);
+  // console.log(dacBccuData);
+  const measurementTemplates = dacBccuData.recordset;
+  // const redHigh = Object.keys(dacBccuData.recordset[7]);
 
-const addresses = ['TCPIP0::192.168.1.170', 'TCPIP0::192.168.1.10', 'TCPIP0::192.168.1.11', 'TCPIP0::192.168.1.12', 'TCPIP0::192.168.1.13'];
+  for (const template of measurementTemplates) {
+    const dacBccuHexObject = ['4c425646'];
+    const measurement = Object.keys(template);
+    for (let i = 0; i < measurement.length; i += 1) {
+      if (measurement[i].includes('Dac')) {
+        dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
+      } else if (measurement[i].includes('Bccu')) {
+        dacBccuHexObject.push(`${decToHex2c(template[measurement[i]])}0000`);
+      }
+    }
+    console.log(dacBccuHexObject);
+
+    const rdmParams = {
+      command_class: '30',
+      destination: '7151:31323334',
+      pid: '8625',
+      data: dacBccuHexObject.join(''),
+    };
+    sendRDM(rdmParams);
+
+    const readings = await checkInsturments(addresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
+
+    console.log(`readings: ${util.inspect(readings)}`);
+  }
+
+  // for (let i = 0; i < redHigh.length; i += 1) {
+  //   if (redHigh[i].includes('Dac')) {
+  //     dacBccuHexObject.push(decToHex2c(dacBccuData.recordset[7][redHigh[i]]));
+  //   } else if (redHigh[i].includes('Bccu')) {
+  //     dacBccuHexObject.push(decToHex2c(dacBccuData.recordset[7][redHigh[i]]) + '0000');
+  //   }
+  // }
+  // console.log(dacBccuHexObject);
+
+  // const rdmObject = new RdmParamsObject('10', '7151:31323334', '1000', dacBccuHexObject.join(''));
+
+  // console.log(rdmObject);
+  // const rdmParams = {
+  //   command_class: '30',
+  //   destination: '7151:31323334',
+  //   pid: '8625',
+  //   data: dacBccuHexObject.join(''),
+  // };
+  // sendRDM(rdmParams);
+
+  // const readings = await checkInsturments(addresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
+
+  // console.log('readings: '+ util.inspect(readings));
+}
+
+getTestData();
+
+// ------------------------------------------------------------------------------------
+
+// const { checkInsturments, infoCommand, sendCommand, getReading } = require('./SCPIHelpers');
+// const util = require('util');
+// const { hexToBinary } = require('./hexHelpers');
+// const { readPowerSupplyStatus } = require('./psStatusHelpers');
+// const { sendRDM } = require('./rdmDmxHelpers');
+
+// const addresses = ['TCPIP0::192.168.1.170', 'TCPIP0::192.168.1.10', 'TCPIP0::192.168.1.11', 'TCPIP0::192.168.1.12', 'TCPIP0::192.168.1.13'];
+
+// const rdmParams = {
+//   command_class: '30',
+//   destination: '7151:31323334',
+//   pid: '1000',
+//   data: '01'
+// };
 
 async function initializePowerSupply() {
   await sendCommand('TCPIP0::192.168.1.170', 'OUTPut:TRACK 1');
@@ -26,11 +96,15 @@ async function initializePowerSupply() {
   console.log(`Device Status: ${binaryStatus}`);
 }
 
+// initializePowerSupply();
 
+// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
 
-sendCommand(addresses[0], 'OUTPut CH1,OFF');
-initializePowerSupply();
+// setTimeout(() => {
+//   sendRDM(rdmParams);
+// }, 5000);
 
+// ------------------------------------------------------------------------------------
 // sendCommand(addresses[0], 'OUTPut CH1,ON')
 //   .then(() => {
 //     getReading(addresses[0], 'SYSTem:STATus?')
@@ -42,10 +116,6 @@ initializePowerSupply();
 // getReading(addresses[0], 'SYSTem:STATus?').then((response) => {
 //           console.log(response);
 //         });
-
-
-
-
 
 //------------------------------------------------------
 // Two working ways to use async function check instruments

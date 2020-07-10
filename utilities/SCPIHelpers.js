@@ -1,3 +1,4 @@
+/* eslint-disable space-before-blocks */
 /* eslint-disable max-len */
 /* eslint-disable no-console */
 /* eslint-disable prefer-promise-reject-errors */
@@ -6,6 +7,7 @@
 // Async / Await / Promise - version of SCPI function
 const net = require('net');
 
+const infoCommand = '*IDN?';
 
 /**
  * This function sends a command to the scpi server, no response from server
@@ -74,7 +76,7 @@ function getReading(address, command, convert) {
     });
 
     cs.on('close', () => {
-      //console.log('closing connection');
+      // console.log('closing connection');
       cleanUp();
     });
 
@@ -84,24 +86,29 @@ function getReading(address, command, convert) {
   });
 }
 
-
-
-
-const infoCommand = '*IDN?';
-
-function checkInsturments(addressList, command) {
+/**
+ * This function takes an address list and command to query multiple instruments for command.
+ * @param {array} addressList
+ * @param {string} command
+ */
+function checkInsturments(addressList, command, convert) {
   return new Promise((resolve) => {
     const output = [];
-
-    function complete(data) {
+    const complete = (data) => {
     // console.log('complete')
       resolve(data);
-    }
+    };
 
     addressList.forEach(async (deviceAddress) => {
-      await getReading(deviceAddress, command, 'false').then((result) => {
-        output.push({ address: deviceAddress, deviceReading: result });
-      });
+      if (convert){
+        await getReading(deviceAddress, command, convert).then((result) => {
+          output.push({ address: deviceAddress, deviceReading: result });
+        });
+      } else {
+        await getReading(deviceAddress, command, 'false').then((result) => {
+          output.push({ address: deviceAddress, deviceReading: result });
+        });
+      }
       // console.log('return ' + output);
       if (output.length === addressList.length) {
         complete(output);

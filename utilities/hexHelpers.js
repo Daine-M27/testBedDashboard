@@ -15,7 +15,7 @@ function hexToAscii(inputHex) {
   }
 
   return asciiValue;
-};
+}
 
 /**
  * This function returns a 10 digit binary number from hex input
@@ -41,7 +41,7 @@ function rdmHexResponseParse(inputString, posStart, posEnd) {
   const hexString = (rdmString.toString()).substring(posStart, stop);
 
   return hexString;
-};
+}
 
 /**
  * This function converts a decimal number into a Hex string in signed 2's complement format
@@ -59,4 +59,5 @@ function decToHex2c(num) {
   }
   return output;
 }
+
 module.exports = { hexToAscii, hexToBinary, rdmHexResponseParse, decToHex2c };

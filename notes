@@ -1,3 +1,20 @@
+// work flow for test data
+- User picks test from list
+    - use testTemplateId to pull all measurementTemplates for test
+    - format each measurement template and run forEach on the data.
+        - create new test and measurements in db with data from measurementTemplates
+        - record current measurements into new db entries   
+
+        - Create data object to send with rdm api
+            - get dac and bccu values from each measurementTemplate and convert to hex from decimal 
+            - need to add in pwm off time when creating data object
+            - need to store pass low and high currents to use as test pass fail
+                - associate with test 
+
+
+
+
+
 // api notes
 Here's my planned API for the server:
 -----

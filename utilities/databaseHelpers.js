@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 // MSSQL
-require('dotenv').config({ path: '.env' });
+/*const dotenv =*/ require('dotenv').config({ path: '../.env' });
 const sql = require('mssql');
 
 // use to check errors in dotenv
