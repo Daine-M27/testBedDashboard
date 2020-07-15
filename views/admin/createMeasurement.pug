@@ -10,55 +10,55 @@ block content
             option(value=template.Id)= template.TestName
     br
     br
-    lable(for='TestTemplateIdNumber') Test Template Id
-    input(id='testTemplateIdField' type='number', value='', name='TestTemplateIdNumber', disabled)
+    lable.pr-small(for='TestTemplateIdNumber') Test Template Id:
+    input.mr-small(id='testTemplateIdField' type='number', value='', name='TestTemplateIdNumber', disabled)
     br
     br
-    label(for='MeasurementName') Measurement Name:
-    input(type='text', name='MeasurementName', required)
+    label.pr-small(for='MeasurementName') Measurement Name:
+    input.mr-small(type='text', name='MeasurementName', required)
     br
     br
-    label(for='Dac0') Dac0:
-    input(type='number', name='Dac0', required)
-    label(for='Bccu0') Bccu0:
-    input(type='number', name='Bccu0', required)
-    label(for='PassLowCurrent0') PassLowCurrent0:
-    input(type='number', name='PassLowCurrent0', step='0.00001', required)
-    label(for='PassHighCurrent0') PassHighCurrent0:
-    input(type='number', name='PassHighCurrent0', step='0.00001', required)
+    label.pr-small(for='Dac0') Dac0:
+    input.mr-small(type='number', name='Dac0', required)
+    label.pr-small(for='Bccu0') Bccu0:
+    input.mr-small(type='number', name='Bccu0', required)
+    label.pr-small(for='PassLowCurrent0') PassLowCurrent0:
+    input.mr-small(type='number', name='PassLowCurrent0', step='0.00001', required)
+    label.pr-small(for='PassHighCurrent0') PassHighCurrent0:
+    input.mr-small(type='number', name='PassHighCurrent0', step='0.00001', required)
     br
     br
-    label(for='Dac1') Dac1:
-    input(type='number', name='Dac1', required)
-    label(for='Bccu1') Bccu1:
-    input(type='number', name='Bccu1', required)
-    label(for='PassLowCurrent1') PassLowCurrent1:
-    input(type='number', name='PassLowCurrent1', step='0.00001', required)
-    label(for='PassHighCurrent1') PassHighCurrent1:
-    input(type='number', name='PassHighCurrent1', step='0.00001', required)
+    label.pr-small(for='Dac1') Dac1:
+    input.mr-small(type='number', name='Dac1', required)
+    label.pr-small(for='Bccu1') Bccu1:
+    input.mr-small(type='number', name='Bccu1', required)
+    label.pr-small(for='PassLowCurrent1') PassLowCurrent1:
+    input.mr-small(type='number', name='PassLowCurrent1', step='0.00001', required)
+    label.pr-small(for='PassHighCurrent1') PassHighCurrent1:
+    input.mr-small(type='number', name='PassHighCurrent1', step='0.00001', required)
     br
     br
-    label(for='Dac2') Dac2:
-    input(type='number', name='Dac2', required)
-    label(for='Bccu2') Bccu2:
-    input(type='number', name='Bccu2', required)
-    label(for='PassLowCurrent2') PassLowCurrent2:
-    input(type='number', name='PassLowCurrent2', step='0.00001', required)
-    label(for='PassHighCurrent2') PassHighCurrent2:
-    input(type='number', name='PassHighCurrent2', step='0.00001', required)
+    label.pr-small(for='Dac2') Dac2:
+    input.mr-small(type='number', name='Dac2', required)
+    label.pr-small(for='Bccu2') Bccu2:
+    input.mr-small(type='number', name='Bccu2', required)
+    label.pr-small(for='PassLowCurrent2') PassLowCurrent2:
+    input.mr-small(type='number', name='PassLowCurrent2', step='0.00001', required)
+    label.pr-small(for='PassHighCurrent2') PassHighCurrent2:
+    input.mr-small(type='number', name='PassHighCurrent2', step='0.00001', required)
     br
     br
-    label(for='Dac3') Dac3:
-    input(type='number', name='Dac3, required')
-    label(for='Bccu3') Bccu3:
-    input(type='number', name='Bccu3', required)
-    label(for='PassLowCurrent3') PassLowCurrent3:
-    input(type='number', name='PassLowCurrent3', step='0.00001', required)
-    label(for='PassHighCurrent3') PassHighCurrent3:
-    input(type='number', name='PassHighCurrent3', step='0.00001', required)
+    label.pr-small(for='Dac3') Dac3:
+    input.mr-small(type='number', name='Dac3, required')
+    label.pr-small(for='Bccu3') Bccu3:
+    input.mr-small(type='number', name='Bccu3', required)
+    label.pr-small(for='PassLowCurrent3') PassLowCurrent3:
+    input.mr-small(type='number', name='PassLowCurrent3', step='0.00001', required)
+    label.pr-small(for='PassHighCurrent3') PassHighCurrent3:
+    input.mr-small(type='number', name='PassHighCurrent3', step='0.00001', required)
     br
     br
-    input(type='submit', value='Submit')
+    input.mr-small(type='submit', value='Submit')
 
     append scripts
         script(src="\\javascript\\createMeasurement.js")

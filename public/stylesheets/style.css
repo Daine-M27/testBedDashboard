@@ -6,3 +6,11 @@ body {
 a {
   color: #00B7FF;
 }
+
+.pr-small {
+  padding-right: 4px;
+}
+
+.mr-small {
+  margin-right: 4px;
+}

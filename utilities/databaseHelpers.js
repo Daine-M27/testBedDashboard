@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 // MSSQL
-/*const dotenv =*/ require('dotenv').config({ path: '../.env' });
+const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const sql = require('mssql');
 
 // use to check errors in dotenv
-// if (dotenv.error) {
-//   console.log(dotenv.error);
-// }
+if (dotenv.error) {
+  console.log(dotenv.error);
+}
 // console.log(dotenv.parsed);
 
 const config = {
@@ -118,7 +118,7 @@ async function insertMeasurementTemplate(data) {
 
 /**
  * This function gets a measurement template with the test template id
- * @param {*} id
+ * @param {number} id
  */
 async function getMeasurementTemplate(id) {
   try {
