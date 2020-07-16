@@ -4,9 +4,21 @@ block content
   h1 Run Test Page
   p #{title}
 
-  ul
-    li
-      a#ic(href="\\instrumentCheck") Check Instruments
-
-
+  h2 Instrument Status
   #instrumentPanel
+    each instrument in instruments
+      ul
+        li=(instrument.address).replace('TCPIP0::', '')
+        if ((instrument.deviceReading).includes("Error:") === true)
+          li.error=(instrument.deviceReading).replace(/,/g, ', ')
+        else 
+          li.positive=(instrument.deviceReading).replace(/,/g, ', ')
+  br
+  br
+  h2 Choose Test
+  form(action='\\runTest\\startTest', method='post')        
+    select(name='TestTemplateId', id='templateDropDown', required)
+      option(value='', selected, disabled, hidden)='Choose Test Template Here'
+        each template in templates
+          option(value=template.Id)= template.TestName
+    input(type='submit', value='Start Test')
