@@ -25,18 +25,15 @@ router.get('/', (req, res) => {
     });
 });
 
-/* GET test specific page */
-router.get('/instrumentCheck', (req, res) => {
-  res.render('.\\runTest\\runTest', { title: 'Test Specific Page' });
-});
-
 /*  */
 router.post('/startTest', (req, res) => {
   // console.log(req.body.TestTemplateId);
   
   // take test template id and redirect to test page
-  res
-
+  // power up pps with initial config values
+  // check board to ensure it matches test selected wattage
+  // if pps is ready and board matches enable start test button
+  res.render('.\\runTest\\testPage', { title: 'Test Data' });
 });
 
 module.exports = router;
