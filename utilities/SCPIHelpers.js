@@ -6,6 +6,9 @@
 
 // Async / Await / Promise - version of SCPI function
 const net = require('net');
+const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
+const psStatus = require('../utilities/psStatusHelpers');
+const hexHelper = require('../utilities/hexHelpers');
 
 const infoCommand = '*IDN?';
 
@@ -117,8 +120,30 @@ function checkInsturments(addressList, command, convert) {
   });
 }
 
+async function initializePowerSupply() {
+  const output = {
+    Voltage: '',
+    Current: '',
+    Config: '',
+  };
+  const powerSupplyAddress = process.env.PPS;
+  await sendCommand(powerSupplyAddress, 'OUTPut:TRACK 1');
+  await sendCommand(powerSupplyAddress, 'CH1:VOLTage 24');
+  await sendCommand(powerSupplyAddress, 'CH1:CURRent 3.2');
+  output.Voltage = await getReading(powerSupplyAddress, 'VOLTage?', 'false');
+  output.Current = await getReading(powerSupplyAddress, 'CURRent?', 'false');
+  const statusCodes = await getReading(powerSupplyAddress, 'SYSTem:STATus?');
+  output.Config = psStatus.readPowerSupplyStatus(hexHelper.hexToBinary(statusCodes));
+  // console.log(`Voltage Setting: ${reading1}`);
+  // console.log(`Current Setting: ${reading2}`);
+  // console.log(`Binary Code: ${reading3ToBinary}`);
+  // console.log(`Device Status: ${binaryStatus}`);
+
+  return output;
+}
+
 module.exports = {
-  sendCommand, getReading, checkInsturments, infoCommand,
+  sendCommand, getReading, checkInsturments, infoCommand, initializePowerSupply,
 };
 
 // old way created object that would hold response along with command that was sent.

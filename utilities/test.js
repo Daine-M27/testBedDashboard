@@ -62,7 +62,7 @@ async function getTestData() {
   // console.log('readings: '+ util.inspect(readings));
 }
 
-getTestData();
+// getTestData();
 
 // ------------------------------------------------------------------------------------
 
@@ -98,7 +98,7 @@ async function initializePowerSupply() {
 
 // initializePowerSupply();
 
-// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
 
 // setTimeout(() => {
 //   sendRDM(rdmParams);
