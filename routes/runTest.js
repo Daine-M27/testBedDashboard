@@ -1,9 +1,9 @@
+const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const express = require('express');
 const scpi = require('../utilities/SCPIHelpers');
 const dbhelper = require('../utilities/databaseHelpers');
-const { getReading, initializePowerSupply } = require('../utilities/SCPIHelpers');
-const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
-
+const { initializePowerSupply } = require('../utilities/SCPIHelpers');
+const { runTestById } = require('../utilities/testHelpers');
 
 const router = express.Router();
 
@@ -43,6 +43,11 @@ router.post('/startTest', (req, res) => {
   // console.log(req.body.TestTemplateId);
   const testId = req.body.TestTemplateId;
 
+  scpi.sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').then(() => {
+    runTestById(testId).then(() => {
+      res.render('.\\runTest\\testResults', { title: 'Test Results' });
+    });
+  });
   // take test template id and redirect to test page
   
   // power up pps with initial config values

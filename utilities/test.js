@@ -81,20 +81,20 @@ async function getTestData() {
 //   data: '01'
 // };
 
-async function initializePowerSupply() {
-  await sendCommand('TCPIP0::192.168.1.170', 'OUTPut:TRACK 1');
-  await sendCommand('TCPIP0::192.168.1.170', 'CH1:VOLTage 24');
-  await sendCommand('TCPIP0::192.168.1.170', 'CH1:CURRent 3.2');
-  const reading1 = await getReading('TCPIP0::192.168.1.170', 'VOLTage?', 'false');
-  const reading2 = await getReading('TCPIP0::192.168.1.170', 'CURRent?', 'false');
-  const reading3 = await getReading(addresses[0], 'SYSTem:STATus?');
-  const reading3ToBinary = hexToBinary(reading3);
-  const binaryStatus = readPowerSupplyStatus(reading3ToBinary);
-  console.log(`Voltage Setting: ${reading1}`);
-  console.log(`Current Setting: ${reading2}`);
-  console.log(`Binary Code: ${reading3ToBinary}`);
-  console.log(`Device Status: ${binaryStatus}`);
-}
+// async function initializePowerSupply() {
+//   await sendCommand('TCPIP0::192.168.1.170', 'OUTPut:TRACK 1');
+//   await sendCommand('TCPIP0::192.168.1.170', 'CH1:VOLTage 24');
+//   await sendCommand('TCPIP0::192.168.1.170', 'CH1:CURRent 3.2');
+//   const reading1 = await getReading('TCPIP0::192.168.1.170', 'VOLTage?', 'false');
+//   const reading2 = await getReading('TCPIP0::192.168.1.170', 'CURRent?', 'false');
+//   const reading3 = await getReading(addresses[0], 'SYSTem:STATus?');
+//   const reading3ToBinary = hexToBinary(reading3);
+//   const binaryStatus = readPowerSupplyStatus(reading3ToBinary);
+//   console.log(`Voltage Setting: ${reading1}`);
+//   console.log(`Current Setting: ${reading2}`);
+//   console.log(`Binary Code: ${reading3ToBinary}`);
+//   console.log(`Device Status: ${binaryStatus}`);
+// }
 
 // initializePowerSupply();
 
