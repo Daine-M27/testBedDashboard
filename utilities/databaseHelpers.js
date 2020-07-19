@@ -44,7 +44,7 @@ const measurementTemplateObject = {
 
 /**
  * This function takes values in an object consisting of
- * TestName and IsActive, to create a new test template in the database.
+ * TestName, Wattage, and IsActive to create a new test template in the database.
  * @param {object} data
  */
 async function insertTestTemplate(data) {

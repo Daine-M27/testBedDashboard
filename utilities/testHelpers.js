@@ -15,6 +15,11 @@ const dmmAddresses = [
 ];
 const unlockCode = process.env.UNLOCK_CODE;
 
+/**
+ * This function uses a test template Id to get all measurement
+ * data and run each series of commands on DUT.
+ * @param {string} id
+ */
 async function runTestById(id) {
   const dacBccuData = await getMeasurementTemplate(id);
   // console.log(dacBccuData);
@@ -34,6 +39,7 @@ async function runTestById(id) {
     }
     // console.log(dacBccuHexObject);
 
+    // format rdm parameters
     const rdmParams = {
       command_class: '30',
       destination: '7151:31323334',

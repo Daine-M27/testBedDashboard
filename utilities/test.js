@@ -1,29 +1,53 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
+const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const util = require('util');
 const { getMeasurementTemplate } = require('./databaseHelpers');
 const { decToHex2c, hexToBinary } = require('./hexHelpers');
 const { RdmParamsObject, sendRDM } = require('./rdmDmxHelpers');
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
-// require('dotenv').config({ path: '.env' });
-const addresses = ['TCPIP0::192.168.1.10', 'TCPIP0::192.168.1.11', 'TCPIP0::192.168.1.12', 'TCPIP0::192.168.1.13'];
 
-async function getTestData() {
-  const dacBccuData = await getMeasurementTemplate(15);
+// 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
+
+//-----------------------------------------------------------------------------------------
+const dmmAddresses = [
+  process.env.DMM_CHAN_0,
+  process.env.DMM_CHAN_1,
+  process.env.DMM_CHAN_2,
+  process.env.DMM_CHAN_3,
+];
+const unlockCode = process.env.UNLOCK_CODE;
+
+/**
+ * This function uses a test template Id to get all measurement
+ * data and run each series of commands on DUT.
+ * @param {string} id
+ */
+async function runTestById(id) {
+  const dacBccuData = await getMeasurementTemplate(id);
   // console.log(dacBccuData);
   const measurementTemplates = dacBccuData.recordset;
-  // const redHigh = Object.keys(dacBccuData.recordset[7]);
-
+  // for/of loop finishes one iteration before moving on.
+  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+  
   for (const template of measurementTemplates) {
-    const dacBccuHexObject = ['4c425646'];
+    // add code to setup return object for db storage !!!!!!
+
+    const dacBccuHexObject = [unlockCode];
     const measurement = Object.keys(template);
+    // 
     for (let i = 0; i < measurement.length; i += 1) {
       if (measurement[i].includes('Dac')) {
         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
       } else if (measurement[i].includes('Bccu')) {
-        dacBccuHexObject.push(`${decToHex2c(template[measurement[i]])}0000`);
+        dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
+        // onOff time comes after bccu
+        dacBccuHexObject.push('0000');
       }
     }
-    console.log(dacBccuHexObject);
+    // console.log(dacBccuHexObject);
 
+    // format rdm parameters
     const rdmParams = {
       command_class: '30',
       destination: '7151:31323334',
@@ -32,35 +56,73 @@ async function getTestData() {
     };
     sendRDM(rdmParams);
 
-    const readings = await checkInsturments(addresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
+    const readings = await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
 
-    console.log(`readings: ${util.inspect(readings)}`);
+    // console.log(`readings: ${util.inspect(readings)}`);
+    console.log(`name: ${template.MeasurementName}`);
+    // save to db here.
   }
-
-  // for (let i = 0; i < redHigh.length; i += 1) {
-  //   if (redHigh[i].includes('Dac')) {
-  //     dacBccuHexObject.push(decToHex2c(dacBccuData.recordset[7][redHigh[i]]));
-  //   } else if (redHigh[i].includes('Bccu')) {
-  //     dacBccuHexObject.push(decToHex2c(dacBccuData.recordset[7][redHigh[i]]) + '0000');
-  //   }
-  // }
-  // console.log(dacBccuHexObject);
-
-  // const rdmObject = new RdmParamsObject('10', '7151:31323334', '1000', dacBccuHexObject.join(''));
-
-  // console.log(rdmObject);
-  // const rdmParams = {
-  //   command_class: '30',
-  //   destination: '7151:31323334',
-  //   pid: '8625',
-  //   data: dacBccuHexObject.join(''),
-  // };
-  // sendRDM(rdmParams);
-
-  // const readings = await checkInsturments(addresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
-
-  // console.log('readings: '+ util.inspect(readings));
+  
+  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
 }
+//sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+runTestById('15');
+// --------------------------------------------------------------------------------------------
+// async function getTestData() {
+//   const dacBccuData = await getMeasurementTemplate(15);
+//   // console.log(dacBccuData);
+//   const measurementTemplates = dacBccuData.recordset;
+//   // const redHigh = Object.keys(dacBccuData.recordset[7]);
+
+//   for (const template of measurementTemplates) {
+//     const dacBccuHexObject = ['4c425646'];
+//     const measurement = Object.keys(template);
+//     for (let i = 0; i < measurement.length; i += 1) {
+//       if (measurement[i].includes('Dac')) {
+//         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
+//       } else if (measurement[i].includes('Bccu')) {
+//         dacBccuHexObject.push(`${decToHex2c(template[measurement[i]])}0000`);
+//       }
+//     }
+//     console.log(dacBccuHexObject);
+
+//     const rdmParams = {
+//       command_class: '30',
+//       destination: '7151:31323334',
+//       pid: '8625',
+//       data: dacBccuHexObject.join(''),
+//     };
+//     sendRDM(rdmParams);
+
+//     const readings = await checkInsturments(addresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
+
+//     console.log(`readings: ${util.inspect(readings)}`);
+//   }
+
+// for (let i = 0; i < redHigh.length; i += 1) {
+//   if (redHigh[i].includes('Dac')) {
+//     dacBccuHexObject.push(decToHex2c(dacBccuData.recordset[7][redHigh[i]]));
+//   } else if (redHigh[i].includes('Bccu')) {
+//     dacBccuHexObject.push(decToHex2c(dacBccuData.recordset[7][redHigh[i]]) + '0000');
+//   }
+// }
+// console.log(dacBccuHexObject);
+
+// const rdmObject = new RdmParamsObject('10', '7151:31323334', '1000', dacBccuHexObject.join(''));
+
+// console.log(rdmObject);
+// const rdmParams = {
+//   command_class: '30',
+//   destination: '7151:31323334',
+//   pid: '8625',
+//   data: dacBccuHexObject.join(''),
+// };
+// sendRDM(rdmParams);
+
+// const readings = await checkInsturments(addresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
+
+// console.log('readings: '+ util.inspect(readings));
+// }
 
 // getTestData();
 
@@ -98,7 +160,7 @@ async function getTestData() {
 
 // initializePowerSupply();
 
-sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
 
 // setTimeout(() => {
 //   sendRDM(rdmParams);
