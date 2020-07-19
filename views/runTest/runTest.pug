@@ -26,6 +26,13 @@ block content
           li.positive=item
   br
   br
+
+  h2 Is LED Board Connected?
+  button(type='button' id='confirmConnected') Confirmed
+  
+
+  br
+  br
   h2 Choose Test
   form(action='\\runTest\\startTest', method='post')        
     select(name='TestTemplateId', id='templateDropDown', required)
@@ -35,4 +42,7 @@ block content
     br
     br
     p.hidden      
-    input(type='submit', value='Start Test', disabled)
+    input(id='submit' type='submit', value='Start Test', disabled)
+
+    append scripts
+        script(src="\\javascript\\runTest.js")

@@ -53,6 +53,7 @@ async function insertTestTemplate(data) {
     const pool = await sql.connect(config);
     const request = await pool.request()
       .input('TestName', sql.NVarChar(50), data.TestName)
+      .input('Wattage', sql.Int, data.Wattage)
       .input('IsActive', sql.Bit, Number(data.IsActive))
       .execute('InsertTestTemplate');
     pool.close();

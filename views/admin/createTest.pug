@@ -6,7 +6,18 @@ block content
   form(action='.\\createTest', method='post')
     label(for='TestName') Test Name:
     input(type='text', name='TestName', required)
+    br
+    br
+    label(for='Wattage') Device Wattage:
+    select(name='Wattage', id='Wattage', required)
+        option(value='', selected, disabled, hidden)='Choose Test Wattage Here'
+        option(value='40')= '40 Watt'
+        option(value='80')= '80 Watt'
+        option(value='150')= '150 Watt'
     input(type='hidden', value=1, name='IsActive')
+    br
+    br
+
     input(type='submit', value='Submit')
 
     
