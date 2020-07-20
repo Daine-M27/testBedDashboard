@@ -36,30 +36,51 @@ function sendDMX(params) {
       'content-type': 'application/x-www-form-urlencoded',
     },
   }).then((res) => {
-    console.log(res.status);
+    return res;
   }, (err) => {
     console.log(err);
   });
 }
 
+/**
+ * This function send commands via rdm and returns the response.
+ * @param {rdmObject} params
+ */
 function sendRDM(params) {
-  console.log(`function : ${util.inspect(params)}`);
-  axios({
-    method: 'post',
-    url: 'http://127.0.0.1:5000/v1/rdm',
-    data: qs.stringify(params),
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-    },
-  }).then((res) => {
-    console.log(res.status);
-  }, (err) => {
-    console.log(err);
+  // console.log(`function : ${util.inspect(params)}`);
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'post',
+      url: 'http://127.0.0.1:5000/v1/rdm',
+      data: qs.stringify(params),
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+    }).then((res) => {
+      resolve(res.data);
+    });
   });
 }
 
-function rdmDataFormater() {
+function rdmDiscoverAddress() {
+  return new Promise((resolve) => {
+    const discoverData = {
+      destination: 'FFFF:FFFFFFFF',
+      high: 'FFFF:FFFFFFFF',
+      low: '0000:00000000',
+    };
 
+    axios({
+      method: 'post',
+      url: 'http://127.0.0.1:5000/v1/rdm_discovery',
+      data: qs.stringify(discoverData),
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+    }).then((res) => {
+      resolve(res.data.fixture_address);
+    });
+  });
 }
 
-module.exports = { sendDMX, sendRDM, RdmParamsObject, rdmDataFormater };
+module.exports = { sendDMX, sendRDM, RdmParamsObject, rdmDiscoverAddress };

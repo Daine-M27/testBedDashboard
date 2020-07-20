@@ -3,9 +3,10 @@
 const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const util = require('util');
 const { getMeasurementTemplate } = require('./databaseHelpers');
-const { decToHex2c, hexToBinary } = require('./hexHelpers');
+const { decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii } = require('./hexHelpers');
 const { RdmParamsObject, sendRDM } = require('./rdmDmxHelpers');
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
+const { ConnectionPool } = require('mssql');
 
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
@@ -66,7 +67,25 @@ async function runTestById(id) {
   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
 }
 //sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-runTestById('15');
+//runTestById('15');
+
+
+const infoRDM = {
+  command_class: '20',
+  destination: '7151:31323334',
+  pid: '00c0',
+  data: '',
+};
+
+sendRDM(infoRDM).then((res) => {
+  //console.log(res)
+  //console.log(rdmHexResponseParse(res.response))
+  console.log(hexToAscii(rdmHexResponseParse(res.response)));
+});
+
+
+
+
 // --------------------------------------------------------------------------------------------
 // async function getTestData() {
 //   const dacBccuData = await getMeasurementTemplate(15);

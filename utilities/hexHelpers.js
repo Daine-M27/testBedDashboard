@@ -32,13 +32,14 @@ function hexToBinary(inputHex) {
  * @param {number} posStart
  * @param {number} posEnd
  */
-function rdmHexResponseParse(inputString, posStart, posEnd) {
+function rdmHexResponseParse(inputString) {
   // remove spaces from hex if any exist
   const rdmString = inputString.split(' ').join('');
+  const start = 48;
   // set end position if one is not specified
-  const stop = posEnd || (inputString.length - 4);
+  const stop = (rdmString.length - 4);
   // remove segment of string
-  const hexString = (rdmString.toString()).substring(posStart, stop);
+  const hexString = (rdmString.toString()).substring(start, stop);
 
   return hexString;
 }
