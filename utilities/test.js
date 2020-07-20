@@ -2,11 +2,13 @@
 /* eslint-disable no-restricted-syntax */
 const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const util = require('util');
-const { getMeasurementTemplate } = require('./databaseHelpers');
-const { decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii } = require('./hexHelpers');
-const { RdmParamsObject, sendRDM } = require('./rdmDmxHelpers');
-const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 const { ConnectionPool } = require('mssql');
+const { getMeasurementTemplate } = require('./databaseHelpers');
+const {
+  decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii,
+} = require('./hexHelpers');
+const { RdmParamsObject, sendRDM, rdmDiscoverAddress } = require('./rdmDmxHelpers');
+const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
@@ -25,18 +27,20 @@ const unlockCode = process.env.UNLOCK_CODE;
  * @param {string} id
  */
 async function runTestById(id) {
-  const dacBccuData = await getMeasurementTemplate(id);
+  const dacBccuData = await getMeasurementTemplate(id).catch((err) => { console.log(err); });
   // console.log(dacBccuData);
   const measurementTemplates = dacBccuData.recordset;
+  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
+
+  const dutAddress = await rdmDiscoverAddress().catch((err) => { console.log(err); }); // '7151:31323334'
+
   // for/of loop finishes one iteration before moving on.
-  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
-  
   for (const template of measurementTemplates) {
     // add code to setup return object for db storage !!!!!!
 
     const dacBccuHexObject = [unlockCode];
     const measurement = Object.keys(template);
-    // 
+    //
     for (let i = 0; i < measurement.length; i += 1) {
       if (measurement[i].includes('Dac')) {
         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
@@ -51,40 +55,40 @@ async function runTestById(id) {
     // format rdm parameters
     const rdmParams = {
       command_class: '30',
-      destination: '7151:31323334',
+      destination: dutAddress,
       pid: '8625',
       data: dacBccuHexObject.join(''),
     };
-    sendRDM(rdmParams);
+    await sendRDM(rdmParams).catch((err) => { console.log(err); });
 
-    const readings = await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
+    const readings = await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').catch((err) => { console.log(err); }); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
 
-    // console.log(`readings: ${util.inspect(readings)}`);
+    console.log(`readings: ${util.inspect(readings)}`);
     console.log(`name: ${template.MeasurementName}`);
     // save to db here.
   }
-  
-  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+
+  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
 }
-//sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-//runTestById('15');
+// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+ runTestById('15');
 
+//-------------------------------------------------------------------------------------------
+// const infoRDM = {
+//   command_class: '20',
+//   destination: '7151:31323334',
+//   pid: '00c0',
+//   data: '',
+// };
 
-const infoRDM = {
-  command_class: '20',
-  destination: '7151:31323334',
-  pid: '00c0',
-  data: '',
-};
+// // get firmware and wattage
+// sendRDM(infoRDM).then((res) => {
+//  console.log(hexToAscii(rdmHexResponseParse(res.response)));
+// });
 
-sendRDM(infoRDM).then((res) => {
-  //console.log(res)
-  //console.log(rdmHexResponseParse(res.response))
-  console.log(hexToAscii(rdmHexResponseParse(res.response)));
-});
-
-
-
+// rdmDiscoverAddress().then((res) => {
+//   console.log(res);
+// });
 
 // --------------------------------------------------------------------------------------------
 // async function getTestData() {

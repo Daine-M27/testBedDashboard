@@ -35,9 +35,7 @@ function sendDMX(params) {
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
     },
-  }).then((res) => {
-    return res;
-  }, (err) => {
+  }).then((res) => res, (err) => {
     console.log(err);
   });
 }
@@ -58,29 +56,39 @@ function sendRDM(params) {
       },
     }).then((res) => {
       resolve(res.data);
+    }).catch((err) => {
+      reject(err);
     });
   });
 }
 
 function rdmDiscoverAddress() {
-  return new Promise((resolve) => {
-    const discoverData = {
-      destination: 'FFFF:FFFFFFFF',
-      high: 'FFFF:FFFFFFFF',
-      low: '0000:00000000',
-    };
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const discoverData = {
+        destination: 'FFFF:FFFFFFFF',
+        high: 'FFFF:FFFFFFFF',
+        low: '0000:00000000',
+      };
 
-    axios({
-      method: 'post',
-      url: 'http://127.0.0.1:5000/v1/rdm_discovery',
-      data: qs.stringify(discoverData),
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    }).then((res) => {
-      resolve(res.data.fixture_address);
-    });
+      axios({
+        method: 'post',
+        url: 'http://127.0.0.1:5000/v1/rdm_discovery',
+        data: qs.stringify(discoverData),
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+      }).then((res) => {
+        const output = (res.data.fixture_address).split(' ').join('');
+        resolve(`${output.substr(0, 4)}:${output.substr(4)}`);
+      }).catch((err) => {
+        console.log(`rdmDiscover: ${err}`);
+        reject(err);
+      });
+    }, 600);
   });
 }
 
-module.exports = { sendDMX, sendRDM, RdmParamsObject, rdmDiscoverAddress };
+module.exports = {
+  sendDMX, sendRDM, RdmParamsObject, rdmDiscoverAddress,
+};

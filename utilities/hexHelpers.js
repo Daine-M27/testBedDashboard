@@ -36,7 +36,6 @@ function rdmHexResponseParse(inputString) {
   // remove spaces from hex if any exist
   const rdmString = inputString.split(' ').join('');
   const start = 48;
-  // set end position if one is not specified
   const stop = (rdmString.length - 4);
   // remove segment of string
   const hexString = (rdmString.toString()).substring(start, stop);
