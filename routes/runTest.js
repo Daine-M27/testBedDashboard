@@ -2,8 +2,9 @@ const dotenv = require('dotenv').config({ path: require('find-config')('.env') }
 const express = require('express');
 const scpi = require('../utilities/SCPIHelpers');
 const dbhelper = require('../utilities/databaseHelpers');
-const { initializePowerSupply } = require('../utilities/SCPIHelpers');
+const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { runTestById } = require('../utilities/testHelpers');
+const { rdmDiscoverAddress, getFirmwareAndWattage} = require('../utilities/rdmDmxHelpers');
 
 const router = express.Router();
 
@@ -41,19 +42,21 @@ router.get('/', (req, res) => {
 /*  */
 router.post('/startTest', (req, res) => {
   // console.log(req.body.TestTemplateId);
-  const testId = req.body.TestTemplateId;
-
-  scpi.sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').then(() => {
-    runTestById(testId).then(() => {
-      res.render('.\\runTest\\testResults', { title: 'Test Results' });
+  const testInfo = JSON.parse(req.body.TestTemplate);
+  
+  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
+  rdmDiscoverAddress().then((dutAddress) => {
+    getFirmwareAndWattage(dutAddress).then((data) => {
+      if (data.wattage.includes(testInfo.wattage) === false) {
+        runTestById(testInfo.id).then(() => {
+          res.render('.\\runTest\\testResults', { title: 'Test Results' });
+        });// take test template id and redirect to test page
+      } else {
+        res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device Wattage does not match the selected test!' });
+      }
     });
   });
-  // take test template id and redirect to test page
   
-  // power up pps with initial config values
-  // check board to ensure it matches test selected wattage
-  
-
 });
 
 module.exports = router;

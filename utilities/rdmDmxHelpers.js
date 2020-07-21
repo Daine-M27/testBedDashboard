@@ -3,6 +3,7 @@ const qs = require('qs');
 const axios = require('axios');
 const util = require('util');
 const { getTestTemplate, getMeasurementTemplate } = require('./databaseHelpers');
+const { hexToAscii, rdmHexResponseParse } = require('./hexHelpers');
 
 // const green = {
 //   1: '128',
@@ -62,6 +63,10 @@ function sendRDM(params) {
   });
 }
 
+/**
+ * This function get the address of a device if
+ * there is only one device on the network.
+ */
 function rdmDiscoverAddress() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -80,6 +85,7 @@ function rdmDiscoverAddress() {
         },
       }).then((res) => {
         const output = (res.data.fixture_address).split(' ').join('');
+        // resolve with address formatted for rdm commands 'xxxx:xxxxxxxx'
         resolve(`${output.substr(0, 4)}:${output.substr(4)}`);
       }).catch((err) => {
         console.log(`rdmDiscover: ${err}`);
@@ -89,6 +95,38 @@ function rdmDiscoverAddress() {
   });
 }
 
+/**
+ * This function takes an address and gets the firmware and wattage
+ * of the device at the address.  Returns an object with firmware and wattage
+ * @param {string} address
+ */
+function getFirmwareAndWattage(address) {
+  return new Promise((resolve, reject) => {
+    const infoRDM = {
+      command_class: '20',
+      destination: address,
+      pid: '00c0',
+      data: '',
+    };
+
+    // get firmware and wattage
+    sendRDM(infoRDM).then((res) => {
+      const fullResponse = hexToAscii(rdmHexResponseParse(res.response));
+      const individualData = fullResponse.split(' ');
+      resolve({
+        firmware: individualData[0],
+        wattage: individualData[1],
+      });
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+}
+
 module.exports = {
-  sendDMX, sendRDM, RdmParamsObject, rdmDiscoverAddress,
+  sendDMX,
+  sendRDM,
+  RdmParamsObject,
+  rdmDiscoverAddress,
+  getFirmwareAndWattage,
 };

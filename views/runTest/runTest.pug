@@ -3,6 +3,8 @@ extends ..\\layout
 block content
   h1 Run Test Page
   p #{title}
+  if message 
+    h2 #{message}
 
   h2 Instrument Network Status
   #instrumentPanel
@@ -35,10 +37,10 @@ block content
   br
   h2 Choose Test
   form(action='\\runTest\\startTest', method='post')        
-    select(name='TestTemplateId', id='templateDropDown', required)
+    select(name='TestTemplate', id='templateDropDown', required)
       option(value='', selected, disabled, hidden)='Choose Test Template Here'
         each template in templates
-          option(value=template.Id)= template.TestName
+          option(value={ id:template.Id, wattage:template.Wattage })= template.TestName
     br
     br
     p.hidden      
