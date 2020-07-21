@@ -135,8 +135,76 @@ async function getMeasurementTemplate(id) {
   }
 }
 
+/**
+ * This function inserts a test into the db
+ * @param {object} data
+ */
+async function insertTest(data) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('TestTemplateId', sql.Int, data.testTemplateId)
+      .input('TestTemplateName', sql.NVarChar(50), data.testTemplateName)
+      .input('DeviceWattage', sql.VarChar(20), data.wattage)
+      .input('DeviceFirmware', sql.VarChar(20), data.firmware)
+      .input('BoardId', sql.VarChar(20), data.boardId)
+      .execute('InsertTest');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Test Measurement Template Error: ${err}`);
+    return err;
+  }
+}
+
+/**
+ * This function inserts a measurement into the db
+ * @param {object} data
+ */
+async function insertMeasurement(data) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('TestTemplateId', sql.Int, data.TestTemplateId)
+      .input('MeasurementTemplateId', sql.Int, data.MeasureTemplateId)
+      .input('MeasurementName', sql.VarChar(50), data.MeasurementName)
+      .input('Dac0', sql.Int, data.Dac0)
+      .input('Bccu0', sql.Int, data.Bccu0)
+      .input('PassLowCurrent0', sql.Decimal(10, 5), data.PassLowCurrent0)
+      .input('PassHighCurrent0', sql.Decimal(10, 5), data.PassHighCurrent0)
+      .input('Dac1', sql.Int, data.Dac1)
+      .input('Bccu1', sql.Int, data.Bccu1)
+      .input('PassLowCurrent1', sql.Decimal(10, 5), data.PassLowCurrent1)
+      .input('PassHighCurrent1', sql.Decimal(10, 5), data.PassHighCurrent1)
+      .input('Dac2', sql.Int, data.Dac2)
+      .input('Bccu2', sql.Int, data.Bccu2)
+      .input('PassLowCurrent2', sql.Decimal(10, 5), data.PassLowCurrent2)
+      .input('PassHighCurrent2', sql.Decimal(10, 5), data.PassHighCurrent2)
+      .input('Dac3', sql.Int, data.Dac3)
+      .input('Bccu3', sql.Int, data.Bccu3)
+      .input('PassLowCurrent3', sql.Decimal(10, 5), data.PassLowCurrent3)
+      .input('PassHighCurrent3', sql.Decimal(10, 5), data.PassHighCurrent3)
+      .input('Current0', sql.Decimal(10, 5), data.Current0)
+      .input('Current1', sql.Decimal(10, 5), data.Current1)
+      .input('Current2', sql.Decimal(10, 5), data.Current2)
+      .input('Current3', sql.Decimal(10, 5), data.Current3)
+      .input('DidPass', sql.Bit, data.PassFail)
+      .execute('InsertMeasurement');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Test Measurement Template Error: ${err}`);
+    return err;
+  }
+}
+
 module.exports = {
-  insertTestTemplate, getTestTemplate, insertMeasurementTemplate, getMeasurementTemplate,
+  insertTestTemplate,
+  getTestTemplate,
+  insertMeasurementTemplate,
+  getMeasurementTemplate,
+  insertTest,
+  insertMeasurement,
 };
 
 // getMeasurementTemplate(measurementTemplateObject.TestTemplateId)
