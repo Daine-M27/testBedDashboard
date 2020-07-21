@@ -166,7 +166,7 @@ async function insertMeasurement(data) {
     const pool = await sql.connect(config);
     const result = await pool.request()
       .input('TestTemplateId', sql.Int, data.TestTemplateId)
-      .input('MeasurementTemplateId', sql.Int, data.MeasureTemplateId)
+      .input('MeasurementTemplateId', sql.Int, data.Id)
       .input('MeasurementName', sql.VarChar(50), data.MeasurementName)
       .input('Dac0', sql.Int, data.Dac0)
       .input('Bccu0', sql.Int, data.Bccu0)
@@ -188,7 +188,7 @@ async function insertMeasurement(data) {
       .input('Current1', sql.Decimal(10, 5), data.Current1)
       .input('Current2', sql.Decimal(10, 5), data.Current2)
       .input('Current3', sql.Decimal(10, 5), data.Current3)
-      .input('DidPass', sql.Bit, data.PassFail)
+      .input('DidPass', sql.Bit, data.DidPass)
       .execute('InsertMeasurement');
     pool.close();
     return result;

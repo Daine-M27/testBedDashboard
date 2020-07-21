@@ -5,7 +5,7 @@ const dotenv = require('dotenv').config({ path: require('find-config')('.env') }
 const util = require('util');
 const { ConnectionPool } = require('mssql');
 const { reset } = require('nodemon');
-const { getMeasurementTemplate, insertTest, insertMeasurement } = require('./databaseHelpers');
+const { getMeasurementTemplate, insertTest, insertMeasurement, insertMeasurementTemplate } = require('./databaseHelpers');
 const {
   decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii,
 } = require('./hexHelpers');
@@ -94,6 +94,7 @@ async function runTestById(testTemplate) {
       }
       output[index].DidPass = 0;
 
+      insertMeasurement(output[index]);
       // create measurement in db with output object;
 
       // console.log(output)
