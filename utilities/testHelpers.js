@@ -63,6 +63,7 @@ const unlockCode = process.env.UNLOCK_CODE;
  * @param {string} id
  */
 async function runTestById(id) {
+  const output = {};
   const dacBccuData = await getMeasurementTemplate(id).catch((err) => { console.log(err); });
   // console.log(dacBccuData);
   const measurementTemplates = dacBccuData.recordset;

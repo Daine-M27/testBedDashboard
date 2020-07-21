@@ -47,8 +47,8 @@ router.post('/startTest', (req, res) => {
   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
   rdmDiscoverAddress().then((dutAddress) => {
     getFirmwareAndWattage(dutAddress).then((data) => {
-      if (data.wattage.includes(testInfo.wattage) === false) {
-        runTestById(testInfo.id).then(() => {
+      if (data.wattage.includes(testInfo.wattage) === true) {
+        runTestById(testInfo).then(() => {
           res.render('.\\runTest\\testResults', { title: 'Test Results' });
         });// take test template id and redirect to test page
       } else {

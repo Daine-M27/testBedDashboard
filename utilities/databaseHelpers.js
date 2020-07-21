@@ -143,16 +143,16 @@ async function insertTest(data) {
   try {
     const pool = await sql.connect(config);
     const result = await pool.request()
-      .input('TestTemplateId', sql.Int, data.testTemplateId)
-      .input('TestTemplateName', sql.NVarChar(50), data.testTemplateName)
-      .input('DeviceWattage', sql.VarChar(20), data.wattage)
-      .input('DeviceFirmware', sql.VarChar(20), data.firmware)
-      .input('BoardId', sql.VarChar(20), data.boardId)
+      .input('TestTemplateId', sql.Int, data.TestTemplateId)
+      .input('TestTemplateName', sql.NVarChar(50), data.TestTemplateName)
+      .input('DeviceWattage', sql.VarChar(20), data.DeviceWattage)
+      .input('DeviceFirmware', sql.VarChar(20), data.DeviceFirmware)
+      .input('BoardId', sql.VarChar(20), data.BoardId)
       .execute('InsertTest');
     pool.close();
     return result;
   } catch (err) {
-    console.log(`Get Test Measurement Template Error: ${err}`);
+    console.log(`Insert Test Error: ${err}`);
     return err;
   }
 }
@@ -193,10 +193,12 @@ async function insertMeasurement(data) {
     pool.close();
     return result;
   } catch (err) {
-    console.log(`Get Test Measurement Template Error: ${err}`);
+    console.log(`Insert Measurement Error: ${err}`);
     return err;
   }
 }
+
+
 
 module.exports = {
   insertTestTemplate,

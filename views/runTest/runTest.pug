@@ -40,7 +40,7 @@ block content
     select(name='TestTemplate', id='templateDropDown', required)
       option(value='', selected, disabled, hidden)='Choose Test Template Here'
         each template in templates
-          option(value={ id:template.Id, wattage:template.Wattage })= template.TestName
+          option(value={ id:template.Id, testName=template.TestName, wattage:template.Wattage })= template.TestName
     br
     br
     p.hidden      
