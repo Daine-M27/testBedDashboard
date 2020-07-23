@@ -148,9 +148,10 @@ async function insertTest(data) {
       .input('DeviceWattage', sql.VarChar(20), data.DeviceWattage)
       .input('DeviceFirmware', sql.VarChar(20), data.DeviceFirmware)
       .input('BoardId', sql.VarChar(20), data.BoardId)
+      // .output('Id', sql.Int)
       .execute('InsertTest');
     pool.close();
-    return result;
+    return result.recordset;
   } catch (err) {
     console.log(`Insert Test Error: ${err}`);
     return err;
@@ -165,7 +166,7 @@ async function insertMeasurement(data) {
   try {
     const pool = await sql.connect(config);
     const result = await pool.request()
-      .input('TestTemplateId', sql.Int, data.TestTemplateId)
+      .input('TestId', sql.Int, data.TestId)
       .input('MeasurementTemplateId', sql.Int, data.Id)
       .input('MeasurementName', sql.VarChar(50), data.MeasurementName)
       .input('Dac0', sql.Int, data.Dac0)

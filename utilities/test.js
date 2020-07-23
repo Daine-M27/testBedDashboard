@@ -15,6 +15,18 @@ const {
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
+const testData = {
+  TestTemplateId: '17',
+  TestTemplateName: 'InsertReturn Test',
+  DeviceWattage: '27',
+  DeviceFirmware: '108',
+  BoardId: '2160',
+};
+
+insertTest(testData).then(res => {
+  console.log(res[0].Id);
+})
+
 //-----------------------------------------------------------------------------------------
 
 // rdmDiscoverAddress().then((res) => {
@@ -23,94 +35,94 @@ const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 //   });
 // });
 //-----------------------------------------------------------------------------------------
-const dmmAddresses = [
-  process.env.DMM_CHAN_0,
-  process.env.DMM_CHAN_1,
-  process.env.DMM_CHAN_2,
-  process.env.DMM_CHAN_3,
-];
-const unlockCode = process.env.UNLOCK_CODE;
+// const dmmAddresses = [
+//   process.env.DMM_CHAN_0,
+//   process.env.DMM_CHAN_1,
+//   process.env.DMM_CHAN_2,
+//   process.env.DMM_CHAN_3,
+// ];
+// const unlockCode = process.env.UNLOCK_CODE;
 
-/**
- * This function uses a test template Id to get all measurement
- * data and run each series of commands on DUT.
- * @param {string} id
- */
-async function runTestById(testTemplate) {
-  const output = [];
-  // get new test information
+// /**
+//  * This function uses a test template Id to get all measurement
+//  * data and run each series of commands on DUT.
+//  * @param {string} id
+//  */
+// async function runTestById(testTemplate) {
+//   const output = [];
+//   // get new test information
 
-  // create test in db
+//   // create test in db
 
-  const dacBccuData = await getMeasurementTemplate(testTemplate.Id).catch((err) => { console.log(err); });
-  // console.log(dacBccuData);
-  const measurementTemplates = dacBccuData.recordset;
-  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
-  const dutAddress = await rdmDiscoverAddress().catch((err) => { console.log(err); }); // '7151:31323334'
+//   const dacBccuData = await getMeasurementTemplate(testTemplate.Id).catch((err) => { console.log(err); });
+//   // console.log(dacBccuData);
+//   const measurementTemplates = dacBccuData.recordset;
+//   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
+//   const dutAddress = await rdmDiscoverAddress().catch((err) => { console.log(err); }); // '7151:31323334'
 
-  await getFirmwareAndWattage(dutAddress).then(async (res) => {
-    const testData = {
-      TestTemplateId: testTemplate.Id,
-      TestTemplateName: testTemplate.TestName,
-      DeviceWattage: res.wattage,
-      DeviceFirmware: res.firmware,
-      BoardId: dutAddress,
-    };
+//   await getFirmwareAndWattage(dutAddress).then(async (res) => {
+//     const testData = {
+//       TestTemplateId: testTemplate.Id,
+//       TestTemplateName: testTemplate.TestName,
+//       DeviceWattage: res.wattage,
+//       DeviceFirmware: res.firmware,
+//       BoardId: dutAddress,
+//     };
 
-    await insertTest(testData);
-  });
-  // for/of loop finishes one iteration before moving on.
-  for (const [index, template] of measurementTemplates.entries()) {
-    // add code to setup return object for db storage !!!!!!
-    output.push(template);
+//     await insertTest(testData);
+//   });
+//   // for/of loop finishes one iteration before moving on.
+//   for (const [index, template] of measurementTemplates.entries()) {
+//     // add code to setup return object for db storage !!!!!!
+//     output.push(template);
 
-    const dacBccuHexObject = [unlockCode];
-    const measurement = Object.keys(template);
-    //
-    for (let i = 0; i < measurement.length; i += 1) {
-      if (measurement[i].includes('Dac')) {
-        dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
-      } else if (measurement[i].includes('Bccu')) {
-        dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
-        // onOff time comes after bccu
-        dacBccuHexObject.push('0000');
-      }
-    }
-    // console.log(dacBccuHexObject);
+//     const dacBccuHexObject = [unlockCode];
+//     const measurement = Object.keys(template);
+//     //
+//     for (let i = 0; i < measurement.length; i += 1) {
+//       if (measurement[i].includes('Dac')) {
+//         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
+//       } else if (measurement[i].includes('Bccu')) {
+//         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
+//         // onOff time comes after bccu
+//         dacBccuHexObject.push('0000');
+//       }
+//     }
+//     // console.log(dacBccuHexObject);
 
-    // format rdm parameters
-    const rdmParams = {
-      command_class: '30',
-      destination: dutAddress,
-      pid: '8625',
-      data: dacBccuHexObject.join(''),
-    };
-    await sendRDM(rdmParams).catch((err) => { console.log(err); });
+//     // format rdm parameters
+//     const rdmParams = {
+//       command_class: '30',
+//       destination: dutAddress,
+//       pid: '8625',
+//       data: dacBccuHexObject.join(''),
+//     };
+//     await sendRDM(rdmParams).catch((err) => { console.log(err); });
 
-    // const readings = await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').catch((err) => { console.log(err); });
-    await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then((readings) => {
-      for (let r = 0; r < readings.length; r += 1) {
-        output[index][`Current${r}`] = parseFloat(readings[r].deviceReading);
-      }
-      output[index].DidPass = 0;
+//     // const readings = await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').catch((err) => { console.log(err); });
+//     await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then((readings) => {
+//       for (let r = 0; r < readings.length; r += 1) {
+//         output[index][`Current${r}`] = parseFloat(readings[r].deviceReading);
+//       }
+//       output[index].DidPass = 0;
 
-      insertMeasurement(output[index]);
-      // create measurement in db with output object;
+//       insertMeasurement(output[index]);
+//       // create measurement in db with output object;
 
-      // console.log(output)
-      // console.log(`name: ${template.MeasurementName}`);
-      // console.log(`readings: ${util.inspect(readings)}`);
-    });
+//       // console.log(output)
+//       // console.log(`name: ${template.MeasurementName}`);
+//       // console.log(`readings: ${util.inspect(readings)}`);
+//     });
 
-    // console.log(index)
-    // console.log(`name: ${template.MeasurementName}`);
-    // console.log(`readings: ${util.inspect(readings)}`);
-    // save to db here.
-  }
-  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
-}
+//     // console.log(index)
+//     // console.log(`name: ${template.MeasurementName}`);
+//     // console.log(`readings: ${util.inspect(readings)}`);
+//     // save to db here.
+//   }
+//   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
+// }
 // sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-runTestById({Id:'15', TestName: '150insertTest', Wattage:'150'});
+// runTestById({Id:'15', TestName: '150insertTest', Wattage:'150'});
 
 //-------------------------------------------------------------------------------------------
 // function getFirmwareAndWattage(address){

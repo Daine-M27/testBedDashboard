@@ -91,7 +91,7 @@ function rdmDiscoverAddress() {
         console.log(`rdmDiscover: ${err}`);
         reject(err);
       });
-    }, 600);
+    }, 1000);
   });
 }
 
