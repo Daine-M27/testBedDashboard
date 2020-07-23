@@ -4,7 +4,7 @@ const scpi = require('../utilities/SCPIHelpers');
 const dbhelper = require('../utilities/databaseHelpers');
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { runTestById } = require('../utilities/testHelpers');
-const { rdmDiscoverAddress, getFirmwareAndWattage} = require('../utilities/rdmDmxHelpers');
+const { rdmDiscoverAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
 
 const router = express.Router();
 
@@ -43,20 +43,25 @@ router.get('/', (req, res) => {
 router.post('/startTest', (req, res) => {
   // console.log(req.body.TestTemplateId);
   const testInfo = JSON.parse(req.body.TestTemplate);
-  
+
   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
   rdmDiscoverAddress().then((dutAddress) => {
-    getFirmwareAndWattage(dutAddress).then((data) => {
-      if (data.wattage.includes(testInfo.wattage) === true) {
-        runTestById(testInfo).then(() => {
-          res.render('.\\runTest\\testResults', { title: 'Test Results' });
-        });// take test template id and redirect to test page
-      } else {
-        res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device Wattage does not match the selected test!' });
-      }
-    });
+    if (dutAddress.length > 3) {
+      console.log(`run test rdm discover${dutAddress}`);
+      getFirmwareAndWattage(dutAddress).then((data) => {
+        if (data.wattage.includes(testInfo.wattage) === true) {
+          runTestById(testInfo).then(() => {
+            res.render('.\\runTest\\testResults', { title: 'Test Results' });
+          });// take test template id and redirect to test page
+        } else {
+          res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device Wattage does not match the selected test!' });
+        }
+      });
+    } else {
+      sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
+      res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'No Device Found with RDM!' });
+    }
   });
-  
 });
 
 module.exports = router;

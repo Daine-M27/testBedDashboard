@@ -33,14 +33,19 @@ function hexToBinary(inputHex) {
  * @param {number} posEnd
  */
 function rdmHexResponseParse(inputString) {
+  // console.log('rdm hex: ==> '+ inputString)
   // remove spaces from hex if any exist
-  const rdmString = inputString.split(' ').join('');
-  const start = 48;
-  const stop = (rdmString.length - 4);
-  // remove segment of string
-  const hexString = (rdmString.toString()).substring(start, stop);
+  try {
+    const rdmString = inputString.split(' ').join('');
+    const start = 48;
+    const stop = (rdmString.length - 4);
+    // remove segment of string
+    const hexString = (rdmString.toString()).substring(start, stop);
 
-  return hexString;
+    return hexString;
+  } catch (error) {
+    return error;
+  }
 }
 
 /**

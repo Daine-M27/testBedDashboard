@@ -15,17 +15,37 @@ const {
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
-const testData = {
-  TestTemplateId: '17',
-  TestTemplateName: 'InsertReturn Test',
-  DeviceWattage: '27',
-  DeviceFirmware: '108',
-  BoardId: '2160',
-};
 
-insertTest(testData).then(res => {
-  console.log(res[0].Id);
-})
+// const infoRDM = {
+//   command_class: '20',
+//   destination: '7151:31323334',
+//   pid: '00c0',
+//   data: '',
+// };
+
+// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+// 7151:31323334
+//getFirmwareAndWattage('7151:31323334').then(res => {console.log(res)})
+
+
+// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');    
+//sendRDM(infoRDM).then(res => console.log(res))
+
+//rdmDiscoverAddress().then(res => console.log(res))
+//------------------------------------------------------------------------------------------
+
+
+// const testData = {
+//   TestTemplateId: '17',
+//   TestTemplateName: 'InsertReturn Test',
+//   DeviceWattage: '27',
+//   DeviceFirmware: '108',
+//   BoardId: '2160',
+// };
+
+// insertTest(testData).then(res => {
+//   console.log(res[0].Id);
+// })
 
 //-----------------------------------------------------------------------------------------
 

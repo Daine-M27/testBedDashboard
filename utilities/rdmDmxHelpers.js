@@ -56,8 +56,15 @@ function sendRDM(params) {
         'content-type': 'application/x-www-form-urlencoded',
       },
     }).then((res) => {
-      resolve(res.data);
+      
+      console.log('sendRDM success')
+      resolve(res);
     }).catch((err) => {
+      console.log("send rdm reject"+err)
+      // if (err.response.status === 500) {
+      //   console.log(err.response.status + 'bad sendRDM');
+      //   resolve(sendRDM(params));
+      // }
       reject(err);
     });
   });
@@ -84,6 +91,7 @@ function rdmDiscoverAddress() {
           'content-type': 'application/x-www-form-urlencoded',
         },
       }).then((res) => {
+        console.log(`${res.data.fixture_address} discover address`);
         const output = (res.data.fixture_address).split(' ').join('');
         // resolve with address formatted for rdm commands 'xxxx:xxxxxxxx'
         resolve(`${output.substr(0, 4)}:${output.substr(4)}`);
@@ -91,7 +99,7 @@ function rdmDiscoverAddress() {
         console.log(`rdmDiscover: ${err}`);
         reject(err);
       });
-    }, 1000);
+    }, 1200);
   });
 }
 
@@ -101,6 +109,7 @@ function rdmDiscoverAddress() {
  * @param {string} address
  */
 function getFirmwareAndWattage(address) {
+  console.log('getFirmware enter');
   return new Promise((resolve, reject) => {
     const infoRDM = {
       command_class: '20',
@@ -110,14 +119,15 @@ function getFirmwareAndWattage(address) {
     };
 
     // get firmware and wattage
-    sendRDM(infoRDM).then((res) => {
-      const fullResponse = hexToAscii(rdmHexResponseParse(res.response));
+    sendRDM(infoRDM).then(async (res) => {
+      const fullResponse = hexToAscii( rdmHexResponseParse(res.data.response));
       const individualData = fullResponse.split(' ');
       resolve({
         firmware: individualData[0],
         wattage: individualData[1],
       });
     }).catch((err) => {
+      console.log('getfirmwarewattage reject' + infoRDM.address)
       reject(err);
     });
   });

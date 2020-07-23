@@ -19,7 +19,8 @@ const unlockCode = process.env.UNLOCK_CODE;
 
 /**
  * This function uses a test template Id to get all measurement
- * data and run each series of commands on DUT.
+ * data and run each series of commands on DUT.  It then saves all
+ * measurements into the database
  * @param {string} id
  */
 async function runTestById(testTemplate) {
@@ -86,7 +87,7 @@ async function runTestById(testTemplate) {
 
       // console.log(output)
       // console.log(`name: ${template.MeasurementName}`);
-      console.log(`readings: ${util.inspect(readings)}`);
+      // console.log(`readings: ${util.inspect(readings)}`);
     });
 
     // console.log(index)
