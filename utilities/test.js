@@ -22,8 +22,15 @@ const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 //   pid: '00c0',
 //   data: '',
 // };
+const dmmAddresses = [
+  process.env.DMM_CHAN_0,
+  process.env.DMM_CHAN_1,
+  process.env.DMM_CHAN_2,
+  process.env.DMM_CHAN_3,
+];
 
-// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then(res => console.log(res));
 // 7151:31323334
 //getFirmwareAndWattage('7151:31323334').then(res => {console.log(res)})
 

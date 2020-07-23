@@ -56,11 +56,10 @@ function sendRDM(params) {
         'content-type': 'application/x-www-form-urlencoded',
       },
     }).then((res) => {
-      
-      console.log('sendRDM success')
+      // console.log('sendRDM success')
       resolve(res);
     }).catch((err) => {
-      console.log("send rdm reject"+err)
+      console.log(`send rdm reject${err}`);
       // if (err.response.status === 500) {
       //   console.log(err.response.status + 'bad sendRDM');
       //   resolve(sendRDM(params));

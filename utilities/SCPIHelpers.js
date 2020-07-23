@@ -37,7 +37,7 @@ function sendCommand(address, command) {
     });
 
     cs.on('close', () => {
-      console.log('closing connection');
+      // console.log('closing connection');
       cleanUp();
     });
 
@@ -96,27 +96,60 @@ function getReading(address, command, convert) {
  */
 function checkInsturments(addressList, command, convert) {
   return new Promise((resolve) => {
+    const readingPromises = [];
     const output = [];
     const complete = (data) => {
     // console.log('complete')
       resolve(data);
     };
 
+    // addressList.forEach((deviceAddress) => {
+    //   readingPromises.push(getReading(deviceAddress))
+    // })
+    //Promise.all(addressList)
+
     addressList.forEach(async (deviceAddress) => {
       if (convert){
-        await getReading(deviceAddress, command, convert).then((result) => {
-          output.push({ address: deviceAddress, deviceReading: result });
-        });
+        readingPromises.push(getReading(deviceAddress, command, convert));
+        // await getReading(deviceAddress, command, convert).then((result) => {
+        //   output.push({ address: deviceAddress, deviceReading: result });
+        // });
       } else {
-        await getReading(deviceAddress, command, 'false').then((result) => {
-          output.push({ address: deviceAddress, deviceReading: result });
-        });
+        readingPromises.push(getReading(deviceAddress, command, 'false'));
+        // await getReading(deviceAddress, command, 'false').then((result) => {
+        //   output.push({ address: deviceAddress, deviceReading: result });
+        // });
       }
       // console.log('return ' + output);
+      // if (output.length === addressList.length) {
+      //   complete(output);
+      // }
+    });
+
+    Promise.all(readingPromises).then((readings) => {
+      readings.forEach((reading, index) => {
+        output.push({ address: addressList[index], deviceReading: reading });
+      });
+
       if (output.length === addressList.length) {
         complete(output);
       }
     });
+    // addressList.forEach(async (deviceAddress) => {
+    //   if (convert){
+    //     await getReading(deviceAddress, command, convert).then((result) => {
+    //       output.push({ address: deviceAddress, deviceReading: result });
+    //     });
+    //   } else {
+    //     await getReading(deviceAddress, command, 'false').then((result) => {
+    //       output.push({ address: deviceAddress, deviceReading: result });
+    //     });
+    //   }
+    //   // console.log('return ' + output);
+    //   if (output.length === addressList.length) {
+    //     complete(output);
+    //   }
+    // });
   });
 }
 

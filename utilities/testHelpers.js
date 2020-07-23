@@ -86,8 +86,8 @@ async function runTestById(testTemplate) {
       // create measurement in db with output object;
 
       // console.log(output)
-      // console.log(`name: ${template.MeasurementName}`);
-      // console.log(`readings: ${util.inspect(readings)}`);
+       console.log(`name: ${template.MeasurementName}`);
+       console.log(`readings: ${util.inspect(readings)}`);
     });
 
     // console.log(index)
