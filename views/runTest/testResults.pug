@@ -1,4 +1,15 @@
 extends ..\\layout
+include ..\\mixins\measurementInfo-mixin.pug
+include ..\\mixins\testInfo-mixin.pug
 
 block content
-  h1 #{title}
+  h1 TestName: #{testInfo.TestTemplateName}
+  form(action="\\export", method="post")
+    input(type="hidden", value=testInfo.Id, name="TestId")
+    input(type="submit", value="Export CSV")
+  +testInfo(testInfo)
+  each measurement, index in measurementInfo
+    +measurementInfo(measurementInfo[index])
+
+  append scripts
+        script(src="\\javascript\\testResults.js")  

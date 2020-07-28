@@ -21,6 +21,20 @@ a {
   background-color: rgb(236, 236, 236);
 }
 
+.measurementPanel {
+  max-height: 0;
+  max-width: 500px;
+  padding: 0px;
+  background-color: rgb(236, 236, 236);
+  overflow: hidden;
+  transition: max-height 0.25s ease-in-out
+}
+
+.accordion {
+  padding: 10px;
+  min-width: 500px
+}
+
 .error {
   background-color: red;
 }

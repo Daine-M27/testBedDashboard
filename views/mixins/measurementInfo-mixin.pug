@@ -1,0 +1,19 @@
+mixin measurementInfo(measurementData)   
+    if measurementData.DidPass === false 
+        button.accordion.error Measurement Name: #{measurementData.MeasurementName}
+    else
+        button.accordion Measurement Name: #{measurementData.MeasurementName} 
+    .measurementPanel         
+        p Test Id: #{measurementData.TestId}
+        if measurementData.DidPass === false 
+            p.error Pass: #{measurementData.DidPass}
+        else
+            p.positive Pass: #{measurementData.DidPass}                
+        each val, key in measurementData
+            if (key.toLowerCase().includes('dac') || key.toLowerCase().includes('bccu') || key.toLowerCase().includes('current'))
+                p #{key}: #{val}                    
+    br
+   
+                 
+
+

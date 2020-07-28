@@ -5,6 +5,7 @@ const dbhelper = require('../utilities/databaseHelpers');
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { runTestById } = require('../utilities/testHelpers');
 const { rdmDiscoverAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
+const { getTestById, getMeasurementsByTestId } = require('../utilities/databaseHelpers');
 
 const router = express.Router();
 
@@ -62,7 +63,22 @@ router.post('/startTest', (req, res) => {
       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
       res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'No Device Found with RDM!' });
     }
+  }).catch((error) => {
+    sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
+    res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
   });
+});
+
+/** */
+router.get('/testResults/:testId', (req, res) => {
+  getTestById(req.params.testId)
+    .then((testResponse) => {
+      getMeasurementsByTestId(req.params.testId)
+        .then((meausrementResponse) => {
+          res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
+        });
+    });
+  //res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId });
 });
 
 module.exports = router;
