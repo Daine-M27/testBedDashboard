@@ -119,7 +119,7 @@ function getFirmwareAndWattage(address) {
 
     // get firmware and wattage
     sendRDM(infoRDM).then(async (res) => {
-      const fullResponse = hexToAscii( rdmHexResponseParse(res.data.response));
+      const fullResponse = hexToAscii(rdmHexResponseParse(res.data.response));
       const individualData = fullResponse.split(' ');
       resolve({
         firmware: individualData[0],

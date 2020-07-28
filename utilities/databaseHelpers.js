@@ -158,6 +158,20 @@ async function insertTest(data) {
   }
 }
 
+async function getTestById(id) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('Id', sql.Int, id)
+      .execute('getTestById');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Test Measurement Template Error: ${err}`);
+    return err;
+  }
+}
+
 /**
  * This function inserts a measurement into the db
  * @param {object} data
@@ -199,6 +213,20 @@ async function insertMeasurement(data) {
   }
 }
 
+async function getMeasurementsByTestId(id) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('TestId', sql.Int, id)
+      .execute('getMeasurementsByTestId');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Test Measurement Template Error: ${err}`);
+    return err;
+  }
+}
+
 
 
 module.exports = {
@@ -208,6 +236,8 @@ module.exports = {
   getMeasurementTemplate,
   insertTest,
   insertMeasurement,
+  getTestById,
+  getMeasurementsByTestId,
 };
 
 // getMeasurementTemplate(measurementTemplateObject.TestTemplateId)

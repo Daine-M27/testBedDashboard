@@ -5,7 +5,7 @@ const dotenv = require('dotenv').config({ path: require('find-config')('.env') }
 const util = require('util');
 const { ConnectionPool } = require('mssql');
 const { reset } = require('nodemon');
-const { getMeasurementTemplate, insertTest, insertMeasurement, insertMeasurementTemplate } = require('./databaseHelpers');
+const { getMeasurementTemplate, insertTest, insertMeasurement, insertMeasurementTemplate, getTestById, getMeasurementsByTestId } = require('./databaseHelpers');
 const {
   decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii,
 } = require('./hexHelpers');
@@ -16,21 +16,24 @@ const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
+//getMeasurementsByTestId(47).then(res => { console.log(res) })
+
+// -----------------------------------------------------------------------------------------
 // const infoRDM = {
 //   command_class: '20',
 //   destination: '7151:31323334',
 //   pid: '00c0',
 //   data: '',
 // };
-const dmmAddresses = [
-  process.env.DMM_CHAN_0,
-  process.env.DMM_CHAN_1,
-  process.env.DMM_CHAN_2,
-  process.env.DMM_CHAN_3,
-];
+// const dmmAddresses = [
+//   process.env.DMM_CHAN_0,
+//   process.env.DMM_CHAN_1,
+//   process.env.DMM_CHAN_2,
+//   process.env.DMM_CHAN_3,
+// ];
 
-sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
-checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then(res => console.log(res));
+// sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+// checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then(res => console.log(res));
 // 7151:31323334
 //getFirmwareAndWattage('7151:31323334').then(res => {console.log(res)})
 

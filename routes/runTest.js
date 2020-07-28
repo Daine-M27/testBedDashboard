@@ -49,6 +49,7 @@ router.post('/startTest', (req, res) => {
     if (dutAddress.length > 3) {
       // console.log(`run test rdm discover${dutAddress}`);
       getFirmwareAndWattage(dutAddress).then((data) => {
+        // check for wattage before running test
         if (data.wattage.includes(testInfo.wattage) === true) {
           runTestById(testInfo).then(() => {
             res.render('.\\runTest\\testResults', { title: 'Test Results' });
