@@ -1,4 +1,5 @@
 const express = require('express');
+const xlsx = require('xlsx');
 const dbhelper = require('../utilities/databaseHelpers');
 
 const router = express.Router();
@@ -43,5 +44,29 @@ router.post('/createMeasurement', (req, res) => {
       console.log(`createMeasurement POST error ${err}`);
     });
 });
+
+router.post('/export', (req, res) => {
+  dbhelper.getTestById(req.body.TestId)
+    .then((testResponse) => {
+      dbhelper.getMeasurementsByTestId(req.body.TestId)
+        .then((meausrementResponse) => {
+          const test = xlsx.utils.json_to_sheet(testResponse.recordset);
+          const measures = xlsx.utils.json_to_sheet(meausrementResponse.recordset);
+          const wb = xlsx.utils.book_new();
+
+          xlsx.utils.book_append_sheet(wb, test, 'Test Data');
+          xlsx.utils.book_append_sheet(wb, measures, 'Measurement Data');
+
+          xlsx.writeFile(wb, 'Export.xlsx');
+          
+          // console.log(util.inspect(testResponse));
+          // console.log(util.inspect(meausrementResponse));
+          // console.log('done');
+          res.download('Export.xlsx');
+
+          // res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
+        });
+    });
+})
 
 module.exports = router;

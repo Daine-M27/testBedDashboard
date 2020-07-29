@@ -13,10 +13,30 @@ const {
   RdmParamsObject, sendRDM, rdmDiscoverAddress, getFirmwareAndWattage,
 } = require('./rdmDmxHelpers');
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
-
+const xlsx = require('xlsx');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
-//getMeasurementsByTestId(47).then(res => { console.log(res) })
+
+getTestById(37)
+  .then((testResponse) => {
+    getMeasurementsByTestId(37)
+      .then((meausrementResponse) => {
+        var test = xlsx.utils.sheet_add_json(testResponse);
+        var measures = xlsx.utils.sheet_add_json(meausrementResponse);
+        var wb = xlsx.utils.book_new();
+
+        xlsx.utils.book_append_sheet(wb, test);
+        xlsx.utils.book_append_sheet(wb, measures);
+
+        var buf = xlsx.write(wb, {type: 'buffer', bookType: 'xlsx'})
+        //console.log(util.inspect(testResponse));
+        //console.log(util.inspect(meausrementResponse));
+        //console.log('done');
+
+
+      // res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
+      });
+  });
 
 // -----------------------------------------------------------------------------------------
 // const infoRDM = {

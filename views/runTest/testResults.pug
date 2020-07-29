@@ -4,7 +4,7 @@ include ..\\mixins\testInfo-mixin.pug
 
 block content
   h1 TestName: #{testInfo.TestTemplateName}
-  form(action="\\export", method="post")
+  form(action="..\\..\\admin\\export", method="post")
     input(type="hidden", value=testInfo.Id, name="TestId")
     input(type="submit", value="Export CSV")
   +testInfo(testInfo)
