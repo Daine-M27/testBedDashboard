@@ -52,8 +52,8 @@ router.post('/startTest', (req, res) => {
       getFirmwareAndWattage(dutAddress).then((data) => {
         // check for wattage before running test
         if (data.wattage.includes(testInfo.wattage) === true) {
-          runTestById(testInfo).then(() => {
-            res.render('.\\runTest\\testResults', { title: 'Test Results' });
+          runTestById(testInfo).then((testOutput) => {
+            res.redirect('./testResults/'+ testOutput[0].TestId);
           });// take test template id and redirect to test page
         } else {
           res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device Wattage does not match the selected test!' });

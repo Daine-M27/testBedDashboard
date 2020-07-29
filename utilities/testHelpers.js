@@ -96,6 +96,7 @@ async function runTestById(testTemplate) {
     // save to db here.
   }
   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
+  return output;
 }
 
 module.exports = { runTestById };

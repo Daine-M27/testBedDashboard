@@ -58,13 +58,10 @@ router.post('/export', (req, res) => {
           xlsx.utils.book_append_sheet(wb, measures, 'Measurement Data');
 
           xlsx.writeFile(wb, 'Export.xlsx');
-          
           // console.log(util.inspect(testResponse));
           // console.log(util.inspect(meausrementResponse));
           // console.log('done');
           res.download('Export.xlsx');
-
-          // res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
         });
     });
 })
