@@ -53,7 +53,7 @@ router.post('/export', (req, res) => {
           const test = xlsx.utils.json_to_sheet(testResponse.recordset);
           const measures = xlsx.utils.json_to_sheet(meausrementResponse.recordset);
           const wb = xlsx.utils.book_new();
-          const fileName = `Test_${req.body.TestId}_${testResponse.recordset[0].BoardId}.xlsx`;
+          const fileName = `Test${req.body.TestId}_Board${testResponse.recordset[0].BoardId.replace(':', '')}.xlsx`;
 
           xlsx.utils.book_append_sheet(wb, test, 'Test Data');
           xlsx.utils.book_append_sheet(wb, measures, 'Measurement Data');
