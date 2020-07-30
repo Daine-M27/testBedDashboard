@@ -1,6 +1,8 @@
 const express = require('express');
+const fs = require('fs');
 const xlsx = require('xlsx');
 const dbhelper = require('../utilities/databaseHelpers');
+
 
 const router = express.Router();
 
@@ -62,9 +64,19 @@ router.post('/export', (req, res) => {
           // console.log(util.inspect(testResponse));
           // console.log(util.inspect(meausrementResponse));
           // console.log('done');
-          res.download(fileName);
+          res.download(fileName, (err) => {
+            if (err) {
+              console.log(err);
+            }
+            // delete file
+            fs.unlink(fileName, (error) => {
+              if (error) {
+                console.log(error);
+              }
+            });
+          });
         });
     });
-})
+});
 
 module.exports = router;
