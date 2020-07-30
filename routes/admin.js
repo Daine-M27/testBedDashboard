@@ -53,15 +53,16 @@ router.post('/export', (req, res) => {
           const test = xlsx.utils.json_to_sheet(testResponse.recordset);
           const measures = xlsx.utils.json_to_sheet(meausrementResponse.recordset);
           const wb = xlsx.utils.book_new();
+          const fileName = `Test_${req.body.TestId}_${testResponse.recordset[0].BoardId}.xlsx`;
 
           xlsx.utils.book_append_sheet(wb, test, 'Test Data');
           xlsx.utils.book_append_sheet(wb, measures, 'Measurement Data');
 
-          xlsx.writeFile(wb, 'Export.xlsx');
+          xlsx.writeFile(wb, fileName);
           // console.log(util.inspect(testResponse));
           // console.log(util.inspect(meausrementResponse));
           // console.log('done');
-          res.download('Export.xlsx');
+          res.download(fileName);
         });
     });
 })
