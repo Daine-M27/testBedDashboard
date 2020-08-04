@@ -75,10 +75,16 @@ router.get('/testResults/:testId', (req, res) => {
     .then((testResponse) => {
       getMeasurementsByTestId(req.params.testId)
         .then((meausrementResponse) => {
+          testResponse.recordset[0].CreatedDate = testResponse.recordset[0].CreatedDate.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
           res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
         });
     });
   //res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId });
+});
+
+/** */
+router.get('/testResults/:boardId', (req, res) => {
+  
 });
 
 module.exports = router;

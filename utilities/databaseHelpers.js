@@ -14,6 +14,7 @@ const config = {
   password: process.env.SQL_PASSWORD,
   server: process.env.SQL_SERVER,
   database: process.env.SQL_DATABASE,
+  options: { enableArithAbort: true },
 };
 
 const testTemplateObject = {
@@ -227,6 +228,34 @@ async function getMeasurementsByTestId(id) {
   }
 }
 
+async function getBoardIds() {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .execute('getBoardIds');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Board Ids Error: ${err}`);
+    return err;
+  }
+}
+
+
+async function getTestsByDateRange(starDate, endDate) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('StartDate', sql.DateTime, new Date(starDate))
+      .input('EndDate', sql.DateTime, new Date(endDate))
+      .execute('getTestsByDateRange');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Test by date range Error: ${err}`);
+    return err;
+  }
+}
 
 
 module.exports = {
@@ -238,6 +267,8 @@ module.exports = {
   insertMeasurement,
   getTestById,
   getMeasurementsByTestId,
+  getBoardIds,
+  getTestsByDateRange,
 };
 
 // getMeasurementTemplate(measurementTemplateObject.TestTemplateId)

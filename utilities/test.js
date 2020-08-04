@@ -5,7 +5,7 @@ const dotenv = require('dotenv').config({ path: require('find-config')('.env') }
 const util = require('util');
 const { ConnectionPool } = require('mssql');
 const { reset } = require('nodemon');
-const { getMeasurementTemplate, insertTest, insertMeasurement, insertMeasurementTemplate, getTestById, getMeasurementsByTestId } = require('./databaseHelpers');
+const { getTestsByDateRange, getMeasurementTemplate, insertTest, insertMeasurement, insertMeasurementTemplate, getTestById, getMeasurementsByTestId, getBoardIds } = require('./databaseHelpers');
 const {
   decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii,
 } = require('./hexHelpers');
@@ -17,26 +17,29 @@ const xlsx = require('xlsx');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
 
-getTestById(37)
-  .then((testResponse) => {
-    getMeasurementsByTestId(37)
-      .then((meausrementResponse) => {
-        var test = xlsx.utils.sheet_add_json(testResponse);
-        var measures = xlsx.utils.sheet_add_json(meausrementResponse);
-        var wb = xlsx.utils.book_new();
+//getBoardIds().then(response => console.log(response.recordset[0].BoardId));
 
-        xlsx.utils.book_append_sheet(wb, test);
-        xlsx.utils.book_append_sheet(wb, measures);
+getTestsByDateRange('2020-07-23', '2020-07-31').then(response => console.log(response));
+// getTestById(37)
+//   .then((testResponse) => {
+//     getMeasurementsByTestId(37)
+//       .then((meausrementResponse) => {
+//         var test = xlsx.utils.sheet_add_json(testResponse);
+//         var measures = xlsx.utils.sheet_add_json(meausrementResponse);
+//         var wb = xlsx.utils.book_new();
 
-        var buf = xlsx.write(wb, {type: 'buffer', bookType: 'xlsx'})
-        //console.log(util.inspect(testResponse));
-        //console.log(util.inspect(meausrementResponse));
-        //console.log('done');
+//         xlsx.utils.book_append_sheet(wb, test);
+//         xlsx.utils.book_append_sheet(wb, measures);
+
+//         var buf = xlsx.write(wb, {type: 'buffer', bookType: 'xlsx'})
+//         //console.log(util.inspect(testResponse));
+//         //console.log(util.inspect(meausrementResponse));
+//         //console.log('done');
 
 
-      // res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
-      });
-  });
+//       // res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
+//       });
+//   });
 
 // -----------------------------------------------------------------------------------------
 // const infoRDM = {
