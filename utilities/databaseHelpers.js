@@ -17,31 +17,31 @@ const config = {
   options: { enableArithAbort: true },
 };
 
-const testTemplateObject = {
-  TestName: 'template1',
-  IsActive: 0,
-};
+// const testTemplateObject = {
+//   TestName: 'template1',
+//   IsActive: 0,
+// };
 
-const measurementTemplateObject = {
-  TestTemplateId: 3,
-  MeasurementName: 'Some Name Here',
-  Dac0: '00',
-  Bccu0: '00',
-  PassLowCurrent0: '.5',
-  PassHighCurrent0: '1.0',
-  Dac1: '00',
-  Bccu1: '00',
-  PassLowCurrent1: '00',
-  PassHighCurrent1: '00',
-  Dac2: '00',
-  Bccu2: '00',
-  PassLowCurrent2: '00',
-  PassHighCurrent2: '00',
-  Dac3: '00',
-  Bccu3: '00',
-  PassLowCurrent3: '00',
-  PassHighCurrent3: '00',
-};
+// const measurementTemplateObject = {
+//   TestTemplateId: 3,
+//   MeasurementName: 'Some Name Here',
+//   Dac0: '00',
+//   Bccu0: '00',
+//   PassLowCurrent0: '.5',
+//   PassHighCurrent0: '1.0',
+//   Dac1: '00',
+//   Bccu1: '00',
+//   PassLowCurrent1: '00',
+//   PassHighCurrent1: '00',
+//   Dac2: '00',
+//   Bccu2: '00',
+//   PassLowCurrent2: '00',
+//   PassHighCurrent2: '00',
+//   Dac3: '00',
+//   Bccu3: '00',
+//   PassLowCurrent3: '00',
+//   PassHighCurrent3: '00',
+// };
 
 /**
  * This function takes values in an object consisting of
@@ -241,7 +241,6 @@ async function getBoardIds() {
   }
 }
 
-
 async function getTestsByDateRange(starDate, endDate) {
   try {
     const pool = await sql.connect(config);
@@ -256,7 +255,6 @@ async function getTestsByDateRange(starDate, endDate) {
     return err;
   }
 }
-
 
 module.exports = {
   insertTestTemplate,

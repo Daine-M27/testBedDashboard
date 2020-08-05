@@ -19,7 +19,7 @@ const xlsx = require('xlsx');
 
 //getBoardIds().then(response => console.log(response.recordset[0].BoardId));
 
-getTestsByDateRange('2020-07-23', '2020-07-31').then(response => console.log(response));
+getTestsByDateRange('2020-07-23', '2020-08-06').then(response => console.log(response));
 // getTestById(37)
 //   .then((testResponse) => {
 //     getMeasurementsByTestId(37)

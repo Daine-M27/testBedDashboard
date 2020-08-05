@@ -95,7 +95,7 @@ function getReading(address, command, convert) {
  * @param {string} command
  */
 function checkInsturments(addressList, command, convert) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const readingPromises = [];
     const output = [];
     const complete = (data) => {
@@ -134,6 +134,8 @@ function checkInsturments(addressList, command, convert) {
       if (output.length === addressList.length) {
         complete(output);
       }
+    }).catch((error) => {
+      reject(error);
     });
     // addressList.forEach(async (deviceAddress) => {
     //   if (convert){
