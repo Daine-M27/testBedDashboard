@@ -1,0 +1,21 @@
+extends ..\\layout
+include ..\\mixins\measurementInfo-mixin.pug
+include ..\\mixins\testInfo-mixin.pug
+
+block content
+  h1 Database Search
+  form(action='\\*\\*', method='post')
+    .ui-widget
+      p Select by Board Id
+      input(id='BoardIdHolder',type='hidden', value=BoardIds)
+      label(for='BoardIdInput') Board Id:
+      input(id='BoardIdInput')        
+      //- select(name='BoardId', id='boardIdDropDown', required)
+      //-   option(value='', selected, disabled, hidden)='Choose Board Id Here'
+      //-     each Id in BoardIds
+      //-       option(value=Id.BoardId)= Id.BoardId
+    br
+    input(type="submit", value="Get Tests")
+
+  append scripts
+    script(src="\\javascript\\searchTestResults.js") 

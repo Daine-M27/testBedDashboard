@@ -228,6 +228,9 @@ async function getMeasurementsByTestId(id) {
   }
 }
 
+/**
+ * This function returns all unique board Ids from the database
+ */
 async function getBoardIds() {
   try {
     const pool = await sql.connect(config);
@@ -241,6 +244,11 @@ async function getBoardIds() {
   }
 }
 
+/**
+ * This function returns all the test conducted between the two dates supplied
+ * @param {string} starDate
+ * @param {string} endDate
+ */
 async function getTestsByDateRange(starDate, endDate) {
   try {
     const pool = await sql.connect(config);

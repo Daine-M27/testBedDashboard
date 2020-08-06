@@ -3,7 +3,7 @@ include ..\\mixins\measurementInfo-mixin.pug
 include ..\\mixins\testInfo-mixin.pug
 
 block content
-  h1 TestName: #{testInfo.TestTemplateName}
+  h1 #{title} 
   form(action="..\\..\\admin\\export", method="post")
     input(type="hidden", value=testInfo.Id, name="TestId")
     input(type="submit", value="Export CSV")

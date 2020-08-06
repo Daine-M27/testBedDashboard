@@ -5,7 +5,7 @@ const dbhelper = require('../utilities/databaseHelpers');
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { runTestById } = require('../utilities/testHelpers');
 const { rdmDiscoverAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
-const { getTestById, getMeasurementsByTestId } = require('../utilities/databaseHelpers');
+const { getTestById, getMeasurementsByTestId, getBoardIds } = require('../utilities/databaseHelpers');
 
 const router = express.Router();
 
@@ -38,7 +38,7 @@ router.get('/', (req, res) => {
             });
         });
     }).catch((err) => {
-      res.render('.\\runTest\\testError', { title: 'SCPI Error', message: err });
+      res.render('.\\runTest\\testError', { title: 'SCPI Server Not Responding', message: err });
     });
 });
 
@@ -77,8 +77,7 @@ router.get('/testResults/:testId', (req, res) => {
     .then((testResponse) => {
       getMeasurementsByTestId(req.params.testId)
         .then((meausrementResponse) => {
-          testResponse.recordset[0].CreatedDate = testResponse.recordset[0].CreatedDate.toLocaleString();
-          res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
+          res.render('.\\runTest\\testResults', { title: `Test Name: ${testResponse.recordset[0].TestTemplateName}`, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
         });
     });
   // res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId });
@@ -86,7 +85,24 @@ router.get('/testResults/:testId', (req, res) => {
 
 /** */
 router.get('/testResults/:boardId', (req, res) => {
+  console.log(req.params.BoardId);
+});
+
+/** */
+router.get('/testResults/:startDate/:endData', (req, res) => {
   
+});
+
+/** */
+router.get('/searchTestResults', (req, res) => {
+  // add promise all to handle all data collection for page
+  getBoardIds()
+    .then((IdResults) => {
+      res.render('.\\runTest\\searchTestResults', { title: 'Search Test Results', BoardIds: IdResults.recordset });
+    })
+    .catch((error) => {
+      res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
+    });
 });
 
 module.exports = router;
