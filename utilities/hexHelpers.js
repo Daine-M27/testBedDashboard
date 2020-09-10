@@ -65,4 +65,14 @@ function decToHex2c(num) {
   return output;
 }
 
-module.exports = { hexToAscii, hexToBinary, rdmHexResponseParse, decToHex2c };
+/**
+ * This function converts a hex number to decimal form
+ * @param {string} hexNum
+ */
+function hexToDecimal(hexNum) {
+  return parseInt(hexNum, 16);
+}
+
+module.exports = {
+  hexToAscii, hexToBinary, rdmHexResponseParse, decToHex2c, hexToDecimal,
+};

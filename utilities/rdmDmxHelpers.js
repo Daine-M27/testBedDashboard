@@ -126,7 +126,31 @@ function getFirmwareAndWattage(address) {
         wattage: individualData[1],
       });
     }).catch((err) => {
-      console.log('getfirmwarewattage reject' + infoRDM.address)
+      console.log('getfirmwarewattage reject' + infoRDM.address);
+      reject(err);
+    });
+  });
+}
+
+function getSensorTemp(sensor, address) {
+  return new Promise((resolve, reject) => {
+    const tempRDM = {
+      command_class: '20',
+      destination: address,
+      pid: '0201',
+      data: sensor,
+    };
+
+    // get only current temp from board or led
+    sendRDM(tempRDM).then(async (res) => {
+      const responseHex = rdmHexResponseParse(res.data.response);
+      //console.log(responseHex + " responesHex");
+      const tempHex = responseHex.split(' ').join('').substring(2, 6);
+      //console.log(tempHex + " tempHex");
+      const decTemp = parseInt(tempHex, 16);
+      resolve(decTemp);
+    }).catch((err) => {
+      console.log('getTempError' + err);
       reject(err);
     });
   });
@@ -138,4 +162,5 @@ module.exports = {
   RdmParamsObject,
   rdmDiscoverAddress,
   getFirmwareAndWattage,
+  getSensorTemp,
 };

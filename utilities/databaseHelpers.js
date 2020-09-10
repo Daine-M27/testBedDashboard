@@ -205,6 +205,7 @@ async function insertMeasurement(data) {
       .input('Current2', sql.Decimal(10, 5), data.Current2)
       .input('Current3', sql.Decimal(10, 5), data.Current3)
       .input('DidPass', sql.Bit, data.DidPass)
+      .input('CPUTemp', sql.Int, data.CPUTemp)
       .execute('InsertMeasurement');
     pool.close();
     return result;

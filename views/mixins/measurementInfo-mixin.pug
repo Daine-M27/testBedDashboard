@@ -10,7 +10,7 @@ mixin measurementInfo(measurementData)
         else
             p.positive Pass: #{measurementData.DidPass}                
         each val, key in measurementData
-            if (key.toLowerCase().includes('dac') || key.toLowerCase().includes('bccu') || key.toLowerCase().includes('current'))
+            if (key.toLowerCase().includes('dac') || key.toLowerCase().includes('bccu') || key.toLowerCase().includes('current') || key.toLowerCase().includes('cputemp'))
                 p #{key}: #{val}                    
     br
    

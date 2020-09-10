@@ -10,16 +10,31 @@ const {
   decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii,
 } = require('./hexHelpers');
 const {
-  RdmParamsObject, sendRDM, rdmDiscoverAddress, getFirmwareAndWattage,
+  RdmParamsObject, sendRDM, rdmDiscoverAddress, getFirmwareAndWattage, getSensorTemp,
 } = require('./rdmDmxHelpers');
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 const xlsx = require('xlsx');
+const dmx = require('./rdmDmxHelpers');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
+const data = {
+  1: '255',
+  2: '255',
+  3: '0',
+  4: '0',
+  5: '0',
+  6: '0',
+};
 
+rdmDiscoverAddress().then(address => {
+  // console.log(address);
+  getSensorTemp('01', address).then((temp) => console.log(temp));
+});
 
-//getBoardIds().then(response => console.log(response.recordset[0].BoardId));
+// dmx.sendDMX(data);
 
-getTestsByDateRange('2020-07-23', '2020-08-06').then(response => console.log(response));
+// getBoardIds().then(response => console.log(response.recordset[0].BoardId));
+
+// getTestsByDateRange('2020-07-23', '2020-08-06').then(response => console.log(response));
 // getTestById(37)
 //   .then((testResponse) => {
 //     getMeasurementsByTestId(37)

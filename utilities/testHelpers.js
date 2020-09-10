@@ -6,7 +6,7 @@ const dotenv = require('dotenv').config({ path: require('find-config')('.env') }
 const util = require('util');
 const { getMeasurementTemplate, insertMeasurement, insertTest } = require('./databaseHelpers');
 const { decToHex2c } = require('./hexHelpers');
-const { sendRDM, rdmDiscoverAddress, getFirmwareAndWattage } = require('./rdmDmxHelpers');
+const { sendRDM, rdmDiscoverAddress, getFirmwareAndWattage, getSensorTemp } = require('./rdmDmxHelpers');
 const { checkInsturments, sendCommand } = require('./SCPIHelpers');
 
 const dmmAddresses = [
@@ -27,6 +27,7 @@ async function runTestById(testTemplate) {
   const output = [];
   // get new test information
   let OutputTestId = 0;
+  let MeasuredTemp = 0;
   // create test in db
 
   const dacBccuData = await getMeasurementTemplate(testTemplate.id).catch((err) => { console.log(err); });
@@ -43,10 +44,12 @@ async function runTestById(testTemplate) {
       DeviceFirmware: res.firmware,
       BoardId: dutAddress,
     };
-
-    await insertTest(testData).then((res) => {
+    await insertTest(testData).then((res2) => {
       // set output Id with return from insertTest
-      OutputTestId = res[0].Id;
+      OutputTestId = res2[0].Id;
+    });
+    await getSensorTemp('00', dutAddress).then((temp) => {
+      MeasuredTemp = temp;
     });
   });
   // for/of loop finishes one iteration before moving on.
@@ -82,6 +85,7 @@ async function runTestById(testTemplate) {
       }
       output[index].DidPass = 0;
       output[index].TestId = OutputTestId;
+      output[index].CPUTemp = MeasuredTemp;
       insertMeasurement(output[index]);
       // create measurement in db with output object;
 
