@@ -24,36 +24,10 @@ const unlockCode = process.env.UNLOCK_CODE;
  * 
  */
 async function runTestById(testTemplate, dutAddress, firmware, wattage) {
+  // variables
   const output = [];
-  // get new test information
-  let OutputTestId = 0;
-  let MeasuredTemp = 0;
-  // create test in db
-
   const dacBccuData = await getMeasurementTemplate(testTemplate.id).catch((err) => { console.log(err); });
-  // console.log(dacBccuData);
   const measurementTemplates = dacBccuData.recordset;
-
-  // sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
-  // const dutAddress = await rdmDiscoverAddress().catch((err) => { console.log(err); }); // '7151:31323334'
-
-  // await getFirmwareAndWattage(dutAddress).then(async (res) => {
-  //   const testData = {
-  //     TestTemplateId: testTemplate.id,
-  //     TestTemplateName: testTemplate.testName,
-  //     DeviceWattage: res.wattage,
-  //     DeviceFirmware: res.firmware,
-  //     BoardId: dutAddress,
-  //   };
-  //   await insertTest(testData).then((res2) => {
-  //     // set output Id with return from insertTest
-  //     OutputTestId = res2[0].Id;
-  //   });
-  //   await getSensorTemp('00', dutAddress).then((temp) => {
-  //     MeasuredTemp = temp;
-  //   });
-  // });
-
   const testData = {
     TestTemplateId: testTemplate.id,
     TestTemplateName: testTemplate.testName,
@@ -61,13 +35,12 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage) {
     DeviceFirmware: firmware,
     BoardId: dutAddress,
   };
+  let OutputTestId = 0;
 
+  // create test in db
   await insertTest(testData).then((res) => {
     // set output Id with return from insertTest
     OutputTestId = res[0].Id;
-  });
-  await getSensorTemp('00', dutAddress).then((temp) => {
-    MeasuredTemp = temp;
   });
 
   // for/of loop finishes one iteration before moving on.
@@ -86,8 +59,6 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage) {
         dacBccuHexObject.push('0000');
       }
     }
-    // console.log(dacBccuHexObject);
-
     // format rdm parameters
     const rdmParams = {
       command_class: '30',
@@ -95,28 +66,29 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage) {
       pid: '8625',
       data: dacBccuHexObject.join(''),
     };
-    await sendRDM(rdmParams).catch((err) => { console.log(err); });
+    // send command to change light settings
+    await sendRDM(rdmParams).then(() => {
+      // record temp of cpu on dut
+      getSensorTemp('00', dutAddress).then((temp) => {
+        output[index].CPUTemp = temp;
+      });
+    }).catch((err) => { console.log(err); });
+
+    // get readings from multimeters
     await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then((readings) => {
       for (let r = 0; r < readings.length; r += 1) {
         output[index][`Current${r}`] = parseFloat(readings[r].deviceReading);
       }
       output[index].DidPass = 0;
       output[index].TestId = OutputTestId;
-      output[index].CPUTemp = MeasuredTemp;
+
+      // insert all data to db
       insertMeasurement(output[index]);
-      // create measurement in db with output object;
-
       // console.log(output)
-       console.log(`name: ${template.MeasurementName}`);
-       console.log(`readings: ${util.inspect(readings)}`);
+      console.log(`name: ${template.MeasurementName}`);
+      console.log(`readings: ${util.inspect(readings)}`);
     });
-
-    // console.log(index)
-    // console.log(`name: ${template.MeasurementName}`);
-    // console.log(`readings: ${util.inspect(readings)}`);
-    // save to db here.
   }
-  
   return output;
 }
 
