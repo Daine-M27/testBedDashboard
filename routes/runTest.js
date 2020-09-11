@@ -46,20 +46,30 @@ router.get('/', (req, res) => {
 router.post('/startTest', (req, res) => {
   // console.log(req.body.TestTemplateId);
   const testInfo = JSON.parse(req.body.TestTemplate);
-
+  // power on device
   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
+  // get address of connected device if one exists, acts as a check to verify device is connected
   rdmDiscoverAddress().then((dutAddress) => {
     if (dutAddress.length > 3) {
       // console.log(`run test rdm discover${dutAddress}`);
+      // check wattage of device
       getFirmwareAndWattage(dutAddress).then((data) => {
         // check for wattage before running test
         if (data.wattage.includes(testInfo.wattage) === true) {
-          runTestById(testInfo).then((testOutput) => {
+          runTestById(testInfo, dutAddress, data.firmware, data.wattage).then((testOutput) => {
+            // passing test
+            sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
             res.redirect(`./testResults/${testOutput[0].TestId}`);
+          }).catch((error) => { // error from runTestById
+            sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
+            res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
           });// take test template id and redirect to test page
         } else {
           res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device Wattage does not match the selected test!' });
         }
+      }).catch((error) => {
+        sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
+        res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
       });
     } else {
       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });

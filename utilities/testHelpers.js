@@ -21,9 +21,9 @@ const unlockCode = process.env.UNLOCK_CODE;
  * This function uses a test template Id to get all measurement
  * data and run each series of commands on DUT.  It then saves all
  * measurements into the database
- * @param {string} id
+ * 
  */
-async function runTestById(testTemplate) {
+async function runTestById(testTemplate, dutAddress, firmware, wattage) {
   const output = [];
   // get new test information
   let OutputTestId = 0;
@@ -33,28 +33,45 @@ async function runTestById(testTemplate) {
   const dacBccuData = await getMeasurementTemplate(testTemplate.id).catch((err) => { console.log(err); });
   // console.log(dacBccuData);
   const measurementTemplates = dacBccuData.recordset;
-  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
-  const dutAddress = await rdmDiscoverAddress().catch((err) => { console.log(err); }); // '7151:31323334'
 
-  await getFirmwareAndWattage(dutAddress).then(async (res) => {
-    const testData = {
-      TestTemplateId: testTemplate.id,
-      TestTemplateName: testTemplate.testName,
-      DeviceWattage: res.wattage,
-      DeviceFirmware: res.firmware,
-      BoardId: dutAddress,
-    };
-    await insertTest(testData).then((res2) => {
-      // set output Id with return from insertTest
-      OutputTestId = res2[0].Id;
-    });
-    await getSensorTemp('00', dutAddress).then((temp) => {
-      MeasuredTemp = temp;
-    });
+  // sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
+  // const dutAddress = await rdmDiscoverAddress().catch((err) => { console.log(err); }); // '7151:31323334'
+
+  // await getFirmwareAndWattage(dutAddress).then(async (res) => {
+  //   const testData = {
+  //     TestTemplateId: testTemplate.id,
+  //     TestTemplateName: testTemplate.testName,
+  //     DeviceWattage: res.wattage,
+  //     DeviceFirmware: res.firmware,
+  //     BoardId: dutAddress,
+  //   };
+  //   await insertTest(testData).then((res2) => {
+  //     // set output Id with return from insertTest
+  //     OutputTestId = res2[0].Id;
+  //   });
+  //   await getSensorTemp('00', dutAddress).then((temp) => {
+  //     MeasuredTemp = temp;
+  //   });
+  // });
+
+  const testData = {
+    TestTemplateId: testTemplate.id,
+    TestTemplateName: testTemplate.testName,
+    DeviceWattage: wattage,
+    DeviceFirmware: firmware,
+    BoardId: dutAddress,
+  };
+
+  await insertTest(testData).then((res) => {
+    // set output Id with return from insertTest
+    OutputTestId = res[0].Id;
   });
+  await getSensorTemp('00', dutAddress).then((temp) => {
+    MeasuredTemp = temp;
+  });
+
   // for/of loop finishes one iteration before moving on.
   for (const [index, template] of measurementTemplates.entries()) {
-    // add code to setup return object for db storage !!!!!!
     output.push(template);
 
     const dacBccuHexObject = [unlockCode];
@@ -99,7 +116,7 @@ async function runTestById(testTemplate) {
     // console.log(`readings: ${util.inspect(readings)}`);
     // save to db here.
   }
-  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
+  
   return output;
 }
 
