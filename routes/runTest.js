@@ -52,9 +52,9 @@ router.post('/startTest', (req, res) => {
   rdmDiscoverAddress().then((dutAddress) => {
     if (dutAddress.length > 3) {
       // console.log(`run test rdm discover${dutAddress}`);
-      // check wattage of device
+      // get wattage of device
       getFirmwareAndWattage(dutAddress).then((data) => {
-        // check for wattage before running test
+        // check wattage before running test
         if (data.wattage.includes(testInfo.wattage) === true) {
           runTestById(testInfo, dutAddress, data.firmware, data.wattage).then((testOutput) => {
             // passing test

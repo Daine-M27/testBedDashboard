@@ -6,8 +6,8 @@ const dotenv = require('dotenv').config({ path: require('find-config')('.env') }
 const util = require('util');
 const { getMeasurementTemplate, insertMeasurement, insertTest } = require('./databaseHelpers');
 const { decToHex2c } = require('./hexHelpers');
-const { sendRDM, rdmDiscoverAddress, getFirmwareAndWattage, getSensorTemp } = require('./rdmDmxHelpers');
-const { checkInsturments, sendCommand } = require('./SCPIHelpers');
+const { sendRDM, getSensorTemp } = require('./rdmDmxHelpers');
+const { checkInsturments } = require('./SCPIHelpers');
 
 const dmmAddresses = [
   process.env.DMM_CHAN_0,
@@ -68,9 +68,14 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage) {
     };
     // send command to change light settings
     await sendRDM(rdmParams).then(() => {
-      // record temp of cpu on dut
+      // record CPU temp
       getSensorTemp('00', dutAddress).then((temp) => {
         output[index].CPUTemp = temp;
+      });
+
+      // record LED temp
+      getSensorTemp('01', dutAddress).then((temp) => {
+        output[index].LEDTemp = temp;
       });
     }).catch((err) => { console.log(err); });
 

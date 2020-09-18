@@ -17,6 +17,7 @@ const config = {
   options: { enableArithAbort: true },
 };
 
+// Object Examples ///////////////////////////////////
 // const testTemplateObject = {
 //   TestName: 'template1',
 //   IsActive: 0,
@@ -206,6 +207,7 @@ async function insertMeasurement(data) {
       .input('Current3', sql.Decimal(10, 5), data.Current3)
       .input('DidPass', sql.Bit, data.DidPass)
       .input('CPUTemp', sql.Int, data.CPUTemp)
+      .input('CPUTemp', sql.Int, data.LEDTemp)
       .execute('InsertMeasurement');
     pool.close();
     return result;
@@ -247,8 +249,8 @@ async function getBoardIds() {
 
 /**
  * This function returns all the test conducted between the two dates supplied
- * @param {string} starDate
- * @param {string} endDate
+ * @param {string} starDate  // sql DateTime format
+ * @param {string} endDate  // sql DateTime format
  */
 async function getTestsByDateRange(starDate, endDate) {
   try {
