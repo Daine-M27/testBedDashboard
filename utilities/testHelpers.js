@@ -69,13 +69,13 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage) {
     // send command to change light settings
     await sendRDM(rdmParams).then(() => {
       // record CPU temp
-      getSensorTemp('00', dutAddress).then((temp) => {
-        output[index].CPUTemp = temp;
-      });
-
-      // record LED temp
-      getSensorTemp('01', dutAddress).then((temp) => {
-        output[index].LEDTemp = temp;
+      getSensorTemp('00', dutAddress).then((cpuTemp) => {
+        output[index].CPUTemp = cpuTemp;
+      }).then(() => {
+        // record LED temp
+        getSensorTemp('01', dutAddress).then((ledTemp) => {
+          output[index].LEDTemp = ledTemp;
+        });
       });
     }).catch((err) => { console.log(err); });
 
