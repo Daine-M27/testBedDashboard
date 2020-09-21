@@ -56,14 +56,15 @@ function sendRDM(params) {
         'content-type': 'application/x-www-form-urlencoded',
       },
     }).then((res) => {
+      // add try again logic
+        // if (err.response.status === 500) {
+        //   console.log(err.response.status + 'bad sendRDM');
+        //   resolve(sendRDM(params));
+        // }
       // console.log('sendRDM success')
       resolve(res);
     }).catch((err) => {
       console.log(`send rdm reject${err}`);
-      // if (err.response.status === 500) {
-      //   console.log(err.response.status + 'bad sendRDM');
-      //   resolve(sendRDM(params));
-      // }
       reject(err);
     });
   });

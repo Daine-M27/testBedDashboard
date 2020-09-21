@@ -207,7 +207,7 @@ async function insertMeasurement(data) {
       .input('Current3', sql.Decimal(10, 5), data.Current3)
       .input('DidPass', sql.Bit, data.DidPass)
       .input('CPUTemp', sql.Int, data.CPUTemp)
-      .input('CPUTemp', sql.Int, data.LEDTemp)
+      .input('LEDTemp', sql.Int, data.LEDTemp)
       .execute('InsertMeasurement');
     pool.close();
     return result;
