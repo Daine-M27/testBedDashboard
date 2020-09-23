@@ -16,19 +16,30 @@ const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 const xlsx = require('xlsx');
 const dmx = require('./rdmDmxHelpers');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
-const data = {
-  1: '255',
-  2: '255',
-  3: '0',
-  4: '0',
-  5: '0',
-  6: '0',
-};
+const dmmAddresses = [
+  process.env.DMM_CHAN_0,
+  process.env.DMM_CHAN_1,
+  process.env.DMM_CHAN_2,
+  process.env.DMM_CHAN_3,
+];
 
-rdmDiscoverAddress().then(address => {
-  // console.log(address);
-  getSensorTemp('01', address).then((temp) => console.log(temp));
-});
+checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then(res => console.log(res));
+
+
+//----------------------------------------------------------------------------------------
+// const data = {
+//   1: '255',
+//   2: '255',
+//   3: '0',
+//   4: '0',
+//   5: '0',
+//   6: '0',
+// };
+
+// rdmDiscoverAddress().then(address => {
+//   // console.log(address);
+//   getSensorTemp('01', address).then((temp) => console.log(temp));
+// });
 
 // dmx.sendDMX(data);
 
