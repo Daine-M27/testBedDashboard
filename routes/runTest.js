@@ -42,6 +42,8 @@ router.get('/', (req, res) => {
     });
 });
 
+
+// refactor to use await for each step and remove nested catch. bring runTestById steps into this route to use res.write for server-sent events hook.
 /*  */
 router.post('/startTest', (req, res) => {
   // console.log(req.body.TestTemplateId);
@@ -49,6 +51,9 @@ router.post('/startTest', (req, res) => {
   // power on device
   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
   // get address of connected device if one exists, acts as a check to verify device is connected
+
+  
+
   rdmDiscoverAddress().then((dutAddress) => {
     if (dutAddress.length > 3) {
       // console.log(`run test rdm discover${dutAddress}`);
