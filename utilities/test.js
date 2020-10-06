@@ -24,7 +24,7 @@ const rdmParams = {
   data: '00',
 };
 
-sendRDM(rdmParams);
+sendRDM(rdmParams).then((response) => console.log(response)).catch(err => console.log(err));
 
 // ----------------------------------------------------------------------------------------
 
