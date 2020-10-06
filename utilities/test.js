@@ -16,14 +16,26 @@ const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 const xlsx = require('xlsx');
 const dmx = require('./rdmDmxHelpers');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
-const dmmAddresses = [
-  process.env.DMM_CHAN_0,
-  process.env.DMM_CHAN_1,
-  process.env.DMM_CHAN_2,
-  process.env.DMM_CHAN_3,
-];
 
-checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then(res => console.log(res));
+const rdmParams = {
+  command_class: '30',
+  destination: '7151:000099e4',
+  pid: '1000',
+  data: '00',
+};
+
+sendRDM(rdmParams);
+
+// ----------------------------------------------------------------------------------------
+
+// const dmmAddresses = [
+//   process.env.DMM_CHAN_0,
+//   process.env.DMM_CHAN_1,
+//   process.env.DMM_CHAN_2,
+//   process.env.DMM_CHAN_3,
+// ];
+
+// checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then(res => console.log(res));
 
 
 //----------------------------------------------------------------------------------------

@@ -1,9 +1,11 @@
 /* eslint-disable no-console */
 const qs = require('qs');
 const axios = require('axios');
+const retry = require('axios-retry');
 const util = require('util');
 const { getTestTemplate, getMeasurementTemplate } = require('./databaseHelpers');
 const { hexToAscii, rdmHexResponseParse } = require('./hexHelpers');
+const { default: axiosRetry } = require('axios-retry');
 
 // const green = {
 //   1: '128',
@@ -46,6 +48,7 @@ function sendDMX(params) {
  * @param {rdmObject} params
  */
 function sendRDM(params) {
+  retry(axios, { retries: 3 });
   // console.log(`function : ${util.inspect(params)}`);
   return new Promise((resolve, reject) => {
     axios({
@@ -56,15 +59,9 @@ function sendRDM(params) {
         'content-type': 'application/x-www-form-urlencoded',
       },
     }).then((res) => {
-      // add try again logic
-        // if (err.response.status === 500) {
-        //   console.log(err.response.status + 'bad sendRDM');
-        //   resolve(sendRDM(params));
-        // }
-      // console.log('sendRDM success')
       resolve(res);
     }).catch((err) => {
-      console.log(`send rdm reject${err}`);
+      // console.log(`send rdm reject${err}`);
       reject(err);
     });
   });
