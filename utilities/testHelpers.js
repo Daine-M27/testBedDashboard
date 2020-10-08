@@ -21,7 +21,7 @@ const unlockCode = process.env.UNLOCK_CODE;
  * This function uses a test template Id to get all measurement
  * data and run each series of commands on DUT.  It then saves all
  * measurements into the database
- * 
+ *
  */
 async function runTestById(testTemplate, dutAddress, firmware, wattage) {
   // variables

@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 const qs = require('qs');
 const axios = require('axios');
@@ -61,7 +62,6 @@ function sendRDM(params) {
     }).then((res) => {
       resolve(res);
     }).catch((err) => {
-      // console.log(`send rdm reject${err}`);
       reject(err);
     });
   });
@@ -74,6 +74,7 @@ function sendRDM(params) {
 function rdmDiscoverAddress() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
+      retry(axios, { retries: 3 });
       const discoverData = {
         destination: 'FFFF:FFFFFFFF',
         high: 'FFFF:FFFFFFFF',
@@ -88,7 +89,7 @@ function rdmDiscoverAddress() {
           'content-type': 'application/x-www-form-urlencoded',
         },
       }).then((res) => {
-        console.log(`${res.data.fixture_address} discover address`);
+        // console.log(`${res.data.fixture_address} discover address`);
         const output = (res.data.fixture_address).split(' ').join('');
         // resolve with address formatted for rdm commands 'xxxx:xxxxxxxx'
         resolve(`${output.substr(0, 4)}:${output.substr(4)}`);
@@ -96,8 +97,28 @@ function rdmDiscoverAddress() {
         console.log(`rdmDiscover: ${err}`);
         reject(err);
       });
-    }, 2500);
+    }, 5000);
   });
+}
+
+/**
+ * This function will retry rdmDiscoverAddress() 3 times then return an empty response
+ * if no address is found.
+ */
+async function getAddress() {
+  console.log('getaddress funciton running');
+  let counter = 0;
+  let address;
+  while (counter !== 3) {
+    address = await rdmDiscoverAddress();
+    if (address.length > 3) {
+      return address;
+    }
+    console.log('Trying address again');
+    counter += 1;
+    console.log(`counter: ${counter}`);
+  }
+  return address;
 }
 
 /**
@@ -161,4 +182,5 @@ module.exports = {
   rdmDiscoverAddress,
   getFirmwareAndWattage,
   getSensorTemp,
+  getAddress,
 };

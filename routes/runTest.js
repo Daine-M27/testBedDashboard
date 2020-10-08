@@ -4,7 +4,7 @@ const scpi = require('../utilities/SCPIHelpers');
 const dbhelper = require('../utilities/databaseHelpers');
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { runTestById } = require('../utilities/testHelpers');
-const { rdmDiscoverAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
+const {getAddress, rdmDiscoverAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
 const { getTestById, getMeasurementsByTestId, getBoardIds } = require('../utilities/databaseHelpers');
 
 const router = express.Router();
@@ -42,8 +42,8 @@ router.get('/', (req, res) => {
     });
 });
 
-
-// refactor to use await for each step and remove nested catch. bring runTestById steps into this route to use res.write for server-sent events hook.
+// refactor to use await for each step and remove nested catch.
+// Bring runTestById steps into this route to use res.write for server-sent events hook.
 /*  */
 router.post('/startTest', (req, res) => {
   // console.log(req.body.TestTemplateId);
@@ -53,8 +53,8 @@ router.post('/startTest', (req, res) => {
   // get address of connected device if one exists, acts as a check to verify device is connected
 
   
-
-  rdmDiscoverAddress().then((dutAddress) => {
+  
+  getAddress().then((dutAddress) => {
     if (dutAddress.length > 3) {
       // console.log(`run test rdm discover${dutAddress}`);
       // get wattage of device

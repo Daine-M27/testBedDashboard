@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable max-len */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
@@ -15,16 +16,53 @@ const {
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 const xlsx = require('xlsx');
 const dmx = require('./rdmDmxHelpers');
+const qs = require('qs');
+const axios = require('axios');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
-const rdmParams = {
-  command_class: '30',
-  destination: '7151:000099e4',
-  pid: '1000',
-  data: '00',
-};
+// function getAddress() {
+//   return new Promise((resolve, reject) => {
+//     let counter = 0;
+//     while (counter < 3) {
+//       console.log('counter: '+counter);
+//       counter += 1;
+//       rdmDiscoverAddress()
+//         .then((response) => {
+//           console.log('response: '+ response)
+//           if (response.length > 3) {
+//             resolve(response);
+//           }
+//         });
+//     }
+//     if (counter > 3) {
+//       reject();
+//     }
+//   });
+// }
 
-sendRDM(rdmParams).then((response) => console.log(response)).catch(err => console.log(err));
+async function getAddress() {
+  let counter = 0;
+  while (counter !== 3) {
+    const address = await rdmDiscoverAddress();
+    if (address.length > 3) {
+      return address;
+    }
+    counter += 1;
+  }
+  return 'No address found, check connection to device.';
+}
+
+getAddress().then(response => console.log('win: ' + response)).catch(error => console.log(error))
+// ------------------------------------------------------------------------------------------
+
+// const rdmParams = {
+//   command_class: '30',
+//   destination: '7151:000099e4',
+//   pid: '1000',
+//   data: '00',
+// };
+
+// rdmDiscoverAddress().then((response) => console.log(response)).catch(err => console.log(err));
 
 // ----------------------------------------------------------------------------------------
 
