@@ -1,34 +1,54 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-console */
 $('#confirmConnected').click(() => {
   console.log('confirmed button')
   $('#submit').prop('disabled', false);
 });
 
+$('#newTestYes').click((event) => {
+  event.preventDefault();
+  $('#submit').prop('disabled', true);
+  $('#Status').addClass('hidden');
+  $('#messageBox').empty();
+  $('#newTestYes').prop('disabled', true).addClass('hidden');
+  $('#newTestNo').prop('disabled', true).addClass('hidden');
+});
+
+$('#newTestNo').click((event) => {
+  event.preventDefault();
+  document.location = '/';
+});
+
 $('#submit').click((event) => {
   event.preventDefault();
-  $('#Status').removeClass('hidden')
-
+  $('#Status').removeClass('hidden');
   const values = $('#templateDropDown').val();
   const testTemplate = JSON.parse(values);
-  console.log(testTemplate);
+  // console.log(testTemplate);
+
   // setup SSE
-  const source = new EventSource("runTest/startTest/" + testTemplate.id.toString() + "/" + testTemplate.testName.toString() + "/" + testTemplate.wattage.toString() + "/");
+  const source = new EventSource(`runTest/startTest/${testTemplate.id.toString()}/${testTemplate.testName.toString()}/${testTemplate.wattage.toString()}/`);
   let url;
   source.addEventListener('message', (e) => {
     $('#messageBox').append(`${e.data}<br>`);
+    $(document).scrollTop($(document).height());
 
+    // testId means test is complete
     if (e.data.includes('TestId') === true) {
       const data = JSON.parse(e.data);
-      console.log('testId' + data.TestId);
-      url = 'runTest/testResults/' + data.TestId;
+      // console.log(`testId${data.TestId}`);
+      url = `runTest/testResults/${data.TestId}`;
       console.log(url);
       source.close();
-      // document.location = url;
+
+      // Enable buttons to continue with user flow
+      $('#newTestYes').prop('disabled', false).removeClass('hidden');
+      $('#newTestNo').prop('disabled', false).removeClass('hidden');
     }
   });
 
   source.addEventListener('error', (e) => {
     $('#messageBox').append(`${e.data}<br>`);
     source.close();
-  })
+  });
 });

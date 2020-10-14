@@ -74,7 +74,7 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
     client.write(`data: Testing ${template.MeasurementName}...\n\n`);
     await sendRDM(rdmParams).then(() => {
       // record CPU temp
-      client.write('data: Getting data from board and instruments...\n\n');
+      client.write('data: Gathering readings...\n\n');
       getSensorTemp('00', dutAddress).then((cpuTemp) => {
         client.write(`data: CPU Temp: ${cpuTemp}\n\n`);
         output[index].CPUTemp = cpuTemp;

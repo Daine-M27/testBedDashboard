@@ -49,8 +49,11 @@ block content
     br
     br
     h2#Status.hidden Test Progress
-    p
-      #messageBox
+    #messageBox
+    br
+    button.hidden(type='button' id='newTestYes' disabled) New Test
+    button.hidden(type='button' id='newTestNo' disabled) Finished
+    
 
     append scripts
         script(src="\\javascript\\runTest.js")

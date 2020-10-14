@@ -23,10 +23,6 @@ router.get('/', (req, res) => {
 
   scpi.checkInsturments(deviceAddresses, '*IDN?', 'false')
     .then((instrumentCheck) => {
-      // if(instrumentCheck){
-
-      // }
-      // console.log(data);
       dbhelper.getTestTemplate()
         .then((testTemplates) => {
           initializePowerSupply()
@@ -69,7 +65,7 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
     // power on device
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
     // get address of connected device if one exists, acts as a check to verify device is connected
-    client.write('data: Getting Device Address...\n\n');
+    client.write('data: Getting device address...\n\n');
     const dutAddress = await getAddress();
     // an empty address means a device was not found
     if (dutAddress.length > 3) {
@@ -85,21 +81,21 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
         // console.log(1);
         client.write('data: \n\n');
         client.write('data: Testing Complete.\n\n');
-        client.write('data: Power Supply Off...\n\n');
+        client.write('data: Power supply off...\n\n');
         sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
         const testIdData = JSON.stringify({ TestId: testOutput[0].TestId });
         client.write(`data: ${testIdData}\n\n`);
         client.end();
       } else {
         // console.log(2);
-        client.write('data: Power Supply Off...\n\n');
+        client.write('data: Power supply off...\n\n');
         sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
         client.write('event: error\ndata: Device wattage does not match the selected test!\n\n');
         client.end();
       }
     } else {
       // console.log(3);
-      client.write('data: Power Supply Off...\n\n');
+      client.write('data: Power supply off...\n\n');
       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
       client.write('event: error\ndata: No device address found with RDM!\n\n');
       client.end();

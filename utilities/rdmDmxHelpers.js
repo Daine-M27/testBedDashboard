@@ -105,7 +105,7 @@ function rdmDiscoverAddress() {
  * This function will retry rdmDiscoverAddress() 3 times then return an empty response
  * if no address is found.
  */
-async function getAddress() {
+async function getAddress(client) {
   console.log('getaddress funciton running');
   let counter = 0;
   let address;
@@ -145,7 +145,7 @@ function getFirmwareAndWattage(address) {
         wattage: individualData[1],
       });
     }).catch((err) => {
-      console.log('getfirmwarewattage reject' + infoRDM.address);
+      console.log(`getfirmwarewattage reject${infoRDM.address}`);
       reject(err);
     });
   });
@@ -163,13 +163,13 @@ function getSensorTemp(sensor, address) {
     // get only current temp from board or led
     sendRDM(tempRDM).then(async (res) => {
       const responseHex = rdmHexResponseParse(res.data.response);
-      //console.log(responseHex + " responesHex");
+      // console.log(responseHex + " responesHex");
       const tempHex = responseHex.split(' ').join('').substring(2, 6);
-      //console.log(tempHex + " tempHex");
+      // console.log(tempHex + " tempHex");
       const decTemp = parseInt(tempHex, 16);
       resolve(decTemp);
     }).catch((err) => {
-      console.log('getTempError' + err);
+      console.log(`getTempError${err}`);
       reject(err);
     });
   });
