@@ -1,3 +1,4 @@
+/* eslint-disable quote-props */
 /* eslint-disable max-len */
 const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const express = require('express');
@@ -43,13 +44,28 @@ router.get('/', (req, res) => {
     });
 });
 
-// refactor to use await for each step and remove nested catch.
-// Bring runTestById steps into this route to use res.write for server-sent events hook.
 /*  */
-router.post('/startTest', async (req, res) => {
+router.get('/startTest/:id/:testName/:wattage', async (req, res, next) => {
+  // setup Server Sent Event Communication
+  const client = res;
+  req.socket.setTimeout((1000 * 120));
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+  });
+  res.write('\n');
+
+  // run test routine
   try {
     // get form information on test to run
-    const testInfo = JSON.parse(req.body.TestTemplate);
+    const testInfo = {
+      'id': req.params.id,
+      'testName': req.params.testName,
+      'wattage': req.params.wattage,
+    };
+
+    client.write("data: " + testInfo.testName + "\n\n");
     // power on device
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
     // get address of connected device if one exists, acts as a check to verify device is connected
@@ -60,51 +76,35 @@ router.post('/startTest', async (req, res) => {
       // check firware wattage to prevent wrong test from running
       if (devSpec.wattage.includes(testInfo.wattage) === true) {
         // run test, power off device and return test result page
-        const testOutput = await runTestById(testInfo, dutAddress, devSpec.firmware, devSpec.wattage);
+        const testOutput = await runTestById(testInfo, dutAddress, devSpec.firmware, devSpec.wattage, client);
+        console.log(1);
         sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-        res.redirect(`./testResults/${testOutput[0].TestId}`);
+        const testIdData = JSON.stringify({ TestId: testOutput[0].TestId });
+        client.write("data: " + testIdData  + "\n\n")
+        client.write("data: " + "Test-Complete" + "\n\n");
+        client.end();
+        // res.redirect(`./testResults/${testOutput[0].TestId}`);
       } else {
+        console.log(2);
         sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-        res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device wattage does not match the selected test!' });
+        client.write("data: " + "Test-Complete" + "\n\n");
+        client.end();
+        // res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device wattage does not match the selected test!' });
       }
     } else {
+      console.log(3);
       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-      res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'No device address found with RDM!' });
+      client.write("data: " + "Test-Complete" + "\n\n");
+      client.end();
+      // res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'No device address found with RDM!' });
     }
   } catch (error) {
+    console.log(error);
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-    res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
+    client.write("data: " + "Test-Complete" + "\n\n");
+    client.end();
+    // res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
   }
-  // getAddress().then((dutAddress) => {
-  //   if (dutAddress.length > 3) {
-  //     // console.log(`run test rdm discover${dutAddress}`);
-  //     // get wattage of device
-  //     getFirmwareAndWattage(dutAddress).then((data) => {
-  //       // check wattage before running test
-  //       if (data.wattage.includes(testInfo.wattage) === true) {
-  //         runTestById(testInfo, dutAddress, data.firmware, data.wattage).then((testOutput) => {
-  //           // passing test
-  //           sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
-  //           res.redirect(`./testResults/${testOutput[0].TestId}`);
-  //         }).catch((error) => { // error from runTestById
-  //           sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
-  //           res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
-  //         });// take test template id and redirect to test page
-  //       } else {
-  //         res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Device Wattage does not match the selected test!' });
-  //       }
-  //     }).catch((error) => {
-  //       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
-  //       res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
-  //     });
-  //   } else {
-  //     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
-  //     res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'No Device Found with RDM!' });
-  //   }
-  // }).catch((error) => {
-  //   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
-  //   res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
-  // });
 });
 
 /** */

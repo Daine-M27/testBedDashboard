@@ -52,7 +52,11 @@ async function getAddress() {
   return 'No address found, check connection to device.';
 }
 
-getAddress().then(response => console.log('win: ' + response)).catch(error => console.log(error))
+getAddress()
+  .then((response) => getFirmwareAndWattage(response).then((res) => {
+    console.log(res);
+  }))
+  .catch(error => console.log(error))
 // ------------------------------------------------------------------------------------------
 
 // const rdmParams = {

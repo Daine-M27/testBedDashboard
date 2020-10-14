@@ -7,6 +7,10 @@ a {
   color: #00B7FF;
 }
 
+.hidden {
+  display: none;
+}
+
 .pr-small {
   padding-right: 4px;
 }

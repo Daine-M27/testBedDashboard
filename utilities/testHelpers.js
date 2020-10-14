@@ -23,8 +23,9 @@ const unlockCode = process.env.UNLOCK_CODE;
  * measurements into the database
  *
  */
-async function runTestById(testTemplate, dutAddress, firmware, wattage) {
+async function runTestById(testTemplate, dutAddress, firmware, wattage, client) {
   // variables
+  client.write("data: " + "Test-Started" + "\n\n")
   const output = [];
   const dacBccuData = await getMeasurementTemplate(testTemplate.id).catch((err) => { console.log(err); });
   const measurementTemplates = dacBccuData.recordset;
