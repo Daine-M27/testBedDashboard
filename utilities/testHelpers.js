@@ -19,14 +19,15 @@ const unlockCode = process.env.UNLOCK_CODE;
 
 /**
  * This function uses a test template Id to get all measurement
- * data and run each series of commands on DUT.  It then saves all
- * measurements into the database
+ * data and run each series of commands on DUT.  It then retireves
+ * and saves all measurements into the database
  *
  */
 async function runTestById(testTemplate, dutAddress, firmware, wattage, client) {
   // variables
-  client.write("data: " + "Test-Started" + "\n\n")
+  client.write('data: Test Started...\n\n');
   const output = [];
+  client.write('data: Getting testing template from database...\n\n');
   const dacBccuData = await getMeasurementTemplate(testTemplate.id).catch((err) => { console.log(err); });
   const measurementTemplates = dacBccuData.recordset;
   const testData = {
@@ -38,7 +39,8 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
   };
   let OutputTestId = 0;
 
-  // create test in db
+  // create test in db in order to get ID for measurements
+  // client.write('data: Adding new test to database...\n\n');
   await insertTest(testData).then((res) => {
     // set output Id with return from insertTest
     OutputTestId = res[0].Id;
@@ -68,13 +70,18 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
       data: dacBccuHexObject.join(''),
     };
     // send command to change light settings
+    client.write('data: \n\n');
+    client.write(`data: Testing ${template.MeasurementName}...\n\n`);
     await sendRDM(rdmParams).then(() => {
       // record CPU temp
+      client.write('data: Getting data from board and instruments...\n\n');
       getSensorTemp('00', dutAddress).then((cpuTemp) => {
+        client.write(`data: CPU Temp: ${cpuTemp}\n\n`);
         output[index].CPUTemp = cpuTemp;
       }).then(() => {
         // record LED temp
         getSensorTemp('01', dutAddress).then((ledTemp) => {
+          client.write(`data: LED Temp: ${ledTemp}\n\n`);
           output[index].LEDTemp = ledTemp;
         });
       });
@@ -83,8 +90,11 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
     // get readings from multimeters
     await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then((readings) => {
       for (let r = 0; r < readings.length; r += 1) {
-        output[index][`Current${r}`] = parseFloat(readings[r].deviceReading);
+        const reading = parseFloat(readings[r].deviceReading);
+        output[index][`Current${r}`] = reading;
+        client.write(`data: Current${r}: ${reading}\n\n`);
       }
+      // check for pass fail --- currently set to fail by default until values are available to check
       output[index].DidPass = 0;
       output[index].TestId = OutputTestId;
 
@@ -99,95 +109,3 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
 }
 
 module.exports = { runTestById };
-// /**
-//  * This function uses a test template Id to get all measurement
-//  * data and run each series of commands on DUT.
-//  * @param {string} id
-//  */
-// async function runTestById(id) {
-//   const dacBccuData = await getMeasurementTemplate(id);
-//   // console.log(dacBccuData);
-//   const measurementTemplates = dacBccuData.recordset;
-//   // for/of loop finishes one iteration before moving on.
-//   for (const template of measurementTemplates) {
-//     const dacBccuHexObject = [unlockCode];
-//     const measurement = Object.keys(template);
-//     for (let i = 0; i < measurement.length; i += 1) {
-//       if (measurement[i].includes('Dac')) {
-//         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
-//       } else if (measurement[i].includes('Bccu')) {
-//         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
-//         // onOff time comes after bccu
-//         dacBccuHexObject.push('0000');
-//       }
-//     }
-//     // console.log(dacBccuHexObject);
-
-//     // format rdm parameters
-//     const rdmParams = {
-//       command_class: '30',
-//       destination: '7151:31323334',
-//       pid: '8625',
-//       data: dacBccuHexObject.join(''),
-//     };
-//     sendRDM(rdmParams);
-
-//     const readings = await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true'); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
-
-//     console.log(`readings: ${util.inspect(readings)}`);
-
-//     // save to db here.
-//   }
-// }
-
-// /**
-//  * This function uses a test template Id to get all measurement
-//  * data and run each series of commands on DUT.
-//  * @param {string} id
-//  */
-// async function runTestById(id) {
-//   const output = {};
-//   const dacBccuData = await getMeasurementTemplate(id).catch((err) => { console.log(err); });
-//   // console.log(dacBccuData);
-//   const measurementTemplates = dacBccuData.recordset;
-//   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON').catch((err) => { console.log(err); });
-
-//   const dutAddress = await rdmDiscoverAddress().catch((err) => { console.log(err); }); // '7151:31323334'
-
-//   // for/of loop finishes one iteration before moving on.
-//   for (const template of measurementTemplates) {
-//     // add code to setup return object for db storage !!!!!!
-
-//     const dacBccuHexObject = [unlockCode];
-//     const measurement = Object.keys(template);
-//     //
-//     for (let i = 0; i < measurement.length; i += 1) {
-//       if (measurement[i].includes('Dac')) {
-//         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
-//       } else if (measurement[i].includes('Bccu')) {
-//         dacBccuHexObject.push(decToHex2c(template[measurement[i]]));
-//         // onOff time comes after bccu
-//         dacBccuHexObject.push('0000');
-//       }
-//     }
-//     // console.log(dacBccuHexObject);
-
-//     // format rdm parameters
-//     const rdmParams = {
-//       command_class: '30',
-//       destination: dutAddress,
-//       pid: '8625',
-//       data: dacBccuHexObject.join(''),
-//     };
-//     await sendRDM(rdmParams).catch((err) => { console.log(err); });
-
-//     const readings = await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').catch((err) => { console.log(err); }); // await getReading(addresses[0], 'MEASure:CURRent?', 'true');
-
-//     console.log(`name: ${template.MeasurementName}`);
-//     console.log(`readings: ${util.inspect(readings)}`);
-
-//     // save to db here.
-//   }
-
-//   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF').catch((err) => { console.log(err); });
-// }
