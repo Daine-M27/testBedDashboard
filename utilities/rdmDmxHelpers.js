@@ -60,12 +60,33 @@ function sendRDM(params) {
         'content-type': 'application/x-www-form-urlencoded',
       },
     }).then((res) => {
+      // console.log(`sendRDM: ${util.inspect(res.data)}`);
+      if (res.data.rdm_response_type === 'nack' || res.data.rdm_response_type === '' || res.data.rdm_response_type === null) {
+        reject(res);
+      }
       resolve(res);
     }).catch((err) => {
       reject(err);
     });
   });
 }
+
+async function getRDMResponse(params) {
+  console.log('getRDMResponse funciton running');
+  let counter = 0;
+  let res;
+  while (counter !== 3) {
+    res = await sendRDM(params);
+    if (res.data.rdm_response_type === 'ack' || res.data.rdm_response_type === 'other') {
+      return res;
+    }
+    console.log('Trying RDM again');
+    counter += 1;
+    console.log(`counter: ${counter}`);
+  }
+  return res;
+}
+
 
 /**
  * This function get the address of a device if
@@ -105,7 +126,7 @@ function rdmDiscoverAddress() {
  * This function will retry rdmDiscoverAddress() 3 times then return an empty response
  * if no address is found.
  */
-async function getAddress(client) {
+async function getAddress() {
   console.log('getaddress funciton running');
   let counter = 0;
   let address;
@@ -137,7 +158,7 @@ function getFirmwareAndWattage(address) {
     };
 
     // get firmware and wattage
-    sendRDM(infoRDM).then(async (res) => {
+    sendRDM(infoRDM).then((res) => {
       const fullResponse = hexToAscii(rdmHexResponseParse(res.data.response));
       const individualData = fullResponse.split(' ');
       resolve({

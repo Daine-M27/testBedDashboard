@@ -1,5 +1,14 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
+let url;
+function resetPage() {
+  $('#submit').prop('disabled', true);
+  $('#Status').addClass('hidden');
+  $('#messageBox').empty();
+  $('#newTestYes').prop('disabled', true).addClass('hidden');
+  $('#newTestNo').prop('disabled', true).addClass('hidden');
+}
+
 $('#confirmConnected').click(() => {
   console.log('confirmed button')
   $('#submit').prop('disabled', false);
@@ -7,16 +16,17 @@ $('#confirmConnected').click(() => {
 
 $('#newTestYes').click((event) => {
   event.preventDefault();
-  $('#submit').prop('disabled', true);
-  $('#Status').addClass('hidden');
-  $('#messageBox').empty();
-  $('#newTestYes').prop('disabled', true).addClass('hidden');
-  $('#newTestNo').prop('disabled', true).addClass('hidden');
+  resetPage();
 });
 
 $('#newTestNo').click((event) => {
   event.preventDefault();
   document.location = '/';
+});
+
+$('#testResultsYes').click((event) => {
+  event.preventDefault();
+  document.location = url;
 });
 
 $('#submit').click((event) => {
@@ -28,9 +38,11 @@ $('#submit').click((event) => {
 
   // setup SSE
   const source = new EventSource(`runTest/startTest/${testTemplate.id.toString()}/${testTemplate.testName.toString()}/${testTemplate.wattage.toString()}/`);
-  let url;
+
   source.addEventListener('message', (e) => {
-    $('#messageBox').append(`${e.data}<br>`);
+    if (!e.data.includes('TestId')) {
+      $('#messageBox').append(`${e.data}<br>`);
+    }
     $(document).scrollTop($(document).height());
 
     // testId means test is complete
@@ -42,13 +54,15 @@ $('#submit').click((event) => {
       source.close();
 
       // Enable buttons to continue with user flow
-      $('#newTestYes').prop('disabled', false).removeClass('hidden');
-      $('#newTestNo').prop('disabled', false).removeClass('hidden');
+      $('#buttonBox > button:disabled').prop('disabled', false).removeClass();
+      // $('#newTestYes').prop('disabled', false).removeClass('hidden');
+      // $('#newTestNo').prop('disabled', false).removeClass('hidden');
     }
   });
 
   source.addEventListener('error', (e) => {
     $('#messageBox').append(`${e.data}<br>`);
     source.close();
+    resetPage();
   });
 });

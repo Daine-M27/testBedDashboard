@@ -46,13 +46,15 @@ block content
     p.hidden      
     input(id='submit' type='submit', value='Start Test', disabled)
     
-    br
-    br
-    h2#Status.hidden Test Progress
-    #messageBox
-    br
+  br
+  br
+  h2#Status.hidden Test Progress
+  #messageBox
+  br
+  #buttonBox
     button.hidden(type='button' id='newTestYes' disabled) New Test
     button.hidden(type='button' id='newTestNo' disabled) Finished
+    button.hidden(type='button' id='testResultsYes' disabled) Test Results
     
 
     append scripts
