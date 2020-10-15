@@ -2,11 +2,11 @@
 /* eslint-disable no-console */
 let url;
 function resetPage() {
+  console.log('reset page called');
   $('#submit').prop('disabled', true);
   $('#Status').addClass('hidden');
   $('#messageBox').empty();
-  $('#newTestYes').prop('disabled', true).addClass('hidden');
-  $('#newTestNo').prop('disabled', true).addClass('hidden');
+  $('#buttonBox > button').prop('disabled', true).addClass('hidden');
 }
 
 $('#confirmConnected').click(() => {
@@ -54,7 +54,7 @@ $('#submit').click((event) => {
       source.close();
 
       // Enable buttons to continue with user flow
-      $('#buttonBox > button:disabled').prop('disabled', false).removeClass();
+      $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');
       // $('#newTestYes').prop('disabled', false).removeClass('hidden');
       // $('#newTestNo').prop('disabled', false).removeClass('hidden');
     }

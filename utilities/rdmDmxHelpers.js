@@ -4,9 +4,7 @@ const qs = require('qs');
 const axios = require('axios');
 const retry = require('axios-retry');
 const util = require('util');
-const { getTestTemplate, getMeasurementTemplate } = require('./databaseHelpers');
 const { hexToAscii, rdmHexResponseParse } = require('./hexHelpers');
-const { default: axiosRetry } = require('axios-retry');
 
 // const green = {
 //   1: '128',
@@ -48,7 +46,7 @@ function sendDMX(params) {
  * This function send commands via rdm and returns the response.
  * @param {rdmObject} params
  */
-function sendRDM(params) {
+function getRDMResponse(params) {
   retry(axios, { retries: 3 });
   // console.log(`function : ${util.inspect(params)}`);
   return new Promise((resolve, reject) => {
@@ -61,9 +59,9 @@ function sendRDM(params) {
       },
     }).then((res) => {
       // console.log(`sendRDM: ${util.inspect(res.data)}`);
-      if (res.data.rdm_response_type === 'nack' || res.data.rdm_response_type === '' || res.data.rdm_response_type === null) {
-        reject(res);
-      }
+      // if (res.data.rdm_response_type === 'nack' || res.data.rdm_response_type === '' || res.data.rdm_response_type === null || res.data.rdm_response_type === 'none') {
+      //   reject(res);
+      // }
       resolve(res);
     }).catch((err) => {
       reject(err);
@@ -71,18 +69,23 @@ function sendRDM(params) {
   });
 }
 
-async function getRDMResponse(params) {
-  console.log('getRDMResponse funciton running');
+/**
+ * This function retries getRDMResponse 3 time if the response type is incorrect
+ * @param {object} params
+ */
+async function sendRDM(params) {
+  console.log('sendRDM funciton running');
   let counter = 0;
   let res;
   while (counter !== 3) {
-    res = await sendRDM(params);
+    res = await getRDMResponse(params);
     if (res.data.rdm_response_type === 'ack' || res.data.rdm_response_type === 'other') {
+      // console.log(`good response:${res.data.rdm_response_type}`);
       return res;
     }
     console.log('Trying RDM again');
     counter += 1;
-    console.log(`counter: ${counter}`);
+    console.log(`Send RDM counter: ${counter}`);
   }
   return res;
 }
@@ -127,7 +130,7 @@ function rdmDiscoverAddress() {
  * if no address is found.
  */
 async function getAddress() {
-  console.log('getaddress funciton running');
+  console.log('getAddress funciton running');
   let counter = 0;
   let address;
   while (counter !== 3) {
@@ -172,7 +175,7 @@ function getFirmwareAndWattage(address) {
   });
 }
 
-function getSensorTemp(sensor, address) {
+function getTempReading(sensor, address) {
   return new Promise((resolve, reject) => {
     const tempRDM = {
       command_class: '20',
@@ -183,17 +186,36 @@ function getSensorTemp(sensor, address) {
 
     // get only current temp from board or led
     sendRDM(tempRDM).then(async (res) => {
+      // console.log(`tempRes: ${util.inspect(res.data.rdm_response_type)}`);
+      // console.log(`response full: ${res.data.response}`);
       const responseHex = rdmHexResponseParse(res.data.response);
-      // console.log(responseHex + " responesHex");
+      // console.log(`ResHex: ${util.inspect(responseHex)}`);
       const tempHex = responseHex.split(' ').join('').substring(2, 6);
-      // console.log(tempHex + " tempHex");
+      // console.log(`tempHex: ${tempHex}`);
       const decTemp = parseInt(tempHex, 16);
+      // console.log(`decTemp: ${decTemp}`);
       resolve(decTemp);
     }).catch((err) => {
       console.log(`getTempError${err}`);
       reject(err);
     });
   });
+}
+
+async function getSensorTemp(sensor, address) {
+  console.log('getSensorTemp funciton running');
+  let counter = 0;
+  let temp;
+  while (counter !== 3) {
+    temp = await getTempReading(sensor, address);
+    if (temp > 0 && temp < 90) {
+      return temp;
+    }
+    console.log(`Trying temp again: ${temp}`);
+    counter += 1;
+    console.log(`counter: ${counter}`);
+  }
+  return temp;
 }
 
 module.exports = {
