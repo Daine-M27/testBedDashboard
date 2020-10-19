@@ -33,7 +33,13 @@ router.get('/', (req, res) => {
                 templates: testTemplates.recordset,
                 status: psReading,
               });
+            })
+            .catch((psErr) => {
+              res.render('.\\runTest\\testError', { title: 'Power supply error.', message: psErr });
             });
+        })
+        .catch((dbErr) => {
+          res.render('.\\runTest\\testError', { title: 'Database not responding, check connection and try again.', message: dbErr });
         });
     }).catch((err) => {
       res.render('.\\runTest\\testError', { title: 'SCPI Server Not Responding', message: err });
@@ -44,7 +50,7 @@ router.get('/', (req, res) => {
 router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
   // setup Server Sent Event Communication
   const client = res;
-  req.socket.setTimeout((1000 * 120));
+  req.socket.setTimeout((1000 * 180));
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -120,6 +126,9 @@ router.get('/testResults/:testId', (req, res) => {
         .then((meausrementResponse) => {
           res.render('.\\runTest\\testResults', { title: `Test Name: ${testResponse.recordset[0].TestTemplateName}`, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });
         });
+    })
+    .catch((dbErr) => {
+      res.render('.\\runTest\\testError', { title: 'Database not responding, check connection and try again.', message: dbErr });
     });
   // res.render('.\\runTest\\testResults', { title: 'Test Results: '+ req.params.testId });
 });
