@@ -112,6 +112,10 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
 router.get('/testResults/:testId', (req, res) => {
   getTestById(req.params.testId)
     .then((testResponse) => {
+      if (testResponse.recordset.length < 1) {
+        res.render('.\\runTest\\testError', { title: 'Test Results', message: 'No results found for that test ID.' });
+        return;
+      }
       getMeasurementsByTestId(req.params.testId)
         .then((meausrementResponse) => {
           res.render('.\\runTest\\testResults', { title: `Test Name: ${testResponse.recordset[0].TestTemplateName}`, testInfo: testResponse.recordset[0], measurementInfo: meausrementResponse.recordset });

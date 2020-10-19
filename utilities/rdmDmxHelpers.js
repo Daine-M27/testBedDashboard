@@ -175,6 +175,11 @@ function getFirmwareAndWattage(address) {
   });
 }
 
+/**
+ * This function gets a reading back from the rdm device
+ * @param {number} sensor 
+ * @param {string} address 
+ */
 function getTempReading(sensor, address) {
   return new Promise((resolve, reject) => {
     const tempRDM = {
@@ -202,6 +207,11 @@ function getTempReading(sensor, address) {
   });
 }
 
+/**
+ * This function retries the getTempReading function if the data is incorrect or missing
+ * @param {number} sensor 
+ * @param {string} address 
+ */
 async function getSensorTemp(sensor, address) {
   console.log('getSensorTemp funciton running');
   let counter = 0;
