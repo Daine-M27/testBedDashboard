@@ -96,14 +96,14 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
         // console.log(2);
         client.write('data: Power supply off...\n\n');
         sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-        client.write('event: error\ndata: Device wattage does not match the selected test!\n\n');
+        client.write('event: error\ndata: Device wattage does not match the selected test, select a new test to continue!\n\n');
         client.end();
       }
     } else {
       // console.log(3);
       client.write('data: Power supply off...\n\n');
       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-      client.write('event: error\ndata: No device address found with RDM!\n\n');
+      client.write('event: error\ndata: No device address found with RDM, check connection and try again!\n\n');
       client.end();
     }
   } catch (error) {

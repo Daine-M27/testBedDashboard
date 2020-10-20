@@ -10,8 +10,9 @@ function resetPage() {
 }
 
 $('#confirmConnected').click(() => {
-  console.log('confirmed button')
+  console.log('confirmed button');
   $('#submit').prop('disabled', false);
+  
 });
 
 $('#newTestYes').click((event) => {
@@ -31,6 +32,7 @@ $('#testResultsYes').click((event) => {
 
 $('#submit').click((event) => {
   event.preventDefault();
+  resetPage();
   $('#Status').removeClass('hidden');
   const values = $('#templateDropDown').val();
   const testTemplate = JSON.parse(values);
@@ -63,6 +65,7 @@ $('#submit').click((event) => {
   source.addEventListener('error', (e) => {
     $('#messageBox').append(`${e.data}<br>`);
     source.close();
-    resetPage();
+    // $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');
+    // resetPage();
   });
 });
