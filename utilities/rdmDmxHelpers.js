@@ -30,15 +30,20 @@ function RdmParamsObject(cc, des, pid, data) {
 }
 
 function sendDMX(params) {
-  axios({
-    method: 'post',
-    url: 'http://127.0.0.1:5000/v1/dmx',
-    data: qs.stringify(params),
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-    },
-  }).then((res) => res, (err) => {
-    console.log(err);
+  retry(axios, { retries: 3 });
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'post',
+      url: 'http://127.0.0.1:5000/v1/dmx',
+      data: qs.stringify(params),
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+    }).then((res) => {
+      resolve(res);
+    }).catch((err) => {
+      reject(err);
+    });
   });
 }
 
@@ -177,8 +182,8 @@ function getFirmwareAndWattage(address) {
 
 /**
  * This function gets a reading back from the rdm device
- * @param {number} sensor 
- * @param {string} address 
+ * @param {number} sensor
+ * @param {string} address
  */
 function getTempReading(sensor, address) {
   return new Promise((resolve, reject) => {
@@ -209,8 +214,8 @@ function getTempReading(sensor, address) {
 
 /**
  * This function retries the getTempReading function if the data is incorrect or missing
- * @param {number} sensor 
- * @param {string} address 
+ * @param {number} sensor
+ * @param {string} address
  */
 async function getSensorTemp(sensor, address) {
   console.log('getSensorTemp funciton running');

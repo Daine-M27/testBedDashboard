@@ -155,7 +155,7 @@ function checkInsturments(addressList, command, convert) {
   });
 }
 
-async function initializePowerSupply() {
+async function initializePowerSupply(volt, curr) {
   const output = {
     Voltage: '',
     Current: '',
@@ -163,8 +163,8 @@ async function initializePowerSupply() {
   };
   const powerSupplyAddress = process.env.PPS;
   await sendCommand(powerSupplyAddress, 'OUTPut:TRACK 1');
-  await sendCommand(powerSupplyAddress, 'CH1:VOLTage 24');
-  await sendCommand(powerSupplyAddress, 'CH1:CURRent 3.2');
+  await sendCommand(powerSupplyAddress, `CH1:VOLTage ${volt}`);
+  await sendCommand(powerSupplyAddress, `CH1:CURRent ${curr}`);
   output.Voltage = await getReading(powerSupplyAddress, 'VOLTage?', 'false');
   output.Current = await getReading(powerSupplyAddress, 'CURRent?', 'false');
   const statusCodes = await getReading(powerSupplyAddress, 'SYSTem:STATus?');

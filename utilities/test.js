@@ -11,7 +11,7 @@ const {
   decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii,
 } = require('./hexHelpers');
 const {
-  RdmParamsObject, sendRDM, rdmDiscoverAddress, getFirmwareAndWattage, getSensorTemp,
+  RdmParamsObject, sendRDM, rdmDiscoverAddress, getFirmwareAndWattage, getSensorTemp, getAddress,
 } = require('./rdmDmxHelpers');
 const { getReading, checkInsturments, sendCommand } = require('./SCPIHelpers');
 const xlsx = require('xlsx');
@@ -20,6 +20,15 @@ const qs = require('qs');
 const axios = require('axios');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
+async function dmxTest() {
+  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+  const address = await getAddress();
+  const firmwareWattage = await getFirmwareAndWattage(address);
+  
+}
+
+
+// --------------------------------------------------------------------------------------------
 // function getAddress() {
 //   return new Promise((resolve, reject) => {
 //     let counter = 0;
@@ -40,23 +49,23 @@ const axios = require('axios');
 //   });
 // }
 
-async function getAddress() {
-  let counter = 0;
-  while (counter !== 3) {
-    const address = await rdmDiscoverAddress();
-    if (address.length > 3) {
-      return address;
-    }
-    counter += 1;
-  }
-  return 'No address found, check connection to device.';
-}
+// async function getAddress() {
+//   let counter = 0;
+//   while (counter !== 3) {
+//     const address = await rdmDiscoverAddress();
+//     if (address.length > 3) {
+//       return address;
+//     }
+//     counter += 1;
+//   }
+//   return 'No address found, check connection to device.';
+// }
 
-getAddress()
-  .then((response) => getFirmwareAndWattage(response).then((res) => {
-    console.log(res);
-  }))
-  .catch(error => console.log(error))
+// getAddress()
+//   .then((response) => getFirmwareAndWattage(response).then((res) => {
+//     console.log(res);
+//   }))
+//   .catch(error => console.log(error))
 // ------------------------------------------------------------------------------------------
 
 // const rdmParams = {

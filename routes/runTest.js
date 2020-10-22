@@ -25,18 +25,24 @@ router.get('/', (req, res) => {
     .then((instrumentCheck) => {
       dbhelper.getTestTemplate()
         .then((testTemplates) => {
-          initializePowerSupply()
-            .then((psReading) => {
-              res.render('.\\runTest\\runTest', {
-                title: 'Test Setup',
-                instruments: instrumentCheck,
-                templates: testTemplates.recordset,
-                status: psReading,
-              });
-            })
-            .catch((psErr) => {
-              res.render('.\\runTest\\testError', { title: 'Power supply error.', message: psErr });
-            });
+          res.render('.\\runTest\\runTest', {
+            title: 'Test Setup',
+            instruments: instrumentCheck,
+            templates: testTemplates.recordset,
+            // status: psReading,
+          });
+          // initializePowerSupply()
+          //   .then((psReading) => {
+          //     res.render('.\\runTest\\runTest', {
+          //       title: 'Test Setup',
+          //       instruments: instrumentCheck,
+          //       templates: testTemplates.recordset,
+          //       status: psReading,
+          //     });
+          //   })
+          //   .catch((psErr) => {
+          //     res.render('.\\runTest\\testError', { title: 'Power supply error.', message: psErr });
+          //   });
         })
         .catch((dbErr) => {
           res.render('.\\runTest\\testError', { title: 'Database not responding, check connection and try again.', message: dbErr });
@@ -66,6 +72,17 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
       'testName': req.params.testName,
       'wattage': req.params.wattage,
     };
+
+    client.write(`data: Initializing power supply...\n\n`);
+    let psStatus;
+
+    if (req.params.wattage.includes('150')) {
+      psStatus = await initializePowerSupply('26.75', '3.2');
+    } else {
+      psStatus = await initializePowerSupply('24', '3.2');
+    }
+    client.write(`data: Power Supply set to ${psStatus.Voltage * 2} Volts...\n\n`);
+    // add check for ps settings is accurate with psStatus
 
     client.write('data: Power Supply On...\n\n');
     // power on device
