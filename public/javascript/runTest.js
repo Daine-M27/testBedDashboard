@@ -7,12 +7,12 @@ function resetPage() {
   $('#Status').addClass('hidden');
   $('#messageBox').empty();
   $('#buttonBox > button').prop('disabled', true).addClass('hidden');
+  $('#confirmConnected').prop('disabled', false);
 }
 
 $('#confirmConnected').click(() => {
   console.log('confirmed button');
   $('#submit').prop('disabled', false);
-  
 });
 
 $('#newTestYes').click((event) => {
@@ -33,6 +33,7 @@ $('#testResultsYes').click((event) => {
 $('#submit').click((event) => {
   event.preventDefault();
   resetPage();
+  $('#confirmConnected').prop('disabled', true);
   $('#Status').removeClass('hidden');
   const values = $('#templateDropDown').val();
   const testTemplate = JSON.parse(values);
@@ -65,6 +66,7 @@ $('#submit').click((event) => {
   source.addEventListener('error', (e) => {
     $('#messageBox').append(`${e.data}<br>`);
     source.close();
+    $('#confirmConnected').prop('disabled', false);
     // $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');
     // resetPage();
   });
