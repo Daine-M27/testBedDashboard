@@ -10,6 +10,11 @@ function resetPage() {
   $('#confirmConnected').prop('disabled', false);
 }
 
+function autoScroll() {
+  const box = document.getElementById('messageBox');
+  box.scrollTop = box.scrollHeight;
+}
+
 $('#confirmConnected').click(() => {
   console.log('confirmed button');
   $('#submit').prop('disabled', false);
@@ -46,8 +51,7 @@ $('#submit').click((event) => {
     if (!e.data.includes('TestId')) {
       $('#messageBox').append(`${e.data}<br>`);
     }
-    $(document).scrollTop($(document).height());
-
+    autoScroll();
     // testId means test is complete
     if (e.data.includes('TestId') === true) {
       const data = JSON.parse(e.data);
@@ -65,6 +69,7 @@ $('#submit').click((event) => {
 
   source.addEventListener('error', (e) => {
     $('#messageBox').append(`${e.data}<br>`);
+    autoScroll();
     source.close();
     $('#confirmConnected').prop('disabled', false);
     // $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');

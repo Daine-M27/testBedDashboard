@@ -19,10 +19,14 @@ a {
   margin-right: 4px;
 }
 
-#instrumentPanel {
-  
+#instrumentPanel {  
   padding: 10px;
   background-color: rgb(236, 236, 236);
+}
+
+#messageBox {
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .measurementPanel {
