@@ -1,6 +1,10 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
 let url;
+let devAddress;
+let devFirmware;
+let devWattage;
 function resetPage() {
   console.log('reset page called');
   $('#submit').prop('disabled', true);
@@ -35,6 +39,11 @@ $('#testResultsYes').click((event) => {
   document.location = url;
 });
 
+$('#printLabel').click((event) => {
+  event.preventDefault();
+  console.log(`Label Printing: ${devFirmware} ${devWattage} ${devAddress}`);
+});
+
 $('#submit').click((event) => {
   event.preventDefault();
   resetPage();
@@ -53,6 +62,21 @@ $('#submit').click((event) => {
     }
     autoScroll();
     // testId means test is complete
+    if (e.data.includes('Address found:')) {
+      const data = e.data.split(': ');
+      devAddress = data[1];
+    }
+
+    if (e.data.includes('Device firmware:')) {
+      const data = e.data.split(': ');
+      devFirmware = data[1];
+    }
+
+    if (e.data.includes('Device wattage:')) {
+      const data = e.data.split(': ');
+      devWattage = data[1];
+    }
+
     if (e.data.includes('TestId') === true) {
       const data = JSON.parse(e.data);
       // console.log(`testId${data.TestId}`);
