@@ -7,7 +7,7 @@ const dbhelper = require('../utilities/databaseHelpers');
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { runTestById } = require('../utilities/testHelpers');
 const { getAddress, rdmDiscoverAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
-const { getTestById, getMeasurementsByTestId, getBoardIds } = require('../utilities/databaseHelpers');
+const { getTestById, getMeasurementsByTestId, getBoardIds, getFirmwares, getWattages } = require('../utilities/databaseHelpers');
 
 const router = express.Router();
 
@@ -151,25 +151,35 @@ router.get('/testResults/:testId', (req, res) => {
 });
 
 /** */
-router.get('/testResults/:boardId', (req, res) => {
-  console.log(req.params.BoardId);
-});
+// router.get('/testResults/:boardId', (req, res) => {
+//   console.log(req.params.BoardId);
+// });
 
 /** */
-router.get('/testResults/:startDate/:endData', (req, res) => {
+// router.get('/testResults/:startDate/:endDate', (req, res) => {
 
-});
+// });
 
 /** */
-router.get('/searchTestResults', (req, res) => {
+router.get('/searchTestResults', async (req, res) => {
+  const data = {};
+  data.BoardIds = await getBoardIds();
+  data.Firmwares = await getFirmwares();
+  data.Wattages = await getWattages();
+
+  if (data.BoardIds.recordset.length > 0 && data.Firmwares.recordset.length > 0 && data.Wattages.recordset.length > 0) {
+    res.render('.\\runTest\\searchTestResults', { title: 'Search Test Results', BoardIds: data.BoardIds.recordset, FirmWares: data.Firmwares.recordset, Wattages: data.Wattages.recordset });
+  } else {
+    res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Missing data from Database' });
+  }
   // add promise all to handle all data collection for page
-  getBoardIds()
-    .then((IdResults) => {
-      res.render('.\\runTest\\searchTestResults', { title: 'Search Test Results', BoardIds: IdResults.recordset });
-    })
-    .catch((error) => {
-      res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
-    });
+  // getBoardIds()
+  //   .then((IdResults) => {
+  //     res.render('.\\runTest\\searchTestResults', { title: 'Search Test Results', BoardIds: IdResults.recordset });
+  //   })
+  //   .catch((error) => {
+  //     res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
+  //   });
 });
 
 module.exports = router;

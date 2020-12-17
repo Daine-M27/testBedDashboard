@@ -248,6 +248,38 @@ async function getBoardIds() {
 }
 
 /**
+ * This function returns all unique Firmwares from the database
+ */
+async function getFirmwares() {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .execute('getFirmwares');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Firmwares Error: ${err}`);
+    return err;
+  }
+}
+
+/**
+ * This function returns all unique Wattages from the database
+ */
+async function getWattages() {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .execute('getWattages');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Wattages Error: ${err}`);
+    return err;
+  }
+}
+
+/**
  * This function returns all the test conducted between the two dates supplied
  * @param {string} starDate  // sql DateTime format
  * @param {string} endDate  // sql DateTime format
@@ -267,6 +299,32 @@ async function getTestsByDateRange(starDate, endDate) {
   }
 }
 
+/**
+ * This function returns search results based on any or all optional parameters
+ * @param {*} bId boardID
+ * @param {*} devWatt wattage
+ * @param {*} devFW firmware
+ * @param {*} startD date to start
+ * @param {*} endD date to end
+ */
+async function searchDatabase(bId, devWatt, devFW, startD, endD) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('BoardId', sql.VarChar(20), bId)
+      .input('DeviceWattage', sql.VarChar(20), devWatt)
+      .input('DeviceFirmware', sql.VarChar(20), devFW)
+      .input('StartDate', sql.DateTime, startD)
+      .input('EndDate', sql.DateTime, endD)
+      .execute('getMeasurementsByTestId');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Get Test Measurement Template Error: ${err}`);
+    return err;
+  }
+}
+
 module.exports = {
   insertTestTemplate,
   getTestTemplate,
@@ -277,7 +335,10 @@ module.exports = {
   getTestById,
   getMeasurementsByTestId,
   getBoardIds,
+  getFirmwares,
+  getWattages,
   getTestsByDateRange,
+  searchDatabase,
 };
 
 // getMeasurementTemplate(measurementTemplateObject.TestTemplateId)

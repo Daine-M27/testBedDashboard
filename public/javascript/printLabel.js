@@ -31,7 +31,6 @@ function jspmWSStatus() {
   }
 }
 
-
 // Do printing...
 function print(fw, watt, addr) {
   if (!fw || !watt || !addr) {
