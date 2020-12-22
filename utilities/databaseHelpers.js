@@ -323,7 +323,7 @@ async function searchDatabase(bId, devFW, devWatt, startD, endD) {
   if (endD === '') {
     endDate = null;
   } else {
-    endDate = `${endD} 11:59:59`;
+    endDate = `${endD} 23:59:59`;
   }
   // const startDate = startD || null;
   // const endDate = endD || null;
