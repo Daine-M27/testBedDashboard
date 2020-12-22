@@ -4,24 +4,31 @@ include ..\\mixins\testInfo-mixin.pug
 
 block content
   h1 Database Search
-  form(action='\\*\\*', method='post')
+  form(action='\\runTest\\searchTestResults\\export', method='post')
     .ui-widget
-      p Select Parameters
+      p Select any, all, or no search parameters.  
+
       input(id='BoardIdHolder',type='hidden', value=BoardIds)
       label(for='BoardIdInput') Board Id:
-      input(id='BoardIdInput')    
+      input(id='BoardIdInput', name='BoardIdInput')    
       br
       br
       input(id='FirmWaresHolder',type='hidden', value=FirmWares)
       label(for='FirmWaresInput') Firmware:
-      input(id='FirmWaresInput')
+      input(id='FirmWaresInput', name='FirmWaresInput')
       br
       br
       input(id='WattagesHolder',type='hidden', value=Wattages)
       label(for='WattagesInput') Wattage:
-      input(id='WattagesInput')
+      input(id='WattagesInput', name='WattagesInput')
       br
       br
+      label(for='StartDate') Start Date:
+      input(id='StartDate', type='date', name='StartDate')
+      br
+      br
+      label(for='EndDate') End Date:
+      input(id='EndDate', type='date', name='EndDate')
    
     input(type="submit", value="Get Tests")
 

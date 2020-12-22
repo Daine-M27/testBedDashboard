@@ -307,20 +307,40 @@ async function getTestsByDateRange(starDate, endDate) {
  * @param {*} startD date to start
  * @param {*} endD date to end
  */
-async function searchDatabase(bId, devWatt, devFW, startD, endD) {
+async function searchDatabase(bId, devFW, devWatt, startD, endD) {
+  const boardId = bId || null;
+  const wattage = devWatt || null;
+  const firmware = devFW || null;
+  let startDate;
+  let endDate;
+
+  if (startD === '') {
+    startDate = null;
+  } else {
+    startDate = `${startD} 00:00:00`;
+  }
+
+  if (endD === '') {
+    endDate = null;
+  } else {
+    endDate = `${endD} 11:59:59`;
+  }
+  // const startDate = startD || null;
+  // const endDate = endD || null;
+
   try {
     const pool = await sql.connect(config);
     const result = await pool.request()
-      .input('BoardId', sql.VarChar(20), bId)
-      .input('DeviceWattage', sql.VarChar(20), devWatt)
-      .input('DeviceFirmware', sql.VarChar(20), devFW)
-      .input('StartDate', sql.DateTime, startD)
-      .input('EndDate', sql.DateTime, endD)
-      .execute('getMeasurementsByTestId');
+      .input('BoardId', sql.VarChar(20), boardId)
+      .input('DeviceWattage', sql.VarChar(20), wattage)
+      .input('DeviceFirmware', sql.VarChar(20), firmware)
+      .input('StartDate', sql.DateTime, startDate)
+      .input('EndDate', sql.DateTime, endDate)
+      .execute('SearchTests');
     pool.close();
     return result;
   } catch (err) {
-    console.log(`Get Test Measurement Template Error: ${err}`);
+    console.log(`SearchDatabase Error: ${err}`);
     return err;
   }
 }

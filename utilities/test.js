@@ -6,7 +6,7 @@ const dotenv = require('dotenv').config({ path: require('find-config')('.env') }
 const util = require('util');
 const { ConnectionPool } = require('mssql');
 const { reset } = require('nodemon');
-const { getTestsByDateRange, getMeasurementTemplate, insertTest, insertMeasurement, insertMeasurementTemplate, getTestById, getMeasurementsByTestId, getBoardIds } = require('./databaseHelpers');
+const { searchDatabase, getTestsByDateRange, getMeasurementTemplate, insertTest, insertMeasurement, insertMeasurementTemplate, getTestById, getMeasurementsByTestId, getBoardIds } = require('./databaseHelpers');
 const {
   decToHex2c, hexToBinary, rdmHexResponseParse, hexToAscii,
 } = require('./hexHelpers');
@@ -18,14 +18,23 @@ const xlsx = require('xlsx');
 const dmx = require('./rdmDmxHelpers');
 const qs = require('qs');
 const axios = require('axios');
+
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
-async function dmxTest() {
-  sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
-  const address = await getAddress();
-  const firmwareWattage = await getFirmwareAndWattage(address);
-  
+async function getResults(bid, watt, fw, sd, ed) {
+  searchDatabase('', '', '', '', '').then((res) => {
+    console.log(res);
+  })
 }
+
+getResults();
+
+// async function dmxTest() {
+//   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+//   const address = await getAddress();
+//   const firmwareWattage = await getFirmwareAndWattage(address);
+  
+// }
 
 
 // --------------------------------------------------------------------------------------------

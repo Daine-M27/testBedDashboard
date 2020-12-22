@@ -1,5 +1,7 @@
 /* eslint-disable quote-props */
 /* eslint-disable max-len */
+const fs = require('fs');
+const xlsx = require('xlsx');
 const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const express = require('express');
 const scpi = require('../utilities/SCPIHelpers');
@@ -81,7 +83,7 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
     } else {
       psStatus = await initializePowerSupply('24', '3.2');
     }
-    client.write(`data: Power Supply set to ${psStatus.Voltage * 2} Volts...\n\n`);
+    client.write(`data: Power Supply set to ${psStatus.Voltage * 2} Volts...\n\n`); // multiply voltage because two channels are run in series to achieve proper voltage
     // add check for ps settings is accurate with psStatus
 
     client.write('data: Power Supply On...\n\n');
@@ -172,14 +174,31 @@ router.get('/searchTestResults', async (req, res) => {
   } else {
     res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Missing data from Database' });
   }
-  // add promise all to handle all data collection for page
-  // getBoardIds()
-  //   .then((IdResults) => {
-  //     res.render('.\\runTest\\searchTestResults', { title: 'Search Test Results', BoardIds: IdResults.recordset });
-  //   })
-  //   .catch((error) => {
-  //     res.render('.\\runTest\\testError', { title: 'Testing Error', message: error });
-  //   });
+});
+
+router.post('/searchTestResults/export', (req, res) => {
+  // console.log(req.body);
+  const params = req.body;
+  dbhelper.searchDatabase(params.BoardIdInput, params.FirmWaresInput, params.WattagesInput, params.StartDate, params.EndDate)
+    .then((results) => {
+      // console.log(results);
+      const searchResults = xlsx.utils.json_to_sheet(results.recordset);
+      const wb = xlsx.utils.book_new();
+      const fileName = 'SearchResults.xlsx';
+
+      xlsx.utils.book_append_sheet(wb, searchResults, 'Search Results');
+      xlsx.writeFile(wb, fileName);
+      res.download(fileName, (err) => {
+        if (err) {
+          res.render('.\\runTest\\testError', { title: 'Error', message: err });
+        }
+        fs.unlink(fileName, (error) => {
+          if (error) {
+            console.log(error);
+          }
+        });
+      });
+    });
 });
 
 module.exports = router;
