@@ -33,16 +33,24 @@ function jspmWSStatus() {
 
 // Do printing...
 function print(fw, watt, addr) {
+  let wattageString = watt;
+
   if (!fw || !watt || !addr) {
     alert(`Missing data for label!
     Firmware: ${fw}
     Wattage: ${watt}
     Address: ${addr}`);
     return;
-  }
+  }  
+
   if (jspmWSStatus()) {
     // Create a ClientPrintJob
     const cpj = new JSPM.ClientPrintJob();
+
+    if (watt === '150W') {
+      wattageString = '100+';
+    }
+
     // Set Printer type (Refer to the help, there many of them!)
     // if ($('#useDefaultPrinter').prop('checked')) {
     //   cpj.clientPrinter = new JSPM.DefaultPrinter();
@@ -64,7 +72,7 @@ function print(fw, watt, addr) {
     cmds += `^D0${  CR}`;
     cmds += `^E30${  CR}`; // Feed stop position
     cmds += `^L${  CR}`;
-    cmds += `AT,20,30,48,48,0,0B,0,0,${fw} ${watt} ${addr}${  CR}`;
+    cmds += `AT,20,30,48,48,0,0B,0,0,${fw} ${wattageString} ${addr}${  CR}`;
     cmds += `E${  CR}`;
 
     cpj.printerCommands = cmds;
