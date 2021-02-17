@@ -69,11 +69,11 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
       pid: '8625',
       data: dacBccuHexObject.join(''),
     };
-    
+
     // send command to change light settings
     client.write('data: \n\n');
     client.write(`data: Testing ${template.MeasurementName}...\n\n`);
-    client.write(`data: CommandValue = ${rdmParams.data}`);
+    client.write(`data: CommandValue = ${rdmParams.data}\n\n`);
     await sendRDM(rdmParams).then(() => {
       // record CPU temp
       client.write('data: Gathering readings...\n\n');

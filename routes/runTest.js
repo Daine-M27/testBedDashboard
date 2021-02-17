@@ -165,14 +165,18 @@ router.get('/testResults/:testId', (req, res) => {
 /** */
 router.get('/searchTestResults', async (req, res) => {
   const data = {};
-  data.BoardIds = await getBoardIds();
-  data.Firmwares = await getFirmwares();
-  data.Wattages = await getWattages();
+  try {
+    data.BoardIds = await getBoardIds();
+    data.Firmwares = await getFirmwares();
+    data.Wattages = await getWattages();
 
-  if (data.BoardIds.recordset.length > 0 && data.Firmwares.recordset.length > 0 && data.Wattages.recordset.length > 0) {
-    res.render('.\\runTest\\searchTestResults', { title: 'Search Test Results', BoardIds: data.BoardIds.recordset, FirmWares: data.Firmwares.recordset, Wattages: data.Wattages.recordset });
-  } else {
-    res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Missing data from Database' });
+    if (data.BoardIds.recordset.length > 0 && data.Firmwares.recordset.length > 0 && data.Wattages.recordset.length > 0) {
+      res.render('.\\runTest\\searchTestResults', { title: 'Search Test Results', BoardIds: data.BoardIds.recordset, FirmWares: data.Firmwares.recordset, Wattages: data.Wattages.recordset });
+    } else {
+      res.render('.\\runTest\\testError', { title: 'Testing Error', message: 'Missing data from Database' });
+    }
+  } catch (error) {
+    res.render('.\\runTest\\testError', { title: 'Testing Error', message: `Error gathering data for search : ${error}` });
   }
 });
 
