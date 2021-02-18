@@ -16,6 +16,39 @@ router.get('/createTest', (req, res) => {
   res.render('.\\admin\\createTest', { title: 'Create Test' });
 });
 
+/* POST to create a test template. */
+router.post('/createTest', (req, res) => {
+  dbhelper.insertTestTemplate(req.body)
+    .then(() => {
+      res.redirect('/admin/createMeasurement');
+    }).catch((err) => {
+      console.log(`createTest POST error ${err}`);
+    });
+});
+
+router.get('/editDeleteTest', (req, res) => {
+  dbhelper.getTestTemplate()
+    .then((data) => {
+      res.render('.\\admin\\editDeleteTest', { title: 'Edit/Delete Test Template', templates: data.recordset });
+    });
+});
+
+router.post('/editDeleteTest', (req, res) => {
+  // console.log(req.body);
+  if (req.body.delete === 'DELETE') {
+    // console.log('delete')
+    dbhelper.deleteTestTemplate(req.body)
+      .then(() => {
+        res.redirect('/admin/editDeleteTest');
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+  } else {
+    console.log('edit');
+  }
+});
+
 /* GET createMeasurement page. */
 router.get('/createMeasurement', (req, res) => {
   dbhelper.getTestTemplate()
@@ -24,16 +57,6 @@ router.get('/createMeasurement', (req, res) => {
       res.render('.\\admin\\createMeasurement', { title: 'Create Measurement', templates: data.recordset });
     }).catch((err) => {
       console.log(err);
-    });
-});
-
-/* POST to create a test template. */
-router.post('/createTest', (req, res) => {
-  dbhelper.insertTestTemplate(req.body)
-    .then(() => {
-      res.redirect('/admin/createMeasurement');
-    }).catch((err) => {
-      console.log(`createTest POST error ${err}`);
     });
 });
 

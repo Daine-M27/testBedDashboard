@@ -82,6 +82,27 @@ async function getTestTemplate() {
   }
 }
 
+async function editTestTemplate(){
+
+}
+
+async function deleteTestTemplate(data) {
+  console.log(data.id);
+  try {
+    // const id = parseInt(data.id, 10);
+    const pool = await sql.connect(config);
+    const request = await pool.request()
+      .input('TemplateId', sql.Int, data.id)
+      .execute('deleteTestTemplate');
+    pool.close();
+    return request;
+  } catch (err) {
+    console.log(`Delete Test Template Error: ${err}`);
+    return err;
+  }
+}
+
+
 /**
  * This function creates a new measurement template which is attached to a test template by the test
  * template ID.
@@ -136,6 +157,18 @@ async function getMeasurementTemplate(id) {
     return err;
   }
 }
+
+async function editMeasurementTemplate(){
+
+}
+
+async function deleteMeasurementTemplate(){
+  
+}
+
+
+
+
 
 /**
  * This function inserts a test into the db
@@ -348,6 +381,7 @@ async function searchDatabase(bId, devFW, devWatt, startD, endD) {
 module.exports = {
   insertTestTemplate,
   getTestTemplate,
+  deleteTestTemplate,
   insertMeasurementTemplate,
   getMeasurementTemplate,
   insertTest,

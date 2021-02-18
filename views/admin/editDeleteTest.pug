@@ -1,0 +1,27 @@
+extends ..\\layout
+
+block content
+  
+    h1= title
+    p= message
+    
+    each template, index in templates
+        form(action='.\\editDeleteTest' method='post')
+            input(name='id', type='input', value=template.Id, hidden)
+            input(name='testNameOriginal' type='input', value=template.TestName, hidden)
+            lable.pr-small(for='name') Name: 
+            input.mr-small(name='name' type='string', value=template.TestName)
+            br
+            Label.pr-small(for='delete') Type DELETE to delete: 
+            input.mr-small(name='delete' type='string', value='')
+            br           
+            input(type='submit', value='Submit')
+        br    
+        br
+    append scripts
+        script(src="\\javascript\\editDeleteTest.js")
+
+
+    
+   
+    
