@@ -45,7 +45,19 @@ router.post('/editDeleteTest', (req, res) => {
         console.log(err)
       });
   } else {
-    console.log('edit');
+    console.log(req.body);
+
+    if (req.body.testNameOriginal !== req.body.name) {
+      dbhelper.editTestTemplate(req.body)
+        .then(() => {
+          res.redirect('/admin/editDeleteTest');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      res.redirect('/admin/editDeleteTest');
+    }
   }
 });
 

@@ -82,12 +82,24 @@ async function getTestTemplate() {
   }
 }
 
-async function editTestTemplate(){
-
+async function editTestTemplate(data) {
+  try {
+    // const id = parseInt(data.id, 10);
+    const pool = await sql.connect(config);
+    const request = await pool.request()
+      .input('TemplateId', sql.Int, data.id)
+      .input('NewName', sql.NVarChar(50), data.name)
+      .execute('editTestTemplate');
+    pool.close();
+    return request;
+  } catch (err) {
+    console.log(`Edit Test Template Error: ${err}`);
+    return err;
+  }
 }
 
 async function deleteTestTemplate(data) {
-  console.log(data.id);
+  // console.log(data.id);
   try {
     // const id = parseInt(data.id, 10);
     const pool = await sql.connect(config);
@@ -382,6 +394,7 @@ module.exports = {
   insertTestTemplate,
   getTestTemplate,
   deleteTestTemplate,
+  editTestTemplate,
   insertMeasurementTemplate,
   getMeasurementTemplate,
   insertTest,
