@@ -1,0 +1,17 @@
+extends ..\\layout
+
+block content
+    h1= title
+    p= message
+    form(action='.\\getMeasurementTemplates', method='get')
+        select(name='TestTemplateId', id='templateDropDown', required)
+            option(value='', selected, disabled, hidden)='Choose Test Template Here'
+            each template in templates
+                option(value=template.Id)= template.TestName
+        br
+        input(type='submit', value='Submit')
+        //- input(id='MeasurementLoad' type="button", value="LOAD")
+    if measurementTemplates
+        p yay templates
+    append scripts
+        script(src="\\javascript\\editDeleteMeasurement.js")

@@ -114,7 +114,6 @@ async function deleteTestTemplate(data) {
   }
 }
 
-
 /**
  * This function creates a new measurement template which is attached to a test template by the test
  * template ID.
@@ -262,6 +261,7 @@ async function insertMeasurement(data) {
   }
 }
 
+/* Get all measurements with test ID */
 async function getMeasurementsByTestId(id) {
   try {
     const pool = await sql.connect(config);

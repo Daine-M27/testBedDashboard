@@ -26,13 +26,15 @@ router.post('/createTest', (req, res) => {
     });
 });
 
+/* GET page for editing tests */
 router.get('/editDeleteTest', (req, res) => {
   dbhelper.getTestTemplate()
     .then((data) => {
-      res.render('.\\admin\\editDeleteTest', { title: 'Edit/Delete Test Template', templates: data.recordset });
+      res.render('.\\admin\\editDeleteTest', { title: 'Edit/Delete Test Template', templates: data.recordset, message: 'Edit name and submit to change.' });
     });
 });
 
+/* POST edits to test data or delete */
 router.post('/editDeleteTest', (req, res) => {
   // console.log(req.body);
   if (req.body.delete === 'DELETE') {
@@ -42,7 +44,7 @@ router.post('/editDeleteTest', (req, res) => {
         res.redirect('/admin/editDeleteTest');
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       });
   } else {
     console.log(req.body);
@@ -82,6 +84,30 @@ router.post('/createMeasurement', (req, res) => {
     });
 });
 
+/* GET page for editing measurements */
+router.get('/editDeleteMeasurement', (req, res) => {
+  dbhelper.getTestTemplate()
+    .then((data) => {
+    // console.log(data);
+      res.render('.\\admin\\editDeleteMeasurement', { title: 'Edit/Delete Measurement', templates: data.recordset });
+    }).catch((err) => {
+      console.log(err);
+    });
+});
+
+router.get('/getMeasurementTemplates', async (req, res) => {
+  // send html of each template based on id of testTemplate
+  const id = req.query.TestTemplateId;
+  const testTemplates = await dbhelper.getTestTemplate();
+  // get all measurement templates from test id
+  dbhelper.getMeasurementTemplate(id)
+    .then((data) => {
+      console.log(data);
+      res.render('.\\admin\\editDeleteMeasurement', { title: 'Edit/Delete Measurement', templates: testTemplates.recordset, measurementTemplates: data.recordset });
+    });
+ });
+
+/*  */
 router.post('/export', (req, res) => {
   dbhelper.getTestById(req.body.TestId)
     .then((testResponse) => {
