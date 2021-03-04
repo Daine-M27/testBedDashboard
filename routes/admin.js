@@ -48,7 +48,6 @@ router.post('/editDeleteTest', (req, res) => {
       });
   } else {
     console.log(req.body);
-
     if (req.body.testNameOriginal !== req.body.name) {
       dbhelper.editTestTemplate(req.body)
         .then(() => {
@@ -95,17 +94,26 @@ router.get('/editDeleteMeasurement', (req, res) => {
     });
 });
 
+/* GET measurement templates from test template */
 router.get('/getMeasurementTemplates', async (req, res) => {
   // send html of each template based on id of testTemplate
   const id = req.query.TestTemplateId;
   const testTemplates = await dbhelper.getTestTemplate();
+  const rootTemplate = testTemplates.recordset
+    .find((template) => template.Id.toString() === id.toString());
+
   // get all measurement templates from test id
   dbhelper.getMeasurementTemplate(id)
     .then((data) => {
-      console.log(data);
-      res.render('.\\admin\\editDeleteMeasurement', { title: 'Edit/Delete Measurement', templates: testTemplates.recordset, measurementTemplates: data.recordset });
+      // console.log(data);
+      res.render('.\\admin\\editDeleteMeasurement', {
+        title: 'Edit/Delete Measurement',
+        templates: testTemplates.recordset,
+        measurementTemplates: data.recordset,
+        selected: rootTemplate,
+      });
     });
- });
+});
 
 /*  */
 router.post('/export', (req, res) => {

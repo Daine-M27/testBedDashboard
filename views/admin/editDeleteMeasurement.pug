@@ -11,9 +11,13 @@ block content
                 option(value=template.Id)= template.TestName
         br
         input(type='submit', value='Submit')
+    br
         //- input(id='MeasurementLoad' type="button", value="LOAD")
-    if measurementTemplates
-        each template in measurementTemplates
-            +editDeleteMeasurement(template)
+    if selected
+        .borderBox
+            h2 Test Template Name: #{selected.TestName}
+            if measurementTemplates        
+                each template in measurementTemplates
+                    +editDeleteMeasurement(template)
     append scripts
         script(src="\\javascript\\editDeleteMeasurement.js")

@@ -1,2 +1,52 @@
 mixin editDeleteMeasurement(template)
-    p #{template.Id}
+    .borderBox
+        form(action='.\\editDeleteMeasurement', method='post')
+            input(name='MeasurementId', value=template.Id, hidden)
+            label.pr-small(for='MeasurementName') Measurement Name:
+            input.mr-small(type='text', name='MeasurementName', value=template.MeasurementName, required)
+            Label.pr-small(for='delete') Type DELETE to delete: 
+            input.mr-small(name='delete' type='string', value='')
+            br
+            br
+            label.pr-small(for='Dac0') Dac0:
+            input.mr-small(type='number', name='Dac0', value=template.Dac0, required)
+            label.pr-small(for='Bccu0') Bccu0:
+            input.mr-small(type='number', name='Bccu0', value=template.Bccu0 required)
+            label.pr-small(for='PassLowCurrent0') PassLowCurrent0:
+            input.mr-small(type='number', name='PassLowCurrent0', step='0.00001', value=template.PassLowCurrent0, required)
+            label.pr-small(for='PassHighCurrent0') PassHighCurrent0:
+            input.mr-small(type='number', name='PassHighCurrent0', step='0.00001', value=template.PassHighCurrent0, required)
+            br
+            br
+            label.pr-small(for='Dac1') Dac1:
+            input.mr-small(type='number', name='Dac1', value=template.Dac1, required)
+            label.pr-small(for='Bccu1') Bccu1:
+            input.mr-small(type='number', name='Bccu1', value=template.Bccu1, required)
+            label.pr-small(for='PassLowCurrent1') PassLowCurrent1:
+            input.mr-small(type='number', name='PassLowCurrent1', step='0.00001', value=template.PassLowCurrent1, required)
+            label.pr-small(for='PassHighCurrent1') PassHighCurrent1:
+            input.mr-small(type='number', name='PassHighCurrent1', step='0.00001', value=template.PassHighCurrent1, required)
+            br
+            br
+            label.pr-small(for='Dac2') Dac2:
+            input.mr-small(type='number', name='Dac2', value=template.Dac2, required)
+            label.pr-small(for='Bccu2') Bccu2:
+            input.mr-small(type='number', name='Bccu2', value=template.Bccu2, required)
+            label.pr-small(for='PassLowCurrent2') PassLowCurrent2:
+            input.mr-small(type='number', name='PassLowCurrent2', step='0.00001', value=template.PassLowCurrent2, required)
+            label.pr-small(for='PassHighCurrent2') PassHighCurrent2:
+            input.mr-small(type='number', name='PassHighCurrent2', step='0.00001', value=template.PassHighCurrent2, required)
+            br
+            br
+            label.pr-small(for='Dac3') Dac3:
+            input.mr-small(type='number', name='Dac3', value=template.Dac3, required)
+            label.pr-small(for='Bccu3') Bccu3:
+            input.mr-small(type='number', name='Bccu3', value=template.Bccu3, required)
+            label.pr-small(for='PassLowCurrent3') PassLowCurrent3:
+            input.mr-small(type='number', name='PassLowCurrent3', step='0.00001', value=template.PassLowCurrent3, required)
+            label.pr-small(for='PassHighCurrent3') PassHighCurrent3:
+            input.mr-small(type='number', name='PassHighCurrent3', step='0.00001', value=template.PassHighCurrent3, required)
+            br
+            br
+            input.mr-small(type='submit', value='Submit')
+    br

@@ -177,10 +177,6 @@ async function deleteMeasurementTemplate(){
   
 }
 
-
-
-
-
 /**
  * This function inserts a test into the db
  * @param {object} data
