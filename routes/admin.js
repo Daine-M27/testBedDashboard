@@ -106,6 +106,23 @@ router.post('/editDeleteMeasurement', async (req, res) => {
           measurementTemplates: measurementTemplates.recordset,
           selected: rootTemplate,
         });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    dbhelper.editMeasurementTemplate(req.body)
+      .then(async () => {
+        const measurementTemplates = await dbhelper.getMeasurementTemplate(measTempId);
+        res.render('.\\admin\\editDeleteMeasurement', {
+          title: 'Edit/Delete Measurement',
+          templates: testTemplates.recordset,
+          measurementTemplates: measurementTemplates.recordset,
+          selected: rootTemplate,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }
   // else if (objectCheck != false) {
