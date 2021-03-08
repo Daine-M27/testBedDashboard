@@ -2,6 +2,7 @@ mixin editDeleteMeasurement(template)
     .borderBox
         form(action='.\\editDeleteMeasurement', method='post')
             input(name='MeasurementId', value=template.Id, hidden)
+            input(name='TestTemplateId', value=template.TestTemplateId, hidden)
             label.pr-small(for='MeasurementName') Measurement Name:
             input.mr-small(type='text', name='MeasurementName', value=template.MeasurementName, required)
             Label.pr-small(for='delete') Type DELETE to delete: 

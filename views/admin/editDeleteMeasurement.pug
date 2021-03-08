@@ -15,7 +15,7 @@ block content
         //- input(id='MeasurementLoad' type="button", value="LOAD")
     if selected
         .borderBox
-            h2 Test Template Name: #{selected.TestName}
+            h2 Test Template Name: #{selected.TestName}            
             if measurementTemplates        
                 each template in measurementTemplates
                     +editDeleteMeasurement(template)

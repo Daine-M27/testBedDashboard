@@ -53,18 +53,6 @@ router.post('/editDeleteTest', (req, res) => {
       .catch((err) => {
         console.log(err);
       });
-    //
-    // if (req.body.testNameOriginal !== req.body.name) {
-    //   dbhelper.editTestTemplate(req.body)
-    //     .then(() => {
-    //       res.redirect('/admin/editDeleteTest');
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   res.redirect('/admin/editDeleteTest');
-    // }
   } else {
     res.redirect('/admin/editDeleteTest');
   }
@@ -100,6 +88,29 @@ router.get('/editDeleteMeasurement', (req, res) => {
     }).catch((err) => {
       console.log(err);
     });
+});
+
+router.post('/editDeleteMeasurement', async (req, res) => {
+  const measTempId = req.body.TestTemplateId;
+  const testTemplates = await dbhelper.getTestTemplate();
+  const rootTemplate = testTemplates.recordset
+    .find((template) => template.Id.toString() === measTempId.toString());
+
+  if (req.body.delete === 'DELETE') {
+    dbhelper.deleteMeasurementTemplate(req.body)
+      .then(async () => {
+        const measurementTemplates = await dbhelper.getMeasurementTemplate(measTempId);
+        res.render('.\\admin\\editDeleteMeasurement', {
+          title: 'Edit/Delete Measurement',
+          templates: testTemplates.recordset,
+          measurementTemplates: measurementTemplates.recordset,
+          selected: rootTemplate,
+        });
+      });
+  }
+  // else if (objectCheck != false) {
+
+  // } else
 });
 
 /* GET measurement templates from test template */
