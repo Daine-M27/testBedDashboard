@@ -3,7 +3,6 @@ const fs = require('fs');
 const xlsx = require('xlsx');
 const dbhelper = require('../utilities/databaseHelpers');
 
-
 const router = express.Router();
 
 /* GET admin page. */
@@ -46,19 +45,28 @@ router.post('/editDeleteTest', (req, res) => {
       .catch((err) => {
         console.log(err);
       });
+  } else if (req.body.testNameOriginal !== req.body.name) {
+    dbhelper.editTestTemplate(req.body)
+      .then(() => {
+        res.redirect('/admin/editDeleteTest');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    //
+    // if (req.body.testNameOriginal !== req.body.name) {
+    //   dbhelper.editTestTemplate(req.body)
+    //     .then(() => {
+    //       res.redirect('/admin/editDeleteTest');
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // } else {
+    //   res.redirect('/admin/editDeleteTest');
+    // }
   } else {
-    console.log(req.body);
-    if (req.body.testNameOriginal !== req.body.name) {
-      dbhelper.editTestTemplate(req.body)
-        .then(() => {
-          res.redirect('/admin/editDeleteTest');
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      res.redirect('/admin/editDeleteTest');
-    }
+    res.redirect('/admin/editDeleteTest');
   }
 });
 
@@ -115,7 +123,7 @@ router.get('/getMeasurementTemplates', async (req, res) => {
     });
 });
 
-/*  */
+/* export values to an excel sheet */
 router.post('/export', (req, res) => {
   dbhelper.getTestById(req.body.TestId)
     .then((testResponse) => {

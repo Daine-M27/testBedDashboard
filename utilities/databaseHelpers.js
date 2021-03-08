@@ -169,12 +169,52 @@ async function getMeasurementTemplate(id) {
   }
 }
 
-async function editMeasurementTemplate(){
-
+async function editMeasurementTemplate(data) {
+  try {
+    // const id = parseInt(data.id, 10);
+    const pool = await sql.connect(config);
+    const request = await pool.request()
+      .input('MeasurementId', sql.Int, data.MeasurementId)
+      .input('MeasurementName', sql.VarChar(50), data.MeasurementName)
+      .input('Dac0', sql.Int, data.Dac0)
+      .input('Bccu0', sql.Int, data.Bccu0)
+      .input('PassLowCurrent0', sql.Decimal(10, 5), data.PassLowCurrent0)
+      .input('PassHighCurrent0', sql.Decimal(10, 5), data.PassHighCurrent0)
+      .input('Dac1', sql.Int, data.Dac1)
+      .input('Bccu1', sql.Int, data.Bccu1)
+      .input('PassLowCurrent1', sql.Decimal(10, 5), data.PassLowCurrent1)
+      .input('PassHighCurrent1', sql.Decimal(10, 5), data.PassHighCurrent1)
+      .input('Dac2', sql.Int, data.Dac2)
+      .input('Bccu2', sql.Int, data.Bccu2)
+      .input('PassLowCurrent2', sql.Decimal(10, 5), data.PassLowCurrent2)
+      .input('PassHighCurrent2', sql.Decimal(10, 5), data.PassHighCurrent2)
+      .input('Dac3', sql.Int, data.Dac3)
+      .input('Bccu3', sql.Int, data.Bccu3)
+      .input('PassLowCurrent3', sql.Decimal(10, 5), data.PassLowCurrent3)
+      .input('PassHighCurrent3', sql.Decimal(10, 5), data.PassHighCurrent3)
+      .execute('editMeasurementTemplate');
+    pool.close();
+    return request;
+  } catch (err) {
+    console.log(`Edit Measurement Template Error: ${err}`);
+    return err;
+  }
 }
 
-async function deleteMeasurementTemplate(){
-  
+async function deleteMeasurementTemplate(data) {
+  // console.log(data.id);
+  try {
+    // const id = parseInt(data.id, 10);
+    const pool = await sql.connect(config);
+    const request = await pool.request()
+      .input('MeasurementId', sql.Int, data.MeasurementId)
+      .execute('deleteMeasurementTemplate');
+    pool.close();
+    return request;
+  } catch (err) {
+    console.log(`Delete Measurement Template Error: ${err}`);
+    return err;
+  }
 }
 
 /**
@@ -393,6 +433,8 @@ module.exports = {
   editTestTemplate,
   insertMeasurementTemplate,
   getMeasurementTemplate,
+  deleteMeasurementTemplate,
+  editMeasurementTemplate,
   insertTest,
   insertMeasurement,
   getTestById,
