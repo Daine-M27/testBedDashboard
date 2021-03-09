@@ -34,3 +34,19 @@ $(() => {
     source: arrayOfWattages,
   });
 });
+
+function isNumber(input) {
+  const rx = new RegExp(/^\d+$/);
+  if (rx.test(input)) {
+    return true;
+  } return false;
+}
+
+$('#btn-submit').click(() => {
+  const testNumber = $('#singleTest').val();
+  if (isNumber(testNumber)) {
+    window.location = `/runTest/testResults/${testNumber}`;
+  } else {
+    alert('Only accepst whole numbers, Please try again!');
+  }
+});

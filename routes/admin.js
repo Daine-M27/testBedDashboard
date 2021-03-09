@@ -125,9 +125,6 @@ router.post('/editDeleteMeasurement', async (req, res) => {
         console.log(err);
       });
   }
-  // else if (objectCheck != false) {
-
-  // } else
 });
 
 /* GET measurement templates from test template */

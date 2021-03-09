@@ -153,16 +153,6 @@ router.get('/testResults/:testId', (req, res) => {
 });
 
 /** */
-// router.get('/testResults/:boardId', (req, res) => {
-//   console.log(req.params.BoardId);
-// });
-
-/** */
-// router.get('/testResults/:startDate/:endDate', (req, res) => {
-
-// });
-
-/** */
 router.get('/searchTestResults', async (req, res) => {
   const data = {};
   try {
@@ -180,6 +170,7 @@ router.get('/searchTestResults', async (req, res) => {
   }
 });
 
+/* export single test results to excel */
 router.post('/searchTestResults/export', (req, res) => {
   // console.log(req.body);
   const params = req.body;

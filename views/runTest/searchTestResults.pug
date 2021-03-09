@@ -29,8 +29,16 @@ block content
       br
       label(for='EndDate') End Date:
       input(id='EndDate', type='date', name='EndDate')
-   
+    br
     input(type="submit", value="Get Tests")
+  br
+  h1 Single Test  
+  .ui-widget
+    label(for='singleTest') Test Number:
+    input(id='singleTest', name='singleTest')
+  br
+  button(id='btn-submit') See Results
+    //- input(type="button", value="See Results")
 
   append scripts
     script(src="\\javascript\\searchTestResults.js")
