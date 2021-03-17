@@ -33,18 +33,6 @@ router.get('/', (req, res) => {
             templates: testTemplates.recordset,
             // status: psReading,
           });
-          // initializePowerSupply()
-          //   .then((psReading) => {
-          //     res.render('.\\runTest\\runTest', {
-          //       title: 'Test Setup',
-          //       instruments: instrumentCheck,
-          //       templates: testTemplates.recordset,
-          //       status: psReading,
-          //     });
-          //   })
-          //   .catch((psErr) => {
-          //     res.render('.\\runTest\\testError', { title: 'Power supply error.', message: psErr });
-          //   });
         })
         .catch((dbErr) => {
           res.render('.\\runTest\\testError', { title: 'Database not responding, check connection and try again.', message: dbErr });

@@ -1,4 +1,24 @@
 extends ..\\layout
+include ..\\mixins\sendDacBccu-mixin.pug
 
 block content
-  h1= title
+    h1= title
+    br
+    h3 Power Supply
+    form(action='/manual/powerControl', method='post')
+        label(for='wattage') Choose Wattage: 
+        select(name='wattage', id='wattage', required)
+            option(value='', selected, disabled, hidden)='Select Wattage'
+            option(value='150') 150 Watt
+            option(value='80') 80 Watt
+            option(value='40') 40 Watt
+        br
+        br
+        input.mr-small(type='submit', value='On', name='psCommand')
+    form(action='/manual/powerControl', method='post')
+        input.mr-small(type='submit', value='Off', name='psCommand')        
+    br
+    br    
+    h3 Send RDM 
+    form(action='/sendRDM', method='post')
+        +sendDacBccu()
