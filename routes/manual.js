@@ -1,35 +1,62 @@
 const express = require('express');
-const SCPI = require('../utilities/SCPIHelpers');
+const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
+const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
+const { decToHex2c } = require('../utilities/hexHelpers');
+const { sendRDM, getAddress } = require('../utilities/rdmDmxHelpers');
 
 const router = express.Router();
 
 /* GET manual testing home page. */
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   res.render('.\\manual\\manual', { title: 'Manual Commands' });
 });
 
 /* Send power commands to power supply */
-router.post('/powerControl', (req, res) => {
+router.post('/powerControl', async (req, res) => {
   if (req.body.psCommand === 'On') {
     const volt = (req.body.wattage === '150') ? '26.75' : '24';
     const watt = '3.2';
     try {
-      SCPI.initializePowerSupply(volt, watt).then(() => {
-        SCPI.sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
-        res.redirect('/manual');
-      });
+      await initializePowerSupply(volt, watt);
+      await sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+      res.redirect('/manual');
     } catch (err) {
-      res.render('.\\error', { message: 'Error Communication with PS', error: err });
+      res.render('.\\error', { message: 'Error Communicating with Power Supply', error: err });
     }
   } else {
-    SCPI.sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+    sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
     res.redirect('/manual');
   }
 });
 
 /* Send DAC BCCU to device */
-router.post('/sendRDM', (req, res) => {
-    
-})
+router.post('/sendRDM', async (req, res) => {
+  const unlockCode = process.env.UNLOCK_CODE;
+  const dacBccuHexObject = [unlockCode];
+  const values = Object.keys(req.body);
+  const dutAddress = await getAddress();
+
+  // console.log(dutAddress);
+  for (let i = 0; i < values.length; i += 1) {
+    if (values[i].includes('Dac')) {
+      dacBccuHexObject.push(decToHex2c(parseInt(req.body[values[i]], 10)));
+    } else if (values[i].includes('Bccu')) {
+      dacBccuHexObject.push(decToHex2c(parseInt(req.body[values[i]], 10)));
+      // onOff time comes after bccu
+      dacBccuHexObject.push('0000');
+    }
+  }
+
+  // format rdm parameters
+  const rdmParams = {
+    command_class: '30',
+    destination: dutAddress,
+    pid: '8625',
+    data: dacBccuHexObject.join(''),
+  };
+  // console.log(req.body);
+  sendRDM(rdmParams);
+  res.send(200);
+});
 
 module.exports = router;

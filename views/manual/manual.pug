@@ -5,7 +5,7 @@ block content
     h1= title
     br
     h3 Power Supply
-    form(action='/manual/powerControl', method='post')
+    form(action='\\manual\\powerControl', method='post')
         label(for='wattage') Choose Wattage: 
         select(name='wattage', id='wattage', required)
             option(value='', selected, disabled, hidden)='Select Wattage'
@@ -20,5 +20,8 @@ block content
     br
     br    
     h3 Send RDM 
-    form(action='/sendRDM', method='post')
+    form(action='\\manual\\sendRDM', method='post')
         +sendDacBccu()
+    br
+    br
+    
