@@ -10,6 +10,7 @@ function resetPage() {
   $('#submit').prop('disabled', true);
   $('#Status').addClass('hidden');
   $('#messageBox').empty();
+  $('#messageBox').removeClass('errorBorder');
   $('#buttonBox > button').prop('disabled', true).addClass('hidden');
   $('#confirmConnected').prop('disabled', false);
 }
@@ -77,6 +78,10 @@ $('#submit').click((event) => {
       devWattage = data[1];
     }
 
+    if (e.data.includes('Failure detected:')) {
+      $('#messageBox').addClass('errorBorder');
+    }
+
     if (e.data.includes('TestId') === true) {
       const data = JSON.parse(e.data);
       // console.log(`testId${data.TestId}`);
@@ -86,8 +91,6 @@ $('#submit').click((event) => {
 
       // Enable buttons to continue with user flow
       $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');
-      // $('#newTestYes').prop('disabled', false).removeClass('hidden');
-      // $('#newTestNo').prop('disabled', false).removeClass('hidden');
     }
   });
 

@@ -74,38 +74,54 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
     client.write('data: \n\n');
     client.write(`data: Testing ${template.MeasurementName}...\n\n`);
     client.write(`data: CommandValue = ${rdmParams.data}\n\n`);
+
+    // get temperature
     await sendRDM(rdmParams).then(() => {
-      // record CPU temp
       client.write('data: Gathering readings...\n\n');
-      getSensorTemp('00', dutAddress).then((cpuTemp) => {
-        client.write(`data: CPU Temp: ${cpuTemp}\n\n`);
-        output[index].CPUTemp = cpuTemp;
-      }).then(() => {
-        // record LED temp
-        getSensorTemp('01', dutAddress).then((ledTemp) => {
-          client.write(`data: LED Temp: ${ledTemp}\n\n`);
-          output[index].LEDTemp = ledTemp;
-        });
-      });
     }).catch((err) => { console.log(err); });
 
     // get readings from multimeters
-    await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then((readings) => {
-      for (let r = 0; r < readings.length; r += 1) {
-        const reading = parseFloat(readings[r].deviceReading);
-        output[index][`Current${r}`] = reading;
-        client.write(`data: Current${r}: ${reading}\n\n`);
-      }
-      // check for pass fail --- currently set to fail by default until values are available to check
-      output[index].DidPass = 0;
-      output[index].TestId = OutputTestId;
+    await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true')
+      .then(async (readings) => {
+        let passFail = 0;
+        for (let r = 0; r < readings.length; r += 1) {
+          const reading = parseFloat(readings[r].deviceReading);
+          const high = template[`PassHighCurrent${r}`];
+          const low = template[`PassLowCurrent${r}`]
+          output[index][`Current${r}`] = reading;
+          client.write(`data: Current${r}: ${reading}\n\n`);
+          if (reading <= high && reading >= low) {
+            passFail += 1;
+          }
+          // console.log(template[`PassLowCurrent${r}`]);
+          // console.log(template[`PassHighCurrent${r}`]);
+        }
 
-      // insert all data to db
-      insertMeasurement(output[index]);
-      // console.log(output)
-      console.log(`name: ${template.MeasurementName}`);
-      console.log(`readings: ${util.inspect(readings)}`);
-    });
+        // get Temperature readings
+        const cpuTemp = await getSensorTemp('00', dutAddress);
+        const ledTemp = await getSensorTemp('01', dutAddress);
+        output[index].CPUTemp = cpuTemp;
+        output[index].LEDTemp = ledTemp;
+        client.write(`data: CPU Temp: ${cpuTemp}\n\n`);
+        client.write(`data: LED Temp: ${ledTemp}\n\n`);
+
+        // check for pass fail
+        if (passFail !== 4) {
+          output[index].DidPass = 0;
+          client.write(`data: Failure detected: Current outside acceptable range\n\n`);
+        } else {
+          output[index].DidPass = 1;
+        }
+        // console.log(output[index].DidPass);
+        output[index].TestId = OutputTestId;
+
+        // insert all data to db
+        await insertMeasurement(output[index]);
+
+        // console.log(output)
+        console.log(`name: ${template.MeasurementName}`);
+        console.log(`readings: ${util.inspect(readings)}`);
+      });
   }
   return output;
 }
