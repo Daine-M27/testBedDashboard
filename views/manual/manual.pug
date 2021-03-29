@@ -4,6 +4,15 @@ include ..\\mixins\sendDacBccu-mixin.pug
 block content
     h1= title
     br
+    h3 Print Label
+    p= printMessage
+    if !printValues
+        form(action='\\manual\\labelInfo', method="get") 
+            input.mr-small(type='submit', value='Get Info', name='printButton', )
+    if printValues        
+        button(type='button' id='printLabelButton' data-address=printValues.address data-firmware=printValues.firmware data-wattage=printValues.wattage) Print
+    br
+    br
     h3 Power Supply
     form(action='\\manual\\powerControl', method='post')
         label(for='wattage') Choose Wattage: 
@@ -15,7 +24,7 @@ block content
         br
         br
         input.mr-small(type='submit', value='On', name='psCommand')
-    form(action='/manual/powerControl', method='post')
+    form(action='\\manual\\powerControl', method='post')
         input.mr-small(type='submit', value='Off', name='psCommand')        
     br
     br    
@@ -24,4 +33,7 @@ block content
         +sendDacBccu()
     br
     br
+
+    append scripts
+        script(src="\\javascript\\manualTesting.js")
     

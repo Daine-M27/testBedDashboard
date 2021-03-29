@@ -99,59 +99,26 @@ function checkInsturments(addressList, command, convert) {
     const readingPromises = [];
     const output = [];
     const complete = (data) => {
-    // console.log('complete')
       resolve(data);
     };
-
-    // addressList.forEach((deviceAddress) => {
-    //   readingPromises.push(getReading(deviceAddress))
-    // })
-    //Promise.all(addressList)
-
     addressList.forEach(async (deviceAddress) => {
-      if (convert){
+      if (convert) {
         readingPromises.push(getReading(deviceAddress, command, convert));
-        // await getReading(deviceAddress, command, convert).then((result) => {
-        //   output.push({ address: deviceAddress, deviceReading: result });
-        // });
       } else {
         readingPromises.push(getReading(deviceAddress, command, 'false'));
-        // await getReading(deviceAddress, command, 'false').then((result) => {
-        //   output.push({ address: deviceAddress, deviceReading: result });
-        // });
       }
-      // console.log('return ' + output);
-      // if (output.length === addressList.length) {
-      //   complete(output);
-      // }
     });
-
+    // return after all promises complete
     Promise.all(readingPromises).then((readings) => {
       readings.forEach((reading, index) => {
         output.push({ address: addressList[index], deviceReading: reading });
       });
-
       if (output.length === addressList.length) {
         complete(output);
       }
     }).catch((error) => {
       reject(error);
     });
-    // addressList.forEach(async (deviceAddress) => {
-    //   if (convert){
-    //     await getReading(deviceAddress, command, convert).then((result) => {
-    //       output.push({ address: deviceAddress, deviceReading: result });
-    //     });
-    //   } else {
-    //     await getReading(deviceAddress, command, 'false').then((result) => {
-    //       output.push({ address: deviceAddress, deviceReading: result });
-    //     });
-    //   }
-    //   // console.log('return ' + output);
-    //   if (output.length === addressList.length) {
-    //     complete(output);
-    //   }
-    // });
   });
 }
 
@@ -169,73 +136,9 @@ async function initializePowerSupply(volt, curr) {
   output.Current = await getReading(powerSupplyAddress, 'CURRent?', 'false');
   const statusCodes = await getReading(powerSupplyAddress, 'SYSTem:STATus?');
   output.Config = psStatus.readPowerSupplyStatus(hexHelper.hexToBinary(statusCodes));
-  // console.log(`Voltage Setting: ${reading1}`);
-  // console.log(`Current Setting: ${reading2}`);
-  // console.log(`Binary Code: ${reading3ToBinary}`);
-  // console.log(`Device Status: ${binaryStatus}`);
-
   return output;
 }
 
 module.exports = {
   sendCommand, getReading, checkInsturments, infoCommand, initializePowerSupply,
 };
-
-// old way created object that would hold response along with command that was sent.
-// const net = require("net");
-
-// function sendCommand (address, command, convert) {
-//     this.address = address;
-//     this.command = command;
-//     this.convert = convert;
-//     this.response;
-//         try {
-//             const params = {
-//                 "parameters": {
-//                     "address": this.address,
-//                     "command": this.command,
-//                     "convert": this.convert
-//                 }
-//             };
-//             //initialize new socket
-//             const client = new net.Socket();
-
-//             // establish connection
-//             client.connect(5001, "127.0.0.1", function () {
-//                 console.log("Connected to C# Socket");
-//                 // convert json to pretty string
-//                 let payload = JSON.stringify(params);
-//                 console.log("sending payload: " + payload);
-//                 // send payload to destination socket
-//                 client.write(payload);
-//             });
-
-//             // get response
-//             client.on('data', (data) => {
-//                 // reading for sending a one way command should be 0 if no errors are detected in sending, otherwise it will be request specific
-//                 let reading = new TextDecoder().decode(data);
-//                 this.response = reading;
-//                 client.destroy();
-//             });
-
-//             // close connection
-//             client.on('close', () => {
-//                 console.log("connection closed");
-//                 //return this.response;
-//             });
-
-//             // handle error from SCPI server
-//             // client.on('error', (error) => {
-//             //     console.log(error);
-//             //     this.res = error;
-//             //     return this.res;
-//             // });
-//         } catch (error) {
-//             // log error and return false
-//             console.log(error)
-//             //this.res = 1;
-//             this.response = error;
-//             //return this.response;
-//         }
-// }
-// module.exports = { sendCommand: sendCommand };

@@ -2,7 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { decToHex2c } = require('../utilities/hexHelpers');
-const { sendRDM, getAddress } = require('../utilities/rdmDmxHelpers');
+const { sendRDM, getAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
+const { readPowerSupplyStatus } = require('../utilities/psStatusHelpers');
 
 const router = express.Router();
 
@@ -57,6 +58,24 @@ router.post('/sendRDM', async (req, res) => {
   // console.log(req.body);
   sendRDM(rdmParams);
   res.send(200);
+});
+
+/* Print Label */
+router.get('/labelInfo', async (req, res) => {
+  const printValues = {};
+  const psStatus = await initializePowerSupply('24', '3.2');
+
+  if (psStatus.Config[3].includes('OFF')) {
+    res.render('.\\manual\\manual', { title: 'Manual Commands', printMessage: 'Check Power Supply!' });
+  } else {
+    const address = await getAddress();
+    const firmWatt = await getFirmwareAndWattage(address);
+    printValues.address = address;
+    printValues.firmware = firmWatt.firmware;
+    printValues.wattage = firmWatt.wattage;
+
+    res.render('.\\manual\\manual', { title: 'Manual Commands', printValues });
+  }
 });
 
 module.exports = router;

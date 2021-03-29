@@ -108,7 +108,7 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
         // check for pass fail
         if (passFail !== 4) {
           output[index].DidPass = 0;
-          client.write(`data: Failure detected: Current outside acceptable range\n\n`);
+          client.write('data: Failure detected: Current outside acceptable range!\n\n');
         } else {
           output[index].DidPass = 1;
         }
