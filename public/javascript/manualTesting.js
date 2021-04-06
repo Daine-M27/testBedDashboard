@@ -1,6 +1,3 @@
-$
-
-
 $('#printLabelButton').click(function() {
   const printAddress = $(this).attr('data-address');
   const printFirmware = $(this).data('firmware');

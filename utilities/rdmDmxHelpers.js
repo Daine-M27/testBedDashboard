@@ -4,7 +4,7 @@ const qs = require('qs');
 const axios = require('axios');
 const retry = require('axios-retry');
 const util = require('util');
-const { hexToAscii, rdmHexResponseParse } = require('./hexHelpers');
+const { hexToAscii, rdmHexResponseParse, hexToDecimal } = require('./hexHelpers');
 
 // const green = {
 //   1: '128',
@@ -180,6 +180,27 @@ function getFirmwareAndWattage(address) {
   });
 }
 
+function getHardwareWattage(address) {
+  console.log('getFirmware enter');
+  return new Promise((resolve, reject) => {
+    const infoRDM = {
+      command_class: '20',
+      destination: address,
+      pid: '8626',
+      data: '',
+    };
+
+    // get firmware and wattage
+    sendRDM(infoRDM).then((res) => {
+      const wattage = hexToDecimal(rdmHexResponseParse(res.data.response));
+      resolve(wattage);
+    }).catch((err) => {
+      console.log(`getHardwareWattage reject${infoRDM.address}`);
+      reject(err);
+    });
+  });
+}
+
 /**
  * This function gets a reading back from the rdm device
  * @param {number} sensor
@@ -239,6 +260,7 @@ module.exports = {
   RdmParamsObject,
   rdmDiscoverAddress,
   getFirmwareAndWattage,
+  getHardwareWattage,
   getSensorTemp,
   getAddress,
 };

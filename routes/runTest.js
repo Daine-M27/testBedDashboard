@@ -8,7 +8,7 @@ const scpi = require('../utilities/SCPIHelpers');
 const dbhelper = require('../utilities/databaseHelpers');
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
 const { runTestById } = require('../utilities/testHelpers');
-const { getAddress, rdmDiscoverAddress, getFirmwareAndWattage } = require('../utilities/rdmDmxHelpers');
+const { getAddress, rdmDiscoverAddress, getFirmwareAndWattage, getHardwareWattage } = require('../utilities/rdmDmxHelpers');
 const { getTestById, getMeasurementsByTestId, getBoardIds, getFirmwares, getWattages } = require('../utilities/databaseHelpers');
 
 const router = express.Router();
@@ -84,9 +84,12 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
     if (dutAddress.length > 3) {
       client.write(`data: Address found: ${dutAddress}\n\n`);
       client.write('data: Getting firmware and wattage...\n\n');
+      const hardwareWattage = await getHardwareWattage(dutAddress);
+      // console.log('HWWatt: '+ hardwareWattage);
       const devSpec = await getFirmwareAndWattage(dutAddress);
       // check firware wattage to prevent wrong test from running
-      if (devSpec.wattage.includes(testInfo.wattage) === true) {
+      if (devSpec.wattage.includes(testInfo.wattage) === true && devSpec.wattage.includes(hardwareWattage.toString()) === true) {
+        client.write(`data: Hardware wattage reading: ${hardwareWattage.toString()}W\n\n`);
         client.write(`data: Device firmware: ${devSpec.firmware}\n\n`);
         client.write(`data: Device wattage: ${devSpec.wattage}\n\n`);
         // run test, power off device and return test result page
@@ -103,7 +106,10 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
         // console.log(2);
         client.write('data: Power supply off...\n\n');
         sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-        client.write('event: error\ndata: Device wattage does not match the selected test, select a new test to continue!\n\n');
+        client.write(`data: Hardware wattage reading: ${hardwareWattage.toString()}W\n\n`);
+        client.write(`data: Device firmware: ${devSpec.firmware}\n\n`);
+        client.write(`data: Device wattage: ${devSpec.wattage}\n\n`);
+        client.write('event: error\ndata: Device wattage or hardware wattage does not match the selected test, please firmware and test selected!\n\n');
         client.end();
       }
     } else {

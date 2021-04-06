@@ -64,16 +64,16 @@ function print(fw, watt, addr) {
     const CR = "\x0D";
     // working format for C200X038YJT labels
     let cmds = `^Q10,3${  CR}`;
-    cmds += `^W50${  CR}`;
-    cmds += `^H10${  CR}`;
-    cmds += `^P1${  CR}`;
-    cmds += `^S6${  CR}`;
-    cmds += `^R0${  CR}`;
-    cmds += `^D0${  CR}`;
+    cmds += `^W50${  CR}`; // label width in mm
+    cmds += `^H10${  CR}`; // Darkness of print
+    cmds += `^P1${  CR}`; // Number of copies
+    cmds += `^S6${  CR}`; // Speed setting inch/sec
+    cmds += `^R0${  CR}`; // Left margin
+    cmds += `^D0${  CR}`; // labels per cut 0 is none
     cmds += `^E30${  CR}`; // Feed stop position
-    cmds += `^L${  CR}`;
-    cmds += `AT,20,30,48,48,0,0B,0,0,${fw} ${wattageString} ${addr}${  CR}`;
-    cmds += `E${  CR}`;
+    cmds += `^L${  CR}`; // Normal or Inverse
+    cmds += `AT,20,30,48,48,0,0B,0,0,${fw} ${wattageString} ${addr}${  CR}`; // Text format options
+    cmds += `E${  CR}`; // End
 
     cpj.printerCommands = cmds;
     // Send print job to printer!
