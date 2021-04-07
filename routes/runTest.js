@@ -109,7 +109,7 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
         client.write(`data: Hardware wattage reading: ${hardwareWattage.toString()}W\n\n`);
         client.write(`data: Device firmware: ${devSpec.firmware}\n\n`);
         client.write(`data: Device wattage: ${devSpec.wattage}\n\n`);
-        client.write('event: error\ndata: Device wattage or hardware wattage does not match the selected test, please check firmware and test selected!\n\n');
+        client.write('data: Failure detected: Device wattage or hardware wattage does not match the selected test, please check firmware and test selected!\n\n');
         client.end();
       }
     } else {
