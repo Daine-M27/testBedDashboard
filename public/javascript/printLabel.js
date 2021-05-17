@@ -33,7 +33,7 @@ function jspmWSStatus() {
 
 // Do printing...
 function print(fw, watt, addr) {
-  let wattageString = watt;
+  const wattageString = watt;
 
   if (!fw || !watt || !addr) {
     alert(`Missing data for label!
@@ -41,7 +41,10 @@ function print(fw, watt, addr) {
     Wattage: ${watt}
     Address: ${addr}`);
     return;
-  }  
+  }
+
+  const split = addr.split(":");
+  const serial = parseInt(split[1], 16).toString();
 
   if (jspmWSStatus()) {
     // Create a ClientPrintJob
@@ -72,7 +75,8 @@ function print(fw, watt, addr) {
     cmds += `^D0${  CR}`; // labels per cut 0 is none
     cmds += `^E30${  CR}`; // Feed stop position
     cmds += `^L${  CR}`; // Normal or Inverse
-    cmds += `AT,20,30,48,48,0,0B,0,0,${fw} ${wattageString} ${addr}${  CR}`; // Text format options
+    cmds += `AT,20,16,48,30,0,0B,0,0,${fw} ${wattageString} ${addr}${  CR}`; // Text format options
+    cmds += `BA,20,50,2,6,30,0,3,${serial}${  CR}`;
     cmds += `E${  CR}`; // End
 
     cpj.printerCommands = cmds;
