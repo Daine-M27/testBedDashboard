@@ -76,7 +76,7 @@ function print(fw, watt, addr) {
     cmds += `^E30${  CR}`; // Feed stop position
     cmds += `^L${  CR}`; // Normal or Inverse
     cmds += `AT,20,16,48,30,0,0B,0,0,${fw} ${wattageString} ${addr}${  CR}`; // Text format options
-    cmds += `BA,20,50,2,6,30,0,3,${serial}${  CR}`;
+    cmds += `BA,280,50,2,6,30,0,3,${serial}${  CR}`;
     cmds += `E${  CR}`; // End
 
     cpj.printerCommands = cmds;
