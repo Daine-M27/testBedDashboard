@@ -33,7 +33,7 @@ function jspmWSStatus() {
 
 // Do printing...
 function print(fw, watt, addr) {
-  const wattageString = watt;
+  let wattageString = watt;
 
   if (!fw || !watt || !addr) {
     alert(`Missing data for label!
