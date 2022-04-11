@@ -71,7 +71,7 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
     // } else {
     //   psStatus = await initializePowerSupply('24', '3.2');
     // }
-    const psStatus = await initializePowerSupply('26, 3.2');
+    const psStatus = await initializePowerSupply('26', '3.2');
 
     client.write(`data: Power Supply set to ${psStatus.Voltage * 2} Volts...\n\n`); // multiply voltage because two channels are run in series to achieve proper voltage
     // add check for ps settings is accurate with psStatus
