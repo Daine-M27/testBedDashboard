@@ -89,9 +89,22 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
       const hardwareWattage = await getHardwareWattage(dutAddress);
       // console.log('HWWatt: '+ hardwareWattage);
       const devSpec = await getFirmwareAndWattage(dutAddress);
-      
       // check firware wattage to prevent wrong test from running
-      if ((devSpec.wattage.includes(testInfo.wattage) === true && devSpec.wattage.includes(hardwareWattage.toString()) === true) || (getHardwareWattage >= 100)) {
+      if (devSpec.wattage.includes(testInfo.wattage) === true && devSpec.wattage.includes(hardwareWattage.toString()) === true) {
+        client.write(`data: Hardware wattage reading: ${hardwareWattage.toString()}W\n\n`);
+        client.write(`data: Device firmware: ${devSpec.firmware}\n\n`);
+        client.write(`data: Device wattage: ${devSpec.wattage}\n\n`);
+        // run test, power off device and return test result page
+        const testOutput = await runTestById(testInfo, dutAddress, devSpec.firmware, devSpec.wattage, client);
+        // console.log(1);
+        client.write('data: \n\n');
+        client.write('data: Testing Complete.\n\n');
+        client.write('data: Power supply off...\n\n');
+        sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+        const testIdData = JSON.stringify({ TestId: testOutput[0].TestId });
+        client.write(`data: ${testIdData}\n\n`);
+        client.end();
+      } else if (hardwareWattage.toString === '150') {
         client.write(`data: Hardware wattage reading: ${hardwareWattage.toString()}W\n\n`);
         client.write(`data: Device firmware: ${devSpec.firmware}\n\n`);
         client.write(`data: Device wattage: ${devSpec.wattage}\n\n`);
