@@ -21,13 +21,15 @@ const axios = require('axios');
 
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
-async function getResults(bid, watt, fw, sd, ed) {
-  searchDatabase('', '', '', '', '').then((res) => {
-    console.log(res);
-  })
-}
 
-getResults();
+const result = hexToAscii
+// async function getResults(bid, watt, fw, sd, ed) {
+//   searchDatabase('', '', '', '', '').then((res) => {
+//     console.log(res);
+//   })
+// }
+
+// getResults();
 
 // async function dmxTest() {
 //   sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');

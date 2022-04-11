@@ -89,8 +89,9 @@ router.get('/startTest/:id/:testName/:wattage', async (req, res) => {
       const hardwareWattage = await getHardwareWattage(dutAddress);
       // console.log('HWWatt: '+ hardwareWattage);
       const devSpec = await getFirmwareAndWattage(dutAddress);
+      
       // check firware wattage to prevent wrong test from running
-      if (devSpec.wattage.includes(testInfo.wattage) === true && devSpec.wattage.includes(hardwareWattage.toString()) === true) {
+      if ((devSpec.wattage.includes(testInfo.wattage) === true && devSpec.wattage.includes(hardwareWattage.toString()) === true) || (getHardwareWattage >= 100)) {
         client.write(`data: Hardware wattage reading: ${hardwareWattage.toString()}W\n\n`);
         client.write(`data: Device firmware: ${devSpec.firmware}\n\n`);
         client.write(`data: Device wattage: ${devSpec.wattage}\n\n`);
