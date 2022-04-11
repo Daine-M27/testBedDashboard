@@ -3,7 +3,6 @@
 const qs = require('qs');
 const axios = require('axios');
 const retry = require('axios-retry');
-const util = require('util');
 const { hexToAscii, rdmHexResponseParse, hexToDecimal } = require('./hexHelpers');
 
 // const green = {
@@ -94,7 +93,6 @@ async function sendRDM(params) {
   }
   return res;
 }
-
 
 /**
  * This function get the address of a device if

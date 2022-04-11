@@ -2,9 +2,15 @@
 /* eslint-disable max-len */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-const dotenv = require('dotenv').config({ path: require('find-config')('.env') });
+const dotenv = require('dotenv').config({
+  path: require('find-config')('.env'),
+});
 const util = require('util');
-const { getMeasurementTemplate, insertMeasurement, insertTest } = require('./databaseHelpers');
+const {
+  getMeasurementTemplate,
+  insertMeasurement,
+  insertTest,
+} = require('./databaseHelpers');
 const { decToHex2c } = require('./hexHelpers');
 const { sendRDM, getSensorTemp } = require('./rdmDmxHelpers');
 const { checkInsturments } = require('./SCPIHelpers');
@@ -23,12 +29,22 @@ const unlockCode = process.env.UNLOCK_CODE;
  * and saves all measurements into the database
  *
  */
-async function runTestById(testTemplate, dutAddress, firmware, wattage, client) {
+async function runTestById(
+  testTemplate,
+  dutAddress,
+  firmware,
+  wattage,
+  client,
+) {
   // variables
   client.write('data: Test Started...\n\n');
   const output = [];
   client.write('data: Getting testing template from database...\n\n');
-  const dacBccuData = await getMeasurementTemplate(testTemplate.id).catch((err) => { console.log(err); });
+  const dacBccuData = await getMeasurementTemplate(testTemplate.id).catch(
+    (err) => {
+      console.log(err);
+    },
+  );
   const measurementTemplates = dacBccuData.recordset;
   const testData = {
     TestTemplateId: testTemplate.id,
@@ -76,18 +92,25 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
     client.write(`data: CommandValue = ${rdmParams.data}\n\n`);
 
     // get temperature
-    await sendRDM(rdmParams).then(() => {
-      client.write('data: Gathering readings...\n\n');
-    }).catch((err) => { console.log(err); });
+    await sendRDM(rdmParams)
+      .then(() => {
+        client.write('data: Gathering readings...\n\n');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
+    // ---------- add time delay at this point to allow led to reach operating temp ------------ //
+
+ 
     // get readings from multimeters
-    await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true')
-      .then(async (readings) => {
+    await checkInsturments(dmmAddresses, 'MEASure:CURRent?', 'true').then(
+      async (readings) => {
         let passFail = 0;
         for (let r = 0; r < readings.length; r += 1) {
           const reading = parseFloat(readings[r].deviceReading);
           const high = template[`PassHighCurrent${r}`];
-          const low = template[`PassLowCurrent${r}`]
+          const low = template[`PassLowCurrent${r}`];
           output[index][`Current${r}`] = reading;
           client.write(`data: Current${r}: ${reading}\n\n`);
           if (reading <= high && reading >= low) {
@@ -108,7 +131,9 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
         // check for pass fail
         if (passFail !== 4) {
           output[index].DidPass = 0;
-          client.write('data: Failure detected: Current outside acceptable range!\n\n');
+          client.write(
+            'data: Failure detected: Current outside acceptable range!\n\n',
+          );
         } else {
           output[index].DidPass = 1;
         }
@@ -121,7 +146,8 @@ async function runTestById(testTemplate, dutAddress, firmware, wattage, client) 
         // console.log(output)
         console.log(`name: ${template.MeasurementName}`);
         console.log(`readings: ${util.inspect(readings)}`);
-      });
+      },
+    );
   }
   return output;
 }
