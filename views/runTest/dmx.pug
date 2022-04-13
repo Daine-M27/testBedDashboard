@@ -1,0 +1,41 @@
+extends ../layout2
+
+block content
+  h1= title
+
+  form(action='/runTest/runDMXTest', method='post')
+    label(for='white') White:
+    br
+    input#white(type='text' name='white' value='0')
+    br
+    br
+    label(for='red') Red:
+    br
+    input#red(type='text' name='red' value='0')
+    br
+    br
+    label(for='green') Green:
+    br
+    input#green(type='text' name='green' value='0')
+    br
+    br
+    label(for='blue') Blue:
+    br
+    input#blue(type='text' name='blue' value='0')
+    br
+    br
+    label(for='delay') Delay in Minutes:
+    br
+    input#delay(type='text' name='delay' value='0')
+    br
+    br
+    button(type='button' onclick='addDMXTest()') Add Test
+    br
+    br
+    h3 Tests to run 
+    #testValues
+    input(type='submit' value='Run Tests')
+
+
+  append scripts
+    script(src="\\javascript\\dmxTest.js")

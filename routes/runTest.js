@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable quote-props */
 /* eslint-disable max-len */
 const fs = require('fs');
@@ -206,4 +207,31 @@ router.post('/searchTestResults/export', (req, res) => {
     });
 });
 
+router.get('/dmxTest', (req, res) => {
+  res.render('.\\runTest\\dmx', { title: 'DMX Test Page' });
+});
+
+router.post('/runDMXTest', (req, res) => {
+  const data = req.body;
+  // get all test keys and values into single object
+  const testValues = Object.fromEntries(Object.entries(data).filter(([key]) => key.includes('Test')));
+  const tests = [];
+
+  for (const cols = Object.entries(testValues); cols.length;) {
+    tests.push(cols.splice(0, 5).reduce((o,[k,v]) => (o[k]=v,o), {}));
+  }
+  // console.log(tests)
+
+  // run tests on tests array of objects
+});
 module.exports = router;
+
+
+// const green = {
+//   1: '128',
+//   2: '0',
+//   3: '255',
+//   4: '0',
+//   5: '0',
+//   6: '0',
+// };

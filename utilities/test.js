@@ -22,7 +22,7 @@ const axios = require('axios');
 // 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 
 
-const result = hexToAscii
+
 // async function getResults(bid, watt, fw, sd, ed) {
 //   searchDatabase('', '', '', '', '').then((res) => {
 //     console.log(res);
