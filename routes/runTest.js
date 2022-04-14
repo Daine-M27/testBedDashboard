@@ -13,16 +13,16 @@ const { getAddress, rdmDiscoverAddress, getFirmwareAndWattage, getHardwareWattag
 const { getTestById, getMeasurementsByTestId, getBoardIds, getFirmwares, getWattages } = require('../utilities/databaseHelpers');
 
 const router = express.Router();
+const deviceAddresses = [
+  process.env.DMM_CHAN_0,
+  process.env.DMM_CHAN_1,
+  process.env.DMM_CHAN_2,
+  process.env.DMM_CHAN_3,
+  process.env.PPS,
+];
 
 /* GET test home page. */
 router.get('/', (req, res) => {
-  const deviceAddresses = [
-    process.env.DMM_CHAN_0,
-    process.env.DMM_CHAN_1,
-    process.env.DMM_CHAN_2,
-    process.env.DMM_CHAN_3,
-    process.env.PPS,
-  ];
 
   scpi.checkInsturments(deviceAddresses, '*IDN?', 'false')
     .then((instrumentCheck) => {
@@ -208,7 +208,15 @@ router.post('/searchTestResults/export', (req, res) => {
 });
 
 router.get('/dmxTest', (req, res) => {
-  res.render('.\\runTest\\dmx', { title: 'DMX Test Page' });
+  scpi.checkInsturments(deviceAddresses, '*IDN?', 'false')
+    .then((instrumentCheck) => {
+      res.render('.\\runTest\\dmx', {
+        title: 'DMX Test Setup',
+        instruments: instrumentCheck,
+      });
+    }).catch((err) => {
+      res.render('.\\runTest\\testError', { title: 'SCPI Server Not Responding', message: err });
+    });
 });
 
 router.post('/runDMXTest', (req, res) => {
