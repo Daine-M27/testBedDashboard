@@ -154,7 +154,12 @@ async function runTestById(
 
 
 
-async function runDMXTests(tests){
-  
+async function runDMXTest(
+  tests,
+  dutAddress,
+  firmware,
+  wattage,
+  client,){
+
 }
 module.exports = { runTestById };
