@@ -218,9 +218,10 @@ router.post('/runDMXTest', (req, res) => {
   const tests = [];
 
   for (const cols = Object.entries(testValues); cols.length;) {
-    tests.push(cols.splice(0, 5).reduce((o,[k,v]) => (o[k]=v,o), {}));
+    // eslint-disable-next-line no-return-assign
+    tests.push(cols.splice(0, 5).reduce((o, [k,v]) => (o[k]=v,o), {}));
   }
-  // console.log(tests)
+  console.log(tests)
 
   // run tests on tests array of objects
 });

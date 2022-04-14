@@ -152,4 +152,9 @@ async function runTestById(
   return output;
 }
 
+
+
+async function runDMXTests(tests){
+  
+}
 module.exports = { runTestById };

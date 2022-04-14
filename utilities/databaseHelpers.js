@@ -271,6 +271,28 @@ async function insertTest(data) {
   }
 }
 
+
+/**
+ * This function inserts a test into the db
+ * @param {object} data
+ */
+async function insertDMXTest(data) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()      
+      .input('DeviceWattage', sql.VarChar(20), data.DeviceWattage)
+      .input('DeviceFirmware', sql.VarChar(20), data.DeviceFirmware)
+      .input('BoardId', sql.VarChar(20), data.BoardId)
+      // .output('Id', sql.Int)
+      .execute('InsertDMXTest');
+    pool.close();
+    return result.recordset;
+  } catch (err) {
+    console.log(`Insert DMX Test Error: ${err}`);
+    return err;
+  }
+}
+
 async function getTestById(id) {
   try {
     const pool = await sql.connect(config);
@@ -327,6 +349,36 @@ async function insertMeasurement(data) {
     return err;
   }
 }
+
+/**
+ * This function inserts a dmx measurement into the db
+ * @param {object} data
+ */
+async function insertDMXMeasurement(data) {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('TestId', sql.Int, data.TestId)
+      .input('WhiteValue', sql.TinyInt, data.WhiteValue)
+      .input('RedValue', sql.TinyInt, data.RedValue)
+      .input('GreenValue', sql.TinyInt, data.GreenValue)
+      .input('BlueValue', sql.TinyInt, data.BlueValue)
+      .input('Current0', sql.Decimal(10, 5), data.Current0)
+      .input('Current1', sql.Decimal(10, 5), data.Current1)
+      .input('Current2', sql.Decimal(10, 5), data.Current2)
+      .input('Current3', sql.Decimal(10, 5), data.Current3)
+      .input('CPUTemp', sql.Int, data.CPUTemp)
+      .input('LEDTemp', sql.Int, data.LEDTemp)
+      .execute('InsertDMXMeasurement');
+    pool.close();
+    return result;
+  } catch (err) {
+    console.log(`Insert DMX Measurement Error: ${err}`);
+    return err;
+  }
+}
+
+
 
 /* Get all measurements with test ID */
 async function getMeasurementsByTestId(id) {
@@ -467,7 +519,9 @@ module.exports = {
   deleteMeasurementTemplate,
   editMeasurementTemplate,
   insertTest,
+  insertDMXTest,
   insertMeasurement,
+  insertDMXMeasurement,
   getTestById,
   getMeasurementsByTestId,
   getBoardIds,
