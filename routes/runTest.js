@@ -216,19 +216,18 @@ router.post('/runDMXTest', (req, res) => {
   // get all test keys and values into single object
   const testValues = Object.fromEntries(Object.entries(data).filter(([key]) => key.includes('Test')));
   const tests = [];
-  const conditionedTests = []
+  const conditionedTests = [];
 
   // create test group objects
   for (const cols = Object.entries(testValues); cols.length;) {
     // eslint-disable-next-line no-return-assign
-    tests.push(cols.splice(0, 5).reduce((o, [k,v]) => (o[k]=v,o), {}));
+    tests.push(cols.splice(0, 5).reduce((o, [k, v]) => (o[k] = v, o), {}));
   }
- 
+
   // condition test key names for dmxTest helper
   tests.forEach((test) => {
     const output = {};
     const testKeys = Object.keys(test);
-
     testKeys.forEach((key) => {
       if (key.includes('white')) {
         output.White = test[key];
@@ -242,7 +241,6 @@ router.post('/runDMXTest', (req, res) => {
         output.Delay = test[key];
       }
     });
-
     conditionedTests.push(output);
   });
 
