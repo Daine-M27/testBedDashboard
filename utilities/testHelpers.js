@@ -5,15 +5,13 @@
 const dotenv = require('dotenv').config({
   path: require('find-config')('.env'),
 });
+const { Console } = require('console');
 const util = require('util');
-const {
-  getMeasurementTemplate,
-  insertMeasurement,
-  insertTest,
-} = require('./databaseHelpers');
+const { getMeasurementTemplate, insertMeasurement, insertTest } = require('./databaseHelpers');
 const { decToHex2c } = require('./hexHelpers');
-const { sendRDM, getSensorTemp } = require('./rdmDmxHelpers');
-const { checkInsturments } = require('./SCPIHelpers');
+const { sendRDM, getSensorTemp, getAddress, rdmDiscoverAddress, getFirmwareAndWattage, getHardwareWattage } = require('./rdmDmxHelpers');
+const { checkInsturments, initializePowerSupply, sendCommand } = require('./SCPIHelpers');
+
 
 const dmmAddresses = [
   process.env.DMM_CHAN_0,
@@ -154,12 +152,13 @@ async function runTestById(
 
 
 
-async function runDMXTest(
-  tests,
-  dutAddress,
-  firmware,
-  wattage,
-  client,){
+async function runDMXTest(tests, address, specs) {
+  // console.log(tests, 'helper');
+
+  const { wattage, firmware } = specs;
+
+  console.log(wattage, firmware);
+
 
 }
-module.exports = { runTestById };
+module.exports = { runTestById, runDMXTest };

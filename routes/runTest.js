@@ -8,7 +8,7 @@ const express = require('express');
 const scpi = require('../utilities/SCPIHelpers');
 const dbhelper = require('../utilities/databaseHelpers');
 const { initializePowerSupply, sendCommand } = require('../utilities/SCPIHelpers');
-const { runTestById } = require('../utilities/testHelpers');
+const { runTestById, runDMXTest } = require('../utilities/testHelpers');
 const { getAddress, rdmDiscoverAddress, getFirmwareAndWattage, getHardwareWattage } = require('../utilities/rdmDmxHelpers');
 const { getTestById, getMeasurementsByTestId, getBoardIds, getFirmwares, getWattages } = require('../utilities/databaseHelpers');
 
@@ -219,8 +219,8 @@ router.get('/dmxTest', (req, res) => {
     });
 });
 
-router.post('/runDMXTest', (req, res) => {
-  const data = req.body;
+router.get('/runDMXTest/', async (req, res) => {
+  const data = req.query;
   // get all test keys and values into single object
   const testValues = Object.fromEntries(Object.entries(data).filter(([key]) => key.includes('Test')));
   const tests = [];
@@ -252,9 +252,20 @@ router.post('/runDMXTest', (req, res) => {
     conditionedTests.push(output);
   });
 
-  console.log(conditionedTests);
   // run tests on tests array of objects
+  try {
+    await initializePowerSupply('26', '3.2');
+    sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
+    const dutAddress = await getAddress();
+    const devSpec = await getFirmwareAndWattage(dutAddress);
+    await runDMXTest(conditionedTests, dutAddress, devSpec );
+    sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+    res.status(200).send('Test Complete');
+  } catch (error) {
+    sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+  }
 });
+
 module.exports = router;
 
 

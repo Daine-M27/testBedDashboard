@@ -56,3 +56,4 @@ function addDMXTest () {
 function removeDMXTest(idValue) {
   $(`#${idValue}`).remove();
 }
+
