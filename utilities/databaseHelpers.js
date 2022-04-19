@@ -45,35 +45,35 @@ const config = {
 // };
 
 
-async function insertDMXTest(data) {
-  try {
-    const pool = await sql.connect(config);
-    const request = await pool.request()
-      .input('BoardId', sql.VarChar(20), data.BoardId)
-      .input('DeviceFirmware', sql.VarChar(20), data.DeviceFirmware)
-      .input('DMXValue', sql.VarChar(20), data.DMXValue)
-      .input('DelayValue', sql.VarChar(20), data.DelayValue)
-      .input('Current0', sql.Decimal(10, 5), data.Current0)
-      .input('Current0CPUTemp', sql.Int, data.Current0CPUTemp)
-      .input('Current0LEDTemp', sql.Int, data.Current0LEDTemp)
-      .input('Current1', sql.Decimal(10, 5), data.Current1)
-      .input('Current1CPUTemp', sql.Int, data.Current1CPUTemp)
-      .input('Current1LEDTemp', sql.Int, data.Current1LEDTemp)
-      .input('Current2', sql.Decimal(10, 5), data.Current2)
-      .input('Current2CPUTemp', sql.Int, data.Current2CPUTemp)
-      .input('Current2LEDTemp', sql.Int, data.Current2LEDTemp)
-      .input('Current3', sql.Decimal(10, 5), data.Current3)
-      .input('Current3CPUTemp', sql.Int, data.Current3CPUTemp)
-      .input('Current3LEDTemp', sql.Int, data.Current3LEDTemp)
+// async function insertDMXTest(data) {
+//   try {
+//     const pool = await sql.connect(config);
+//     const request = await pool.request()
+//       .input('BoardId', sql.VarChar(20), data.BoardId)
+//       .input('DeviceFirmware', sql.VarChar(20), data.DeviceFirmware)
+//       .input('DMXValue', sql.VarChar(20), data.DMXValue)
+//       .input('DelayValue', sql.VarChar(20), data.DelayValue)
+//       .input('Current0', sql.Decimal(10, 5), data.Current0)
+//       .input('Current0CPUTemp', sql.Int, data.Current0CPUTemp)
+//       .input('Current0LEDTemp', sql.Int, data.Current0LEDTemp)
+//       .input('Current1', sql.Decimal(10, 5), data.Current1)
+//       .input('Current1CPUTemp', sql.Int, data.Current1CPUTemp)
+//       .input('Current1LEDTemp', sql.Int, data.Current1LEDTemp)
+//       .input('Current2', sql.Decimal(10, 5), data.Current2)
+//       .input('Current2CPUTemp', sql.Int, data.Current2CPUTemp)
+//       .input('Current2LEDTemp', sql.Int, data.Current2LEDTemp)
+//       .input('Current3', sql.Decimal(10, 5), data.Current3)
+//       .input('Current3CPUTemp', sql.Int, data.Current3CPUTemp)
+//       .input('Current3LEDTemp', sql.Int, data.Current3LEDTemp)
       
-      .execute('InsertDMXTestResult');
-    pool.close();
-    return request;
-  } catch (err) {
-    console.log(`Insert DMX Test Error: ${err}`);
-    return err;
-  }
-}
+//       .execute('InsertDMXTestResult');
+//     pool.close();
+//     return request;
+//   } catch (err) {
+//     console.log(`Insert DMX Test Error: ${err}`);
+//     return err;
+//   }
+// }
 
 /**
  * This function takes values in an object consisting of
@@ -279,7 +279,7 @@ async function insertTest(data) {
 async function insertDMXTest(data) {
   try {
     const pool = await sql.connect(config);
-    const result = await pool.request()      
+    const result = await pool.request()
       .input('DeviceWattage', sql.VarChar(20), data.DeviceWattage)
       .input('DeviceFirmware', sql.VarChar(20), data.DeviceFirmware)
       .input('BoardId', sql.VarChar(20), data.BoardId)
@@ -369,6 +369,7 @@ async function insertDMXMeasurement(data) {
       .input('Current3', sql.Decimal(10, 5), data.Current3)
       .input('CPUTemp', sql.Int, data.CPUTemp)
       .input('LEDTemp', sql.Int, data.LEDTemp)
+      .input('DelayValue', sql.Int, data.DelayValue)
       .execute('InsertDMXMeasurement');
     pool.close();
     return result;

@@ -24,7 +24,7 @@ const deviceAddresses = [
 /* GET test home page. */
 router.get('/', (req, res) => {
 
-  scpi.checkInsturments(deviceAddresses, '*IDN?', 'false')
+  scpi.checkInstruments(deviceAddresses, '*IDN?', 'false')
     .then((instrumentCheck) => {
       dbhelper.getTestTemplate()
         .then((testTemplates) => {
@@ -208,7 +208,7 @@ router.post('/searchTestResults/export', (req, res) => {
 });
 
 router.get('/dmxTest', (req, res) => {
-  scpi.checkInsturments(deviceAddresses, '*IDN?', 'false')
+  scpi.checkInstruments(deviceAddresses, '*IDN?', 'false')
     .then((instrumentCheck) => {
       res.render('.\\runTest\\dmx', {
         title: 'DMX Test Setup',
@@ -258,11 +258,12 @@ router.get('/runDMXTest/', async (req, res) => {
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
     const dutAddress = await getAddress();
     const devSpec = await getFirmwareAndWattage(dutAddress);
-    await runDMXTest(conditionedTests, dutAddress, devSpec );
+    const testOutput = await runDMXTest(conditionedTests, dutAddress, devSpec);
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-    res.status(200).send('Test Complete');
+    res.status(200).send({ 'Test Complete': testOutput });
   } catch (error) {
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
+    res.status(200).send({ 'Error': error });
   }
 });
 

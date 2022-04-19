@@ -94,7 +94,7 @@ function getReading(address, command, convert) {
  * @param {array} addressList
  * @param {string} command
  */
-function checkInsturments(addressList, command, convert) {
+function checkInstruments(addressList, command, convert) {
   return new Promise((resolve, reject) => {
     const readingPromises = [];
     const output = [];
@@ -140,5 +140,5 @@ async function initializePowerSupply(volt, curr) {
 }
 
 module.exports = {
-  sendCommand, getReading, checkInsturments, infoCommand, initializePowerSupply,
+  sendCommand, getReading, checkInstruments, infoCommand, initializePowerSupply,
 };
