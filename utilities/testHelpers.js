@@ -172,9 +172,11 @@ async function runTestById(
  * @param {string} dutAddress
  * @param {Object} specs
  */
-async function runDMXTest(tests, dutAddress, specs) {
+async function runDMXTest(tests, dutAddress, specs, client) {
+  console.log(tests)
   function sleep(sec) {
-    console.log('sleep', sec);
+    // client.write(`data: Delay value ${test.Delay} Min(s)`);
+    // console.log('sleep', sec);
     return new Promise((resolve) => setTimeout(resolve, sec * 1000 * 60));
   }
   const { wattage, firmware } = specs;
@@ -193,11 +195,13 @@ async function runDMXTest(tests, dutAddress, specs) {
     console.log({ testId: outputTestId });
   });
 
+  client.write('data: Test Started...\n\n');
+
   try {
     for (const [index, test] of tests.entries()) {
+      client.write(`data: DMX Values White: ${test.White}, Red: ${test.Red}, Green: ${test.Green}, Blue: ${test.Blue}\n\n`);
       output.push({});
-      console.log(test, index);
-
+      // console.log(test, index);
       const data = {
         1: test.White,
         2: test.Red,
@@ -206,26 +210,29 @@ async function runDMXTest(tests, dutAddress, specs) {
         5: '0',
         6: '0',
       };
-      console.log('sendingDMX.....');
+      // console.log('sendingDMX.....');
+      client.write('data: Sending DMX command...');
       await sendDMX(data);
+      
       await sleep(test.Delay);
-      console.log('checking instruments.....');
+      // console.log('checking instruments.....');
       await checkInstruments(dmmAddresses, 'MEASure:CURRent?', 'true').then(
         async (readings) => {
-          console.log(readings)
-          
+          // console.log(readings);
           for (let r = 0; r < readings.length; r += 1) {
             const reading = parseFloat(readings[r].deviceReading);
-            console.log(reading)
+            // console.log(reading);
             output[index][`Current${r}`] = reading;
-            console.log(output[index])
+            // client.write(`data: Current${r}: ${reading}\n\n`);
           }
-          
+
           const cpuTemp = await getSensorTemp('00', dutAddress);
-          console.log(cpuTemp)
+          client.write(`data: CPU Temp: ${cpuTemp}\n\n`);
+          // console.log(cpuTemp);
           const ledTemp = await getSensorTemp('01', dutAddress);
-          console.log(ledTemp)
-          
+          client.write(`data: LED Temp: ${ledTemp}\n\n`);
+          // console.log(ledTemp);
+
           output[index].WhiteValue = parseInt(test.White);
           output[index].RedValue = parseInt(test.Red);
           output[index].GreenValue = parseInt(test.Green);
@@ -235,10 +242,10 @@ async function runDMXTest(tests, dutAddress, specs) {
           output[index].LEDTemp = ledTemp;
 
           output[index].TestId = outputTestId;
-          console.log(output[index])
+          console.log(output[index]);
           // insert all data to db
           await insertDMXMeasurement(output[index]);
-        },
+        }
       );
     }
   } catch (error) {

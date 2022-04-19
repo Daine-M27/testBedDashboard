@@ -57,3 +57,72 @@ function removeDMXTest(idValue) {
   $(`#${idValue}`).remove();
 }
 
+$('#submit').click((event) => {
+  event.preventDefault();
+  const formData = $('#form').serialize();
+  $('#Status').removeClass('hidden');
+  // setup SSE
+  const source = new EventSource(`/runTest/runDMXTest?${formData}`);
+  
+  source.addEventListener('message', (e) => {
+    if (!e.data.includes('TestId')) {
+      $('#messageBox').append(`${e.data}<br>`);
+    }
+
+    if(e.data.includes('Finished')) {
+      source.close();
+    }
+
+    // testId means test is complete
+    if (e.data.includes('Address found:')) {
+      const data = e.data.split(': ');
+      devAddress = data[1];
+    }
+
+    if (e.data.includes('Device firmware:')) {
+      const data = e.data.split(': ');
+      devFirmware = data[1];
+    }
+
+    if (e.data.includes('Device wattage:')) {
+      const data = e.data.split(': ');
+      devWattage = data[1];
+    }
+
+    if (e.data.includes('Failure detected:')) {
+      $('#messageBox').addClass('errorBorder');
+    }
+
+    if (e.data.includes('TestId') === true) {
+      const data = JSON.parse(e.data);
+      // console.log(`testId${data.TestId}`);
+      url = `runTest/testResults/${data.TestId}`;
+      console.log(url);
+      source.close();
+
+      // Enable buttons to continue with user flow
+      $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');
+    }
+
+
+  });
+
+
+
+  source.addEventListener('error', (e) => {
+    $('#messageBox').append(`${e.data}<br>`);
+    // autoScroll();
+    source.close();
+  });
+
+
+
+
+
+
+});
+
+// document.getElementById('submit').addEventListener('click', function(event){
+//   event.preventDefault();
+//   $('#Status').removeClass('hidden');
+// });
