@@ -1,4 +1,6 @@
 let testNumber = 1;
+const displayElement = document.getElementById('timer');
+
 
 function addDMXTest () {
   const whiteValue = document.getElementById('white').value;
@@ -57,26 +59,114 @@ function removeDMXTest(idValue) {
   $(`#${idValue}`).remove();
 }
 
+function resetPage() {
+  console.log('reset page called');
+  $('#submit').prop('disabled', true);
+  // $('#Status').addClass('hidden');
+  $('#messageBox').empty();
+  // $('#messageBox').removeClass('errorBorder');
+  // $('#buttonBox > button').prop('disabled', true).addClass('hidden');
+  // $('#confirmConnected').prop('disabled', false);
+}
+
+function autoScroll() {
+  const box = document.getElementById('messageBox');
+  box.scrollTop = box.scrollHeight;
+}
+
+function CountDownTimer(duration, granularity) {
+  this.duration = duration;
+  this.granularity = granularity | 1000;
+  this.tickFtns = [];
+  this.running = false;
+}
+
+CountDownTimer.prototype.start = function() {
+  if (this.running) {
+    return;
+  }
+  this.running = true;
+  const start = Date.now();
+  const that = this;
+  let diff;
+  let obj;
+
+  (function timer() {
+    diff = that.duration - (((Date.now() - start) / 1000) | 0);
+
+    if (diff > 0) {
+      setTimeout(timer, that.granularity);
+    } else {
+      diff = 0;
+      that.running = false;
+    }
+
+    obj = CountDownTimer.parse(diff);
+    that.tickFtns.forEach(function(ftn) {
+      ftn.call(this, obj.minutes, obj.seconds);
+    }, that);
+  }());
+};
+
+CountDownTimer.prototype.onTick = function(ftn) {
+  if (typeof ftn === 'function') {
+    this.tickFtns.push(ftn);
+  }
+  return this;
+};
+
+CountDownTimer.prototype.expired = function() {
+  return !this.running;
+};
+
+CountDownTimer.parse = function(seconds) {
+  return {
+    'minutes': (seconds / 60) | 0,
+    'seconds': (seconds % 60) | 0
+  };
+};
+
+function format(display) {
+  return function (minutes, seconds) {
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    display.textContent = minutes + ":" + seconds;
+  };
+}
+
 $('#submit').click((event) => {
+  window.scrollTo(0, document.body.scrollHeight);
   event.preventDefault();
+  resetPage();
   const formData = $('#form').serialize();
   $('#Status').removeClass('hidden');
   // setup SSE
   const source = new EventSource(`/runTest/runDMXTest?${formData}`);
   
   source.addEventListener('message', (e) => {
+    autoScroll();
     if (!e.data.includes('TestId')) {
       $('#messageBox').append(`${e.data}<br>`);
     }
 
     if(e.data.includes('Finished')) {
+      document.getElementById('Action').textContent = 'Finished Testing';
+      $('#submit').prop('disabled', false);
       source.close();
     }
 
-    // testId means test is complete
-    if (e.data.includes('Address found:')) {
-      const data = e.data.split(': ');
-      devAddress = data[1];
+    if(e.data.includes('Measurement Delay')) {
+      $('#timer').removeClass('hidden');
+      document.getElementById('Action').textContent = '';
+      const split = e.data.split(' ', 4);
+      const delay = parseInt(split[2]*60);
+      const timer1 = new CountDownTimer(delay);
+      timer1.onTick(format(displayElement)).start();
+    }
+
+    if(e.data.includes('Taking Measurements')) {
+      $('#timer').addClass('hidden');
+      document.getElementById('Action').textContent = 'Measuring Current';
     }
 
     if (e.data.includes('Device firmware:')) {
@@ -101,7 +191,7 @@ $('#submit').click((event) => {
       source.close();
 
       // Enable buttons to continue with user flow
-      $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');
+      // $('#buttonBox > button:disabled').prop('disabled', false).removeClass('hidden');
     }
 
 

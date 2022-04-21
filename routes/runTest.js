@@ -295,31 +295,39 @@ router.get('/runDMXTest', async (req, res) => {
 
   // run tests on tests array of objects
   try {
-    const psStatus = await initializePowerSupply('26', '3.2');
-    client.write(
-      `data: Power Supply set to ${psStatus.Voltage * 2} Volts...\n\n`
-    );
+    await initializePowerSupply('26', '3.2');
+    // client.write(`data: Power Supply set to ${psStatus.Voltage * 2} Volts...\n\n`);
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,ON');
     client.write('data: Power Supply On...\n\n');
+    client.write('data: \n\n');
     client.write('data: Getting device address...\n\n');
-
+    
     const dutAddress = await getAddress();
     if (dutAddress.length > 3) {
-      client.write(`data: Address found: ${dutAddress}\n\n`);
+      client.write(`data: Address: ${dutAddress}\n\n`);
+      client.write('data: \n\n');
+      
       client.write('data: Getting firmware and wattage...\n\n');
       const devSpec = await getFirmwareAndWattage(dutAddress);
+      client.write(`data: Firmware: ${devSpec.firmware}\n\n`);
+      client.write(`data: Wattage: ${devSpec.wattage}\n\n`);
+      client.write('data: \n\n');
+      
       await runDMXTest(conditionedTests, dutAddress, devSpec, client);
       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
       // dmxClient[0].response.end();
+      client.write('data: Power Supply Off...\n\n');
       client.write('data: Testing Finished...\n\n');
-      res.status(200);
+      // res.status(200);
     } else {
       sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
       client.write('error: Unable to get Address\n\n');
+      client.write('data: Power Supply Off...\n\n');
     }
   } catch (error) {
     sendCommand('TCPIP0::192.168.1.170', 'OUTPut CH1,OFF');
-    res.status(200).send({ Error: error });
+    client.write('data: Power Supply Off...\n\n');
+    client.write(`error: ${error}\n\n`);
   }
 });
 

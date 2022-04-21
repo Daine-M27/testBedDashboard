@@ -50,8 +50,11 @@ block content
       #testValues
       input#submit(type='submit' value='Run Tests')
   
-  h2#Status.hidden Test Progress
-  #messageBox
+  h2#Status.hidden="Test Progress: "
+    span#timer
+    span#Action
+    
+  #messageBox(style='min-height:400px')
   br
   #buttonBox
     button.hidden(type='button' id='newTestYes' disabled) New Test
