@@ -1,0 +1,12 @@
+extends ..\\layout2
+
+block content
+  h1 Firmware Managment
+  p #{title}
+  if message 
+    h2 #{message}
+
+  div(style='margin-bottom: 6px; max-width: 1000px')
+    form#form(action='/firmware/installFirmware', method='post')
+      
+      input#submit(type='submit' value='Install')
