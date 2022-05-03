@@ -139,6 +139,19 @@ async function initializePowerSupply(volt, curr) {
   return output;
 }
 
+async function checkPSStatus(){
+  const output = {
+    Voltage: '',
+    Current: '',
+    Config: '',
+  };
+  const powerSupplyAddress = process.env.PPS;
+  output.Voltage = await getReading(powerSupplyAddress, 'VOLTage?', 'false');
+  output.Current = await getReading(powerSupplyAddress, 'CURRent?', 'false');
+  const statusCodes = await getReading(powerSupplyAddress, 'SYSTem:STATus?');
+  output.Config = psStatus.readPowerSupplyStatus(hexHelper.hexToBinary(statusCodes));
+  return output;
+}
 module.exports = {
-  sendCommand, getReading, checkInstruments, infoCommand, initializePowerSupply,
+  sendCommand, getReading, checkInstruments, infoCommand, initializePowerSupply, checkPSStatus
 };

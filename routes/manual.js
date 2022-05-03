@@ -15,7 +15,8 @@ router.get('/', (req, res) => {
 /* Send power commands to power supply */
 router.post('/powerControl', async (req, res) => {
   if (req.body.psCommand === 'On') {
-    const volt = (req.body.wattage === '150') ? '26.75' : '24';
+    //const volt = (req.body.wattage === '150') ? '26.75' : '24';
+    const volt = '26'
     const watt = '3.2';
     try {
       await initializePowerSupply(volt, watt);

@@ -2,11 +2,37 @@ extends ..\\layout2
 
 block content
   h1 Firmware Managment
-  p #{title}
   if message 
     h2 #{message}
 
   div(style='margin-bottom: 6px; max-width: 1000px')
-    form#form(action='/firmware/installFirmware', method='post')
-      
-      input#submit(type='submit' value='Install')
+    form(action="")
+      label(for='wattage') Select Wattage: 
+      select#wattage(name='wattage')
+        option(value='' selected) Select Wattage
+        -for(const [key, value] of Object.entries(firmwareObj)){
+          option.wattage=key
+        -}
+    br 
+
+    -for(const [key, value] of Object.entries(firmwareObj)) {
+      form.hidden(action='/firmware/installFirmware', method='post', id=`${key}Form`)
+        label(for=key)=`${key}:`
+        br
+        select(name=key id=key)
+          option(value='' selected) Select Firmware
+          each obj in firmwareObj[key]
+            option(value=obj.filename)=obj.displayText
+        br
+        br
+        input#submit(type='submit' value='Install' onclick='return messageBox()')
+        br
+        br
+    -}
+
+  #messageBox
+
+  append scripts
+        script(src="\\javascript\\firmware.js")  
+    
+  
